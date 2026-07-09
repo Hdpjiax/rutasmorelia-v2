@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-roja-2-oken.geojson",
+  "route_id": "ruta-roja-2-oken",
+  "route_name": "Roja 2 Oken",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.04,
+      "max_snap_m": 22.86,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.36,
+      "max_snap_m": 8.9,
+      "confidence": 0.989,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:12.153612+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-alberca-gertrudis.geojson",
+  "route_id": "ruta-alberca-gertrudis",
+  "route_name": "Alberca (Gertrudis)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.08,
+      "max_snap_m": 13.88,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.39,
+      "max_snap_m": 18.34,
+      "confidence": 0.989,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:09.820220+00:00"
+}

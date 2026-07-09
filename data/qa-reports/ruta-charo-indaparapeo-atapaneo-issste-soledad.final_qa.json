@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-charo-indaparapeo-atapaneo-issste-soledad.geojson",
+  "route_id": "ruta-charo-indaparapeo-atapaneo-issste-soledad",
+  "route_name": "Charo - Ind Atapaneo (ISSTE - Soledad)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 5.15,
+      "max_snap_m": 60.34,
+      "confidence": 0.977,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 7.63,
+      "max_snap_m": 81.8,
+      "confidence": 0.966,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.458960+00:00"
+}

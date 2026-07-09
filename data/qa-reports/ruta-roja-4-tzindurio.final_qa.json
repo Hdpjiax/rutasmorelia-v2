@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-roja-4-tzindurio.geojson",
+  "route_id": "ruta-roja-4-tzindurio",
+  "route_name": "Roja 4 Tzindurio",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.74,
+      "max_snap_m": 7.41,
+      "confidence": 0.992,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.18,
+      "max_snap_m": 26.29,
+      "confidence": 0.99,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:12.330792+00:00"
+}

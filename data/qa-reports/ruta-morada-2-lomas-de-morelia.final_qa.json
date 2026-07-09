@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-2-lomas-de-morelia.geojson",
+  "route_id": "ruta-morada-2-lomas-de-morelia",
+  "route_name": "Morada 2 Lomas de Morelia",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.09,
+      "max_snap_m": 19.29,
+      "confidence": 0.986,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.13,
+      "max_snap_m": 14.62,
+      "confidence": 0.991,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.461758+00:00"
+}

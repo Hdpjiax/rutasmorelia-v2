@@ -1,0 +1,553 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-por-torreon-nuevo.geojson",
+  "route_id": "ruta-por-torreon-nuevo",
+  "route_name": "Chiquimitio (Por Torreon Nuevo)",
+  "status": "rejected",
+  "publishable": false,
+  "issues": [
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 509.64m en vértice 7 (>500.0m)",
+      "gap": {
+        "index": 7,
+        "distance_m": 509.64
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 747.45m en vértice 63 (>500.0m)",
+      "gap": {
+        "index": 63,
+        "distance_m": 747.45
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 854.3m en vértice 64 (>500.0m)",
+      "gap": {
+        "index": 64,
+        "distance_m": 854.3
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 2049.32m en vértice 65 (>500.0m)",
+      "gap": {
+        "index": 65,
+        "distance_m": 2049.32
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 1007.49m en vértice 66 (>500.0m)",
+      "gap": {
+        "index": 66,
+        "distance_m": 1007.49
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 565.4m en vértice 76 (>500.0m)",
+      "gap": {
+        "index": 76,
+        "distance_m": 565.4
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 588.35m en vértice 89 (>500.0m)",
+      "gap": {
+        "index": 89,
+        "distance_m": 588.35
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 1505.26m en vértice 96 (>500.0m)",
+      "gap": {
+        "index": 96,
+        "distance_m": 1505.26
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 862.39m en vértice 101 (>500.0m)",
+      "gap": {
+        "index": 101,
+        "distance_m": 862.39
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 849.67m en vértice 102 (>500.0m)",
+      "gap": {
+        "index": 102,
+        "distance_m": 849.67
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 617.78m en vértice 103 (>500.0m)",
+      "gap": {
+        "index": 103,
+        "distance_m": 617.78
+      }
+    },
+    {
+      "feature": 0,
+      "direction": "ida",
+      "severity": "critical",
+      "issue": "salto de 607.91m en vértice 105 (>500.0m)",
+      "gap": {
+        "index": 105,
+        "distance_m": 607.91
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 542.57m en vértice 2 (>500.0m)",
+      "gap": {
+        "index": 2,
+        "distance_m": 542.57
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 720.87m en vértice 8 (>500.0m)",
+      "gap": {
+        "index": 8,
+        "distance_m": 720.87
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 607.91m en vértice 19 (>500.0m)",
+      "gap": {
+        "index": 19,
+        "distance_m": 607.91
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 617.78m en vértice 21 (>500.0m)",
+      "gap": {
+        "index": 21,
+        "distance_m": 617.78
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 849.67m en vértice 22 (>500.0m)",
+      "gap": {
+        "index": 22,
+        "distance_m": 849.67
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 862.39m en vértice 23 (>500.0m)",
+      "gap": {
+        "index": 23,
+        "distance_m": 862.39
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 1505.26m en vértice 28 (>500.0m)",
+      "gap": {
+        "index": 28,
+        "distance_m": 1505.26
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 588.35m en vértice 35 (>500.0m)",
+      "gap": {
+        "index": 35,
+        "distance_m": 588.35
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 565.4m en vértice 48 (>500.0m)",
+      "gap": {
+        "index": 48,
+        "distance_m": 565.4
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 1007.49m en vértice 58 (>500.0m)",
+      "gap": {
+        "index": 58,
+        "distance_m": 1007.49
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 2049.32m en vértice 59 (>500.0m)",
+      "gap": {
+        "index": 59,
+        "distance_m": 2049.32
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 854.3m en vértice 60 (>500.0m)",
+      "gap": {
+        "index": 60,
+        "distance_m": 854.3
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 747.45m en vértice 61 (>500.0m)",
+      "gap": {
+        "index": 61,
+        "distance_m": 747.45
+      }
+    },
+    {
+      "feature": 1,
+      "direction": "vuelta",
+      "severity": "critical",
+      "issue": "salto de 509.64m en vértice 117 (>500.0m)",
+      "gap": {
+        "index": 117,
+        "distance_m": 509.64
+      }
+    }
+  ],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 4.22,
+      "max_snap_m": 16.06,
+      "confidence": 0.981,
+      "issues": [
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 509.64m en vértice 7 (>500.0m)",
+          "gap": {
+            "index": 7,
+            "distance_m": 509.64
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 747.45m en vértice 63 (>500.0m)",
+          "gap": {
+            "index": 63,
+            "distance_m": 747.45
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 854.3m en vértice 64 (>500.0m)",
+          "gap": {
+            "index": 64,
+            "distance_m": 854.3
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 2049.32m en vértice 65 (>500.0m)",
+          "gap": {
+            "index": 65,
+            "distance_m": 2049.32
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 1007.49m en vértice 66 (>500.0m)",
+          "gap": {
+            "index": 66,
+            "distance_m": 1007.49
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 565.4m en vértice 76 (>500.0m)",
+          "gap": {
+            "index": 76,
+            "distance_m": 565.4
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 588.35m en vértice 89 (>500.0m)",
+          "gap": {
+            "index": 89,
+            "distance_m": 588.35
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 1505.26m en vértice 96 (>500.0m)",
+          "gap": {
+            "index": 96,
+            "distance_m": 1505.26
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 862.39m en vértice 101 (>500.0m)",
+          "gap": {
+            "index": 101,
+            "distance_m": 862.39
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 849.67m en vértice 102 (>500.0m)",
+          "gap": {
+            "index": 102,
+            "distance_m": 849.67
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 617.78m en vértice 103 (>500.0m)",
+          "gap": {
+            "index": 103,
+            "distance_m": 617.78
+          }
+        },
+        {
+          "feature": 0,
+          "direction": "ida",
+          "severity": "critical",
+          "issue": "salto de 607.91m en vértice 105 (>500.0m)",
+          "gap": {
+            "index": 105,
+            "distance_m": 607.91
+          }
+        }
+      ]
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 4.39,
+      "max_snap_m": 15.18,
+      "confidence": 0.98,
+      "issues": [
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 542.57m en vértice 2 (>500.0m)",
+          "gap": {
+            "index": 2,
+            "distance_m": 542.57
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 720.87m en vértice 8 (>500.0m)",
+          "gap": {
+            "index": 8,
+            "distance_m": 720.87
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 607.91m en vértice 19 (>500.0m)",
+          "gap": {
+            "index": 19,
+            "distance_m": 607.91
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 617.78m en vértice 21 (>500.0m)",
+          "gap": {
+            "index": 21,
+            "distance_m": 617.78
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 849.67m en vértice 22 (>500.0m)",
+          "gap": {
+            "index": 22,
+            "distance_m": 849.67
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 862.39m en vértice 23 (>500.0m)",
+          "gap": {
+            "index": 23,
+            "distance_m": 862.39
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 1505.26m en vértice 28 (>500.0m)",
+          "gap": {
+            "index": 28,
+            "distance_m": 1505.26
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 588.35m en vértice 35 (>500.0m)",
+          "gap": {
+            "index": 35,
+            "distance_m": 588.35
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 565.4m en vértice 48 (>500.0m)",
+          "gap": {
+            "index": 48,
+            "distance_m": 565.4
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 1007.49m en vértice 58 (>500.0m)",
+          "gap": {
+            "index": 58,
+            "distance_m": 1007.49
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 2049.32m en vértice 59 (>500.0m)",
+          "gap": {
+            "index": 59,
+            "distance_m": 2049.32
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 854.3m en vértice 60 (>500.0m)",
+          "gap": {
+            "index": 60,
+            "distance_m": 854.3
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 747.45m en vértice 61 (>500.0m)",
+          "gap": {
+            "index": 61,
+            "distance_m": 747.45
+          }
+        },
+        {
+          "feature": 1,
+          "direction": "vuelta",
+          "severity": "critical",
+          "issue": "salto de 509.64m en vértice 117 (>500.0m)",
+          "gap": {
+            "index": 117,
+            "distance_m": 509.64
+          }
+        }
+      ]
+    }
+  ],
+  "pass": false,
+  "validated_at": "2026-07-09T00:47:12.033455+00:00"
+}

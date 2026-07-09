@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-charo-san-antonio-corrales.geojson",
+  "route_id": "ruta-charo-san-antonio-corrales",
+  "route_name": "Charo (San Antonio Corrales)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 7.44,
+      "max_snap_m": 121.67,
+      "confidence": 0.967,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 7.72,
+      "max_snap_m": 148.17,
+      "confidence": 0.966,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.486029+00:00"
+}

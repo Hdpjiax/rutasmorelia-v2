@@ -1,0 +1,639 @@
+{
+  "generated_at": "2026-07-09T00:15:04.098157Z",
+  "deleted": {
+    "ruta-naranja-3-centro": [
+      "data\\processed\\geojson\\ruta-naranja-3-centro.geojson",
+      "data\\processed\\matched\\ruta-naranja-3-centro.geojson",
+      "public\\routes\\ruta-naranja-3-centro.geojson",
+      "data\\raw-routes\\kml\\ruta-naranja-3-centro.kml",
+      "data\\qa-reports\\ruta-naranja-3-centro.qa.json",
+      "data\\qa-reports\\ruta-naranja-3-centro.final_qa.json",
+      "public/routes/index.json (entry)",
+      "data/rutastransporte-route-map.json (entry)"
+    ],
+    "ruta-isste-soledad": [
+      "data\\processed\\geojson\\ruta-isste-soledad.geojson",
+      "data\\processed\\matched\\ruta-isste-soledad.geojson",
+      "public\\routes\\ruta-isste-soledad.geojson",
+      "data\\raw-routes\\kml\\ruta-isste-soledad.kml",
+      "data\\qa-reports\\ruta-isste-soledad.qa.json",
+      "data\\qa-reports\\ruta-isste-soledad.final_qa.json",
+      "public/routes/index.json (entry)",
+      "data/rutastransporte-route-map.json (entry)"
+    ]
+  },
+  "rebuild": {
+    "ruta-charo": {
+      "pdf": "charo.pdf",
+      "kml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/11_CHARO/KML_charo/Charo_kml.kml",
+      "kml_lines": [
+        {
+          "n": 582,
+          "len_m": 29434
+        },
+        {
+          "n": 406,
+          "len_m": 23539
+        },
+        {
+          "n": 195,
+          "len_m": 4310
+        },
+        {
+          "n": 2,
+          "len_m": 4
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 582,
+          "len_m": 29434,
+          "start": [
+            -101.18935,
+            19.69592
+          ],
+          "end": [
+            -101.04505,
+            19.74615
+          ]
+        },
+        "vuelta": {
+          "pts": 602,
+          "len_m": 27858,
+          "start": [
+            -101.04501,
+            19.74617
+          ],
+          "end": [
+            -101.18935,
+            19.69592
+          ]
+        }
+      },
+      "final_qa": "rejected",
+      "published": true,
+      "issues": [
+        "salto de 507.21m en vértice 110 (>500.0m)",
+        "salto de 540.72m en vértice 124 (>500.0m)"
+      ],
+      "matched_dirs": {
+        "ida": {
+          "pts": 602,
+          "len_m": 30975,
+          "start": [
+            -101.18935,
+            19.69595
+          ],
+          "end": [
+            -101.04505,
+            19.74615
+          ]
+        },
+        "vuelta": {
+          "pts": 535,
+          "len_m": 27913,
+          "start": [
+            -101.04501,
+            19.74617
+          ],
+          "end": [
+            -101.18935,
+            19.69595
+          ]
+        }
+      }
+    },
+    "ruta-charo-indaparapeo-atapaneo-issste-soledad": {
+      "pdf": "charo.pdf",
+      "kml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/12_CHARO_INDAPARAPEO_ATAPANEO_ISSSTE_SOLEDAD/KML_ciais/Charo_Indapa_Atapa_Issste_Soledad_kml.kml",
+      "kml_lines": [
+        {
+          "n": 536,
+          "len_m": 17912
+        },
+        {
+          "n": 74,
+          "len_m": 6821
+        },
+        {
+          "n": 225,
+          "len_m": 6568
+        },
+        {
+          "n": 192,
+          "len_m": 4128
+        },
+        {
+          "n": 16,
+          "len_m": 423
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 513,
+          "len_m": 18180,
+          "start": [
+            -101.18847,
+            19.70564
+          ],
+          "end": [
+            -101.04671,
+            19.74748
+          ]
+        },
+        "vuelta": {
+          "pts": 536,
+          "len_m": 17912,
+          "start": [
+            -101.04671,
+            19.74748
+          ],
+          "end": [
+            -101.18847,
+            19.70564
+          ]
+        }
+      },
+      "final_qa": "approved",
+      "published": true,
+      "issues": [],
+      "matched_dirs": {
+        "ida": {
+          "pts": 394,
+          "len_m": 19796,
+          "start": [
+            -101.18851,
+            19.70565
+          ],
+          "end": [
+            -101.04671,
+            19.74747
+          ]
+        },
+        "vuelta": {
+          "pts": 314,
+          "len_m": 18116,
+          "start": [
+            -101.04671,
+            19.74747
+          ],
+          "end": [
+            -101.18937,
+            19.70564
+          ]
+        }
+      }
+    },
+    "ruta-charo-san-antonio-corrales": {
+      "pdf": "charo.pdf",
+      "kml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/13_CHARO-SAN_ANTONIO_CORRALES/KML_csac/Charo_San_Antonio_Corrales_kml.kml",
+      "kml_lines": [
+        {
+          "n": 665,
+          "len_m": 21861
+        },
+        {
+          "n": 155,
+          "len_m": 10470
+        },
+        {
+          "n": 455,
+          "len_m": 10465
+        },
+        {
+          "n": 22,
+          "len_m": 423
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 630,
+          "len_m": 21357,
+          "start": [
+            -101.18847,
+            19.70564
+          ],
+          "end": [
+            -101.04107,
+            19.77574
+          ]
+        },
+        "vuelta": {
+          "pts": 665,
+          "len_m": 21861,
+          "start": [
+            -101.04107,
+            19.77574
+          ],
+          "end": [
+            -101.18847,
+            19.70564
+          ]
+        }
+      },
+      "final_qa": "approved",
+      "published": true,
+      "issues": [],
+      "matched_dirs": {
+        "ida": {
+          "pts": 422,
+          "len_m": 22477,
+          "start": [
+            -101.18731,
+            19.70571
+          ],
+          "end": [
+            -101.04107,
+            19.77574
+          ]
+        },
+        "vuelta": {
+          "pts": 438,
+          "len_m": 22215,
+          "start": [
+            -101.04107,
+            19.77574
+          ],
+          "end": [
+            -101.18851,
+            19.70565
+          ]
+        }
+      }
+    },
+    "ruta-coral-1": {
+      "pdf": "Coral 1.pdf",
+      "kml": "rutastransporte/01_RUTAS_DE_COMBI/18_CORAL_1/KML/Coral_1.kml",
+      "kml_lines": [
+        {
+          "n": 207,
+          "len_m": 12169
+        },
+        {
+          "n": 195,
+          "len_m": 11842
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 207,
+          "len_m": 12169,
+          "start": [
+            -101.13968,
+            19.68479
+          ],
+          "end": [
+            -101.20942,
+            19.71065
+          ]
+        },
+        "vuelta": {
+          "pts": 195,
+          "len_m": 11842,
+          "start": [
+            -101.20942,
+            19.71065
+          ],
+          "end": [
+            -101.13968,
+            19.68479
+          ]
+        }
+      },
+      "final_qa": "needs_review",
+      "published": true,
+      "issues": [
+        "qa_status=needs_review",
+        "avg_snap_m=19.82 > umbral 18.0m",
+        "confidence=0.912 < 0.92"
+      ],
+      "matched_dirs": {
+        "ida": {
+          "pts": 371,
+          "len_m": 15921,
+          "start": [
+            -101.13972,
+            19.68482
+          ],
+          "end": [
+            -101.20942,
+            19.71066
+          ]
+        },
+        "vuelta": {
+          "pts": 391,
+          "len_m": 14975,
+          "start": [
+            -101.20942,
+            19.71066
+          ],
+          "end": [
+            -101.13966,
+            19.68499
+          ]
+        }
+      }
+    },
+    "ruta-durazo-santa-maria": {
+      "pdf": "Durazno - Sta. María [Trincheras].pdf",
+      "kml": "rutastransporte/01_RUTAS_DE_COMBI/87_DURAZO-SANTA_MARIA/KML_durazno_maría/Durazno_Santa_Maria_kml.kml",
+      "kml_lines": [
+        {
+          "n": 313,
+          "len_m": 6261
+        },
+        {
+          "n": 280,
+          "len_m": 6203
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 280,
+          "len_m": 6203,
+          "start": [
+            -101.19204,
+            19.68211
+          ],
+          "end": [
+            -101.18088,
+            19.65506
+          ]
+        },
+        "vuelta": {
+          "pts": 313,
+          "len_m": 6261,
+          "start": [
+            -101.18088,
+            19.65506
+          ],
+          "end": [
+            -101.19204,
+            19.68211
+          ]
+        }
+      },
+      "final_qa": "approved",
+      "published": true,
+      "issues": [],
+      "matched_dirs": {
+        "ida": {
+          "pts": 193,
+          "len_m": 6195,
+          "start": [
+            -101.19213,
+            19.68215
+          ],
+          "end": [
+            -101.1809,
+            19.65506
+          ]
+        },
+        "vuelta": {
+          "pts": 212,
+          "len_m": 6273,
+          "start": [
+            -101.1809,
+            19.65506
+          ],
+          "end": [
+            -101.19204,
+            19.68211
+          ]
+        }
+      }
+    },
+    "ruta-jesus-del-monte": {
+      "pdf": "Jesús Del Monte.pdf",
+      "kml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/19_JESUS_DEL_MONTE/KML/Jesus_Del_Monte.kml",
+      "kml_lines": [
+        {
+          "n": 555,
+          "len_m": 25420
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 279,
+          "len_m": 12667,
+          "start": [
+            -101.15517,
+            19.64881
+          ],
+          "end": [
+            -101.19542,
+            19.69556
+          ]
+        },
+        "vuelta": {
+          "pts": 277,
+          "len_m": 12753,
+          "start": [
+            -101.19542,
+            19.69556
+          ],
+          "end": [
+            -101.15517,
+            19.64881
+          ]
+        }
+      },
+      "final_qa": "approved",
+      "published": true,
+      "issues": [],
+      "matched_dirs": {
+        "ida": {
+          "pts": 308,
+          "len_m": 12733,
+          "start": [
+            -101.15517,
+            19.64881
+          ],
+          "end": [
+            -101.19542,
+            19.69555
+          ]
+        },
+        "vuelta": {
+          "pts": 351,
+          "len_m": 12756,
+          "start": [
+            -101.19547,
+            19.69556
+          ],
+          "end": [
+            -101.15517,
+            19.64881
+          ]
+        }
+      }
+    },
+    "ruta-morada-1-aldea": {
+      "pdf": "Morada 1 [Aldea].pdf",
+      "kml": "rutastransporte/01_RUTAS_DE_COMBI/32_MORADA_1_ALDEA/KML/Morada_1_Aldea.kml",
+      "kml_lines": [
+        {
+          "n": 586,
+          "len_m": 21517
+        },
+        {
+          "n": 486,
+          "len_m": 20009
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 486,
+          "len_m": 20009,
+          "start": [
+            -101.14398,
+            19.75495
+          ],
+          "end": [
+            -101.21957,
+            19.67063
+          ]
+        },
+        "vuelta": {
+          "pts": 586,
+          "len_m": 21517,
+          "start": [
+            -101.21957,
+            19.67063
+          ],
+          "end": [
+            -101.14398,
+            19.75495
+          ]
+        }
+      },
+      "final_qa": "needs_review",
+      "published": true,
+      "issues": [
+        "qa_status=needs_review",
+        "avg_snap_m=19.49 > umbral 18.0m",
+        "confidence=0.913 < 0.92"
+      ],
+      "matched_dirs": {
+        "ida": {
+          "pts": 461,
+          "len_m": 20803,
+          "start": [
+            -101.1438,
+            19.75464
+          ],
+          "end": [
+            -101.22062,
+            19.6745
+          ]
+        },
+        "vuelta": {
+          "pts": 634,
+          "len_m": 24521,
+          "start": [
+            -101.21956,
+            19.67063
+          ],
+          "end": [
+            -101.14399,
+            19.75493
+          ]
+        }
+      }
+    },
+    "ruta-alberca-metropolis": {
+      "pdf": "Alberca [Metrópolis].pdf",
+      "kml": "rutastransporte/01_RUTAS_DE_COMBI/78_ALBERCA_METROPOLIS/KML_alberca_m/Alberca_Metropolis_kml.kml",
+      "kml_lines": [
+        {
+          "n": 613,
+          "len_m": 11597
+        },
+        {
+          "n": 381,
+          "len_m": 8388
+        },
+        {
+          "n": 450,
+          "len_m": 8194
+        },
+        {
+          "n": 346,
+          "len_m": 6812
+        },
+        {
+          "n": 204,
+          "len_m": 4150
+        }
+      ],
+      "src_dirs": {
+        "ida": {
+          "pts": 1063,
+          "len_m": 19793,
+          "start": [
+            -101.14701,
+            19.69428
+          ],
+          "end": [
+            -101.20658,
+            19.76615
+          ]
+        },
+        "vuelta": {
+          "pts": 932,
+          "len_m": 19416,
+          "start": [
+            -101.20658,
+            19.76615
+          ],
+          "end": [
+            -101.14701,
+            19.69428
+          ]
+        }
+      },
+      "final_qa": "needs_review",
+      "published": true,
+      "issues": [
+        "qa_status=needs_review",
+        "avg_snap_m=18.06 > umbral 18.0m"
+      ],
+      "matched_dirs": {
+        "ida": {
+          "pts": 614,
+          "len_m": 23602,
+          "start": [
+            -101.14683,
+            19.69424
+          ],
+          "end": [
+            -101.20662,
+            19.76618
+          ]
+        },
+        "vuelta": {
+          "pts": 579,
+          "len_m": 23563,
+          "start": [
+            -101.20673,
+            19.76607
+          ],
+          "end": [
+            -101.14709,
+            19.69417
+          ]
+        }
+      }
+    }
+  },
+  "pdf_map": {
+    "ruta-charo": "charo.pdf",
+    "ruta-charo-indaparapeo-atapaneo-issste-soledad": "charo.pdf",
+    "ruta-charo-san-antonio-corrales": "charo.pdf",
+    "ruta-coral-1": "Coral 1.pdf",
+    "ruta-durazo-santa-maria": "Durazno - Sta. María [Trincheras].pdf",
+    "ruta-jesus-del-monte": "Jesús Del Monte.pdf",
+    "ruta-morada-1-aldea": "Morada 1 [Aldea].pdf",
+    "ruta-alberca-metropolis": "Alberca [Metrópolis].pdf"
+  }
+}

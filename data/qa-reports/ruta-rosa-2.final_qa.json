@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-rosa-2.geojson",
+  "route_id": "ruta-rosa-2",
+  "route_name": "Rosa 2",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.92,
+      "max_snap_m": 30.25,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.55,
+      "max_snap_m": 15.62,
+      "confidence": 0.989,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:12.411262+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-atecuaro.geojson",
+  "route_id": "ruta-atecuaro",
+  "route_name": "Atécuaro",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.73,
+      "max_snap_m": 19.76,
+      "confidence": 0.983,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 4.14,
+      "max_snap_m": 42.9,
+      "confidence": 0.982,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:09.977078+00:00"
+}

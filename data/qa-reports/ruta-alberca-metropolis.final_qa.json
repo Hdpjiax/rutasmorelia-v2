@@ -1,0 +1,30 @@
+{
+  "file": "data/processed/matched/ruta-alberca-metropolis.geojson",
+  "route_id": "ruta-alberca-metropolis",
+  "route_name": "Alberca (Metropolis)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 11.71,
+      "max_snap_m": 106.3,
+      "confidence": 0.948,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 9.66,
+      "max_snap_m": 97.72,
+      "confidence": 0.957,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T04:52:14.288Z"
+}

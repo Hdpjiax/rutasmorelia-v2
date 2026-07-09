@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js / build
+.next/
+out/
+build/
+dist/
+tsconfig.tsbuildinfo
+
+# Env & secrets (never commit)
+.env
+.env.*
+!.env.example
+!.env*.example
+.env-valhalla
+!.env-valhalla.example
+
+# Python
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# GIS / routing local data (regenerable, heavy)
+data/osm/
+data/osrm/
+data/valhalla/tiles/
+data/valhalla/tiles.tar
+data/valhalla/build/
+*.osm.pbf
+*.osrm*
+*.tar
+
+# Logs & local runtime
+*.log
+log-*.log
+terminals/
+test-results/
+playwright-report/
+coverage/
+
+# Tooling / IDE / agents local
+.gemini/
+..agents/
+codebase-memory-mcp-ui-windows-amd64/
+mcps/
+*.exe
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.local
+
+# Misc
+*.tmp
+*.bak
+d/

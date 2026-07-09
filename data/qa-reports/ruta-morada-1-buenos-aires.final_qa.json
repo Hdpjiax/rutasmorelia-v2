@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-1-buenos-aires.geojson",
+  "route_id": "ruta-morada-1-buenos-aires",
+  "route_name": "Morada 1 Buenos Aires",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.08,
+      "max_snap_m": 10.43,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.76,
+      "max_snap_m": 72.18,
+      "confidence": 0.983,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.393390+00:00"
+}

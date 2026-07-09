@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-2-3-de-agosto.geojson",
+  "route_id": "ruta-naranja-2-3-de-agosto",
+  "route_name": "Ruta Naranja 2-3 De Agosto",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.17,
+      "max_snap_m": 13.98,
+      "confidence": 0.986,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.92,
+      "max_snap_m": 10.88,
+      "confidence": 0.987,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.606303+00:00"
+}

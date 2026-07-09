@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-cafe-oro-2b-michoacan.geojson",
+  "route_id": "ruta-cafe-oro-2b-michoacan",
+  "route_name": "Café Oro 2B Michoacán",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.27,
+      "max_snap_m": 11.72,
+      "confidence": 0.99,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.36,
+      "max_snap_m": 35.6,
+      "confidence": 0.989,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.164622+00:00"
+}

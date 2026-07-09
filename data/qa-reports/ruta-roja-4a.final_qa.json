@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-roja-4a.geojson",
+  "route_id": "ruta-roja-4a",
+  "route_name": "Roja 4A",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.96,
+      "max_snap_m": 16.35,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.14,
+      "max_snap_m": 14.17,
+      "confidence": 0.99,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:12.355045+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-roja-1-comercial-mexicana.geojson",
+  "route_id": "ruta-roja-1-comercial-mexicana",
+  "route_name": "Roja 1 Comercial Mexicana",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.13,
+      "max_snap_m": 8.26,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.16,
+      "max_snap_m": 23.39,
+      "confidence": 0.99,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:12.099979+00:00"
+}

@@ -1,0 +1,703 @@
+{
+  "skipped": "ruta-naranja-3-centro (naranja directo)",
+  "routes": [
+    {
+      "route_id": "ruta-naranja-1-issste",
+      "label": "Naranja 1 ISSSTE",
+      "root_pdf": "Naranja 1 [Issste].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\38_NARANJA_1_ISSSTE\\MAPAS_naranja_issste\\Naranja1_ISSSTE.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\38_NARANJA_1_ISSSTE\\KML_naranja_issste\\Naranja1_issste_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\38_NARANJA_1_ISSSTE\\MAPAS_naranja_issste\\Naranja1_ISSSTE.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 10209,
+          "len_other_m": 10224,
+          "len_ratio": 1.001,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 43.6,
+          "max_dev_m": 115.4,
+          "pct_le_25m": 75.7,
+          "pct_le_50m": 95.3,
+          "pct_le_100m": 99.1,
+          "pts_src": 177,
+          "pts_other": 249
+        },
+        "vuelta": {
+          "len_src_m": 10098,
+          "len_other_m": 10939,
+          "len_ratio": 1.083,
+          "avg_dev_m": 18.8,
+          "p95_dev_m": 49.7,
+          "max_dev_m": 122.5,
+          "pct_le_25m": 74.3,
+          "pct_le_50m": 95.2,
+          "pct_le_100m": 99.0,
+          "pts_src": 190,
+          "pts_other": 246
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 10209,
+          "len_other_m": 10224,
+          "len_ratio": 1.001,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 43.6,
+          "max_dev_m": 115.4,
+          "pct_le_25m": 75.7,
+          "pct_le_50m": 95.3,
+          "pct_le_100m": 99.1,
+          "pts_src": 177,
+          "pts_other": 249
+        },
+        "vuelta": {
+          "len_src_m": 10098,
+          "len_other_m": 10939,
+          "len_ratio": 1.083,
+          "avg_dev_m": 18.8,
+          "p95_dev_m": 49.7,
+          "max_dev_m": 122.5,
+          "pct_le_25m": 74.3,
+          "pct_le_50m": 95.2,
+          "pct_le_100m": 99.0,
+          "pts_src": 190,
+          "pts_other": 246
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-1-la-soledad",
+      "label": "Naranja 1 La Soledad",
+      "root_pdf": "Naranja 1 [La Soledad].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\39_NARANJA_1_LA_SOLEDAD\\MAPAS_naranja1_LaSoledad\\Naranja 1 La Soledad.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\39_NARANJA_1_LA_SOLEDAD\\KML_naranja1_LaSoledad\\Naranja_1_La_Soledad_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\39_NARANJA_1_LA_SOLEDAD\\MAPAS_naranja1_LaSoledad\\Naranja 1 La Soledad.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 11527,
+          "len_other_m": 11581,
+          "len_ratio": 1.005,
+          "avg_dev_m": 16.0,
+          "p95_dev_m": 43.6,
+          "max_dev_m": 122.0,
+          "pct_le_25m": 78.8,
+          "pct_le_50m": 95.5,
+          "pct_le_100m": 98.5,
+          "pts_src": 223,
+          "pts_other": 286
+        },
+        "vuelta": {
+          "len_src_m": 11512,
+          "len_other_m": 12352,
+          "len_ratio": 1.073,
+          "avg_dev_m": 16.4,
+          "p95_dev_m": 45.6,
+          "max_dev_m": 122.5,
+          "pct_le_25m": 83.1,
+          "pct_le_50m": 96.0,
+          "pct_le_100m": 99.2,
+          "pts_src": 220,
+          "pts_other": 289
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 11527,
+          "len_other_m": 11581,
+          "len_ratio": 1.005,
+          "avg_dev_m": 16.0,
+          "p95_dev_m": 43.6,
+          "max_dev_m": 122.0,
+          "pct_le_25m": 78.8,
+          "pct_le_50m": 95.5,
+          "pct_le_100m": 98.5,
+          "pts_src": 223,
+          "pts_other": 286
+        },
+        "vuelta": {
+          "len_src_m": 11512,
+          "len_other_m": 12352,
+          "len_ratio": 1.073,
+          "avg_dev_m": 16.4,
+          "p95_dev_m": 45.6,
+          "max_dev_m": 122.5,
+          "pct_le_25m": 83.1,
+          "pct_le_50m": 96.0,
+          "pct_le_100m": 99.2,
+          "pts_src": 220,
+          "pts_other": 289
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-2-3-de-agosto",
+      "label": "Naranja 2 3 de Agosto",
+      "root_pdf": "Naranja 2 [3 De Agosto].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\40_NARANJA_2-3_DE_AGOSTO\\MAPAS_naranja23a\\Naranja2_3 de Agosto.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\40_NARANJA_2-3_DE_AGOSTO\\KML_naranja23a\\Naranja2_3_de_Agosto_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\40_NARANJA_2-3_DE_AGOSTO\\MAPAS_naranja23a\\Naranja2_3 de Agosto.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 13129,
+          "len_other_m": 13098,
+          "len_ratio": 0.998,
+          "avg_dev_m": 15.0,
+          "p95_dev_m": 45.1,
+          "max_dev_m": 86.8,
+          "pct_le_25m": 79.4,
+          "pct_le_50m": 95.6,
+          "pct_le_100m": 100.0,
+          "pts_src": 229,
+          "pts_other": 311
+        },
+        "vuelta": {
+          "len_src_m": 13115,
+          "len_other_m": 13113,
+          "len_ratio": 1.0,
+          "avg_dev_m": 13.9,
+          "p95_dev_m": 40.0,
+          "max_dev_m": 61.8,
+          "pct_le_25m": 83.4,
+          "pct_le_50m": 97.5,
+          "pct_le_100m": 100.0,
+          "pts_src": 259,
+          "pts_other": 354
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 13129,
+          "len_other_m": 13098,
+          "len_ratio": 0.998,
+          "avg_dev_m": 15.0,
+          "p95_dev_m": 45.1,
+          "max_dev_m": 86.8,
+          "pct_le_25m": 79.4,
+          "pct_le_50m": 95.6,
+          "pct_le_100m": 100.0,
+          "pts_src": 229,
+          "pts_other": 311
+        },
+        "vuelta": {
+          "len_src_m": 13115,
+          "len_other_m": 13113,
+          "len_ratio": 1.0,
+          "avg_dev_m": 13.9,
+          "p95_dev_m": 40.0,
+          "max_dev_m": 61.8,
+          "pct_le_25m": 83.4,
+          "pct_le_50m": 97.5,
+          "pct_le_100m": 100.0,
+          "pts_src": 259,
+          "pts_other": 354
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-2-santa-fe",
+      "label": "Naranja 2 Santa Fe",
+      "root_pdf": "NARANJA 2 (↔ Santa Fe).pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\41_NARANJA_2_SANTA_FE\\MAPAS_naranja2_sf\\Naranja2_SantaFe.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\41_NARANJA_2_SANTA_FE\\KML_naranja2_sf\\Naranja2_SantaFe_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\41_NARANJA_2_SANTA_FE\\MAPAS_naranja2_sf\\Naranja2_SantaFe.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 13881,
+          "len_other_m": 14222,
+          "len_ratio": 1.025,
+          "avg_dev_m": 17.4,
+          "p95_dev_m": 56.7,
+          "max_dev_m": 117.0,
+          "pct_le_25m": 75.2,
+          "pct_le_50m": 93.8,
+          "pct_le_100m": 99.3,
+          "pts_src": 246,
+          "pts_other": 334
+        },
+        "vuelta": {
+          "len_src_m": 13605,
+          "len_other_m": 13611,
+          "len_ratio": 1.0,
+          "avg_dev_m": 16.2,
+          "p95_dev_m": 43.8,
+          "max_dev_m": 104.4,
+          "pct_le_25m": 78.8,
+          "pct_le_50m": 96.8,
+          "pct_le_100m": 99.4,
+          "pts_src": 271,
+          "pts_other": 343
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 13881,
+          "len_other_m": 14222,
+          "len_ratio": 1.025,
+          "avg_dev_m": 17.4,
+          "p95_dev_m": 56.7,
+          "max_dev_m": 117.0,
+          "pct_le_25m": 75.2,
+          "pct_le_50m": 93.8,
+          "pct_le_100m": 99.3,
+          "pts_src": 246,
+          "pts_other": 334
+        },
+        "vuelta": {
+          "len_src_m": 13605,
+          "len_other_m": 13611,
+          "len_ratio": 1.0,
+          "avg_dev_m": 16.2,
+          "p95_dev_m": 43.8,
+          "max_dev_m": 104.4,
+          "pct_le_25m": 78.8,
+          "pct_le_50m": 96.8,
+          "pct_le_100m": 99.4,
+          "pts_src": 271,
+          "pts_other": 343
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS",
+        "compare_src_matched/ida: solo 93.8% de puntos fuente a <=50m del trazo actual",
+        "compare_src_public/ida: solo 93.8% de puntos fuente a <=50m del trazo actual"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-centro-puerta-del-sol",
+      "label": "Naranja 3 Centro-Puerta del Sol",
+      "root_pdf": "Naranja 3 [Centro - Puerta Del Sol].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\42_NARANJA_3_CENTRO-PUERTA_DEL_SOL\\MAPAS_naranja3_cps\\Naranja 3_Centro_PuertaSol.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\42_NARANJA_3_CENTRO-PUERTA_DEL_SOL\\KML_naranja3_cps\\Naranja_3_Centro_PuertaSol_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\42_NARANJA_3_CENTRO-PUERTA_DEL_SOL\\MAPAS_naranja3_cps\\Naranja 3_Centro_PuertaSol.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 15699,
+          "len_other_m": 15673,
+          "len_ratio": 0.998,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 45.7,
+          "max_dev_m": 108.9,
+          "pct_le_25m": 78.9,
+          "pct_le_50m": 95.3,
+          "pct_le_100m": 98.8,
+          "pts_src": 336,
+          "pts_other": 418
+        },
+        "vuelta": {
+          "len_src_m": 15619,
+          "len_other_m": 15644,
+          "len_ratio": 1.002,
+          "avg_dev_m": 16.6,
+          "p95_dev_m": 49.0,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 83.8,
+          "pct_le_50m": 95.2,
+          "pct_le_100m": 98.8,
+          "pts_src": 340,
+          "pts_other": 427
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 15699,
+          "len_other_m": 15673,
+          "len_ratio": 0.998,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 45.7,
+          "max_dev_m": 108.9,
+          "pct_le_25m": 78.9,
+          "pct_le_50m": 95.3,
+          "pct_le_100m": 98.8,
+          "pts_src": 336,
+          "pts_other": 418
+        },
+        "vuelta": {
+          "len_src_m": 15619,
+          "len_other_m": 15644,
+          "len_ratio": 1.002,
+          "avg_dev_m": 16.6,
+          "p95_dev_m": 49.0,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 83.8,
+          "pct_le_50m": 95.2,
+          "pct_le_100m": 98.8,
+          "pts_src": 340,
+          "pts_other": 427
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-santa-maria-erandeni",
+      "label": "Naranja 3 Sta Maria Erandeni",
+      "root_pdf": "Naranja 3 [Sta. María - Erandeni].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\44_NARANJA_3_SANTA_MARIA-ERANDENI\\MAPAS_naranja3_sme\\Naranja3_SantaMaría_Erandeni.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\44_NARANJA_3_SANTA_MARIA-ERANDENI\\KML_naranja3_sme\\Naranja3_SantaMaría_Erandeni_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\44_NARANJA_3_SANTA_MARIA-ERANDENI\\MAPAS_naranja3_sme\\Naranja3_SantaMaría_Erandeni.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 19246,
+          "len_other_m": 19339,
+          "len_ratio": 1.005,
+          "avg_dev_m": 17.8,
+          "p95_dev_m": 52.2,
+          "max_dev_m": 117.0,
+          "pct_le_25m": 76.9,
+          "pct_le_50m": 93.3,
+          "pct_le_100m": 98.1,
+          "pts_src": 401,
+          "pts_other": 462
+        },
+        "vuelta": {
+          "len_src_m": 19213,
+          "len_other_m": 19244,
+          "len_ratio": 1.002,
+          "avg_dev_m": 16.3,
+          "p95_dev_m": 39.5,
+          "max_dev_m": 91.2,
+          "pct_le_25m": 80.6,
+          "pct_le_50m": 95.1,
+          "pct_le_100m": 100.0,
+          "pts_src": 413,
+          "pts_other": 454
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 19246,
+          "len_other_m": 19339,
+          "len_ratio": 1.005,
+          "avg_dev_m": 17.8,
+          "p95_dev_m": 52.2,
+          "max_dev_m": 117.0,
+          "pct_le_25m": 76.9,
+          "pct_le_50m": 93.3,
+          "pct_le_100m": 98.1,
+          "pts_src": 401,
+          "pts_other": 462
+        },
+        "vuelta": {
+          "len_src_m": 19213,
+          "len_other_m": 19244,
+          "len_ratio": 1.002,
+          "avg_dev_m": 16.3,
+          "p95_dev_m": 39.5,
+          "max_dev_m": 91.2,
+          "pct_le_25m": 80.6,
+          "pct_le_50m": 95.1,
+          "pct_le_100m": 100.0,
+          "pts_src": 413,
+          "pts_other": 454
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS",
+        "compare_src_matched/ida: solo 93.3% de puntos fuente a <=50m del trazo actual",
+        "compare_src_public/ida: solo 93.3% de puntos fuente a <=50m del trazo actual"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-santa-maria-ita",
+      "label": "Naranja 3 Sta Maria Ita",
+      "root_pdf": "Naranja 3 [Sta. María - Ita]}.pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\45_NARANJA_3_SANTA_MARIA-ITA\\MAPAS_naranja3_smita\\Naranja 3_SantaMaría_ITA.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\45_NARANJA_3_SANTA_MARIA-ITA\\KML_naraja3_smita\\Naranja_3_SantaMaría_ITA_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\45_NARANJA_3_SANTA_MARIA-ITA\\MAPAS_naranja3_smita\\Naranja 3_SantaMaría_ITA.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 18484,
+          "len_other_m": 18564,
+          "len_ratio": 1.004,
+          "avg_dev_m": 17.4,
+          "p95_dev_m": 45.1,
+          "max_dev_m": 120.8,
+          "pct_le_25m": 79.1,
+          "pct_le_50m": 94.9,
+          "pct_le_100m": 98.5,
+          "pts_src": 356,
+          "pts_other": 426
+        },
+        "vuelta": {
+          "len_src_m": 18430,
+          "len_other_m": 18449,
+          "len_ratio": 1.001,
+          "avg_dev_m": 15.5,
+          "p95_dev_m": 43.0,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 80.6,
+          "pct_le_50m": 95.1,
+          "pct_le_100m": 99.0,
+          "pts_src": 391,
+          "pts_other": 426
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 18484,
+          "len_other_m": 18564,
+          "len_ratio": 1.004,
+          "avg_dev_m": 17.4,
+          "p95_dev_m": 45.1,
+          "max_dev_m": 120.8,
+          "pct_le_25m": 79.1,
+          "pct_le_50m": 94.9,
+          "pct_le_100m": 98.5,
+          "pts_src": 356,
+          "pts_other": 426
+        },
+        "vuelta": {
+          "len_src_m": 18430,
+          "len_other_m": 18449,
+          "len_ratio": 1.001,
+          "avg_dev_m": 15.5,
+          "p95_dev_m": 43.0,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 80.6,
+          "pct_le_50m": 95.1,
+          "pct_le_100m": 99.0,
+          "pts_src": 391,
+          "pts_other": 426
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS",
+        "compare_src_matched/ida: solo 94.9% de puntos fuente a <=50m del trazo actual",
+        "compare_src_public/ida: solo 94.9% de puntos fuente a <=50m del trazo actual"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-trico-metropolis",
+      "label": "Naranja 3 Trico-Metropolis",
+      "root_pdf": "Naranja 3 [Trico - Metrópolis].pdf",
+      "map_pdfs": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\46_NARANJA_3_TRICO-METROPOLIS\\MAPAS_naranja3_trico\\Naranja 3 Trico_Metropolis.pdf"
+      ],
+      "kmls": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\46_NARANJA_3_TRICO-METROPOLIS\\KML_naranja3_trico\\Naranja_3_Trico_Metropolis_kml.kml"
+      ],
+      "map_images": [
+        "rutastransporte\\01_RUTAS_DE_COMBI\\46_NARANJA_3_TRICO-METROPOLIS\\MAPAS_naranja3_trico\\Naranja 3 Trico_Metropolis.jpg"
+      ],
+      "pdf_md5_match": false,
+      "files": {
+        "data/processed/geojson": true,
+        "data/processed/matched": true,
+        "public/routes": true
+      },
+      "compare_src_matched": {
+        "ida": {
+          "len_src_m": 17037,
+          "len_other_m": 19241,
+          "len_ratio": 1.129,
+          "avg_dev_m": 19.0,
+          "p95_dev_m": 51.0,
+          "max_dev_m": 108.9,
+          "pct_le_25m": 72.2,
+          "pct_le_50m": 94.4,
+          "pct_le_100m": 99.4,
+          "pts_src": 342,
+          "pts_other": 464
+        },
+        "vuelta": {
+          "len_src_m": 17140,
+          "len_other_m": 17162,
+          "len_ratio": 1.001,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 52.7,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 82.1,
+          "pct_le_50m": 94.0,
+          "pct_le_100m": 98.9,
+          "pts_src": 371,
+          "pts_other": 478
+        }
+      },
+      "compare_src_public": {
+        "ida": {
+          "len_src_m": 17037,
+          "len_other_m": 19241,
+          "len_ratio": 1.129,
+          "avg_dev_m": 19.0,
+          "p95_dev_m": 51.0,
+          "max_dev_m": 108.9,
+          "pct_le_25m": 72.2,
+          "pct_le_50m": 94.4,
+          "pct_le_100m": 99.4,
+          "pts_src": 342,
+          "pts_other": 464
+        },
+        "vuelta": {
+          "len_src_m": 17140,
+          "len_other_m": 17162,
+          "len_ratio": 1.001,
+          "avg_dev_m": 17.2,
+          "p95_dev_m": 52.7,
+          "max_dev_m": 137.9,
+          "pct_le_25m": 82.1,
+          "pct_le_50m": 94.0,
+          "pct_le_100m": 98.9,
+          "pts_src": 371,
+          "pts_other": 478
+        }
+      },
+      "final_qa": {
+        "status": "approved",
+        "publishable": true,
+        "issue_count": 0,
+        "issues": []
+      },
+      "verdict": "NEEDS_FIX",
+      "issues": [
+        "PDF raíz difiere de PDF en rutastransporte/MAPAS",
+        "compare_src_matched/ida: solo 94.4% de puntos fuente a <=50m del trazo actual",
+        "compare_src_matched/vuelta: solo 94.0% de puntos fuente a <=50m del trazo actual",
+        "compare_src_public/ida: solo 94.4% de puntos fuente a <=50m del trazo actual",
+        "compare_src_public/vuelta: solo 94.0% de puntos fuente a <=50m del trazo actual"
+      ]
+    }
+  ]
+}

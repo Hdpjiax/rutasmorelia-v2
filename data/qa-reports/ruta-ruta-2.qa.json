@@ -1,0 +1,26 @@
+[
+  {
+    "feature": 0,
+    "status": "approved",
+    "metrics": {
+      "avg_snap_m": 4.71,
+      "max_snap_m": 21.73,
+      "confidence": 0.979,
+      "matched_coverage": 1.005,
+      "orig_len_m": 17555.6,
+      "matched_len_m": 17646.9
+    }
+  },
+  {
+    "feature": 1,
+    "status": "approved",
+    "metrics": {
+      "avg_snap_m": 10.3,
+      "max_snap_m": 39.78,
+      "confidence": 0.954,
+      "matched_coverage": 1.153,
+      "orig_len_m": 17618.3,
+      "matched_len_m": 20310.8
+    }
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-oro-verde-encinos.geojson",
+  "route_id": "ruta-oro-verde-encinos",
+  "route_name": "Oro Verde Encinos",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 7.2,
+      "max_snap_m": 307.5,
+      "confidence": 0.968,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.74,
+      "max_snap_m": 23.82,
+      "confidence": 0.988,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.857493+00:00"
+}

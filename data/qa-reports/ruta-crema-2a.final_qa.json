@@ -1,0 +1,31 @@
+{
+  "file": "data/processed/matched/ruta-crema-2a.geojson",
+  "route_id": "ruta-crema-2a",
+  "route_name": "Crema 2A",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 17.88,
+      "max_snap_m": 271.31,
+      "confidence": 0.921,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 8.93,
+      "max_snap_m": 147.64,
+      "confidence": 0.96,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T07:01:03.383Z",
+  "transport_type": "combi"
+}

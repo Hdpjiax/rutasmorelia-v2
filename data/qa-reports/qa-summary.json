@@ -1,0 +1,1144 @@
+{
+  "generated_at": "2026-07-09T07:33:43.359Z",
+  "totals": {
+    "routes": 103,
+    "approved": 88,
+    "needs_review": 0,
+    "rejected": 15
+  },
+  "routes": [
+    {
+      "route_id": "ruta-alberca-gertrudis",
+      "route_name": "Alberca (Gertrudis)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-alberca-metropolis",
+      "route_name": "Alberca (Metropolis)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-amarilla-centro",
+      "route_name": "Amarilla 1 Centro",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-arco-san-pedro",
+      "route_name": "Arcos San Pedro",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-arroyo-colorado",
+      "route_name": "Arroyo Colorado",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 37,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-atecuaro",
+      "route_name": "Atécuaro",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-1",
+      "route_name": "Café 1",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-1a",
+      "route_name": "Café 1A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-oro-2-leandro-valle",
+      "route_name": "Café - Oro 2 (Leandro Valle)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-oro-2-rafael-carrillo",
+      "route_name": "Café Oro 2 Rafael Carrillo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-oro-2a",
+      "route_name": "Café Oro 2A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-oro-2b-madero",
+      "route_name": "Café Oro 2B Madero",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cafe-oro-2b-michoacan",
+      "route_name": "Café Oro 2B Michoacán",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-campestre-mision-del-valle",
+      "route_name": "Campestre (Misión del Valle)",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 46,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-campestre-posta-trebol-monarca",
+      "route_name": "Campestre (Posta Trebol - Monarca)",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 42,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-canteras-bachilleres",
+      "route_name": "Canteras Bachilleres (Alamos - San Bernabe)",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 50,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-capula",
+      "route_name": "Capula",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 22,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-centros-comerciales-leandro-valle",
+      "route_name": "Centros Comerciales (Lenadro Valle)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-centros-comerciales-lucio-cabanas",
+      "route_name": "Centros Comerciales (Lucio Cabañas)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-charo",
+      "route_name": "Charo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-charo-indaparapeo-atapaneo-issste-soledad",
+      "route_name": "Charo - Ind Atapaneo (ISSTE - Soledad)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-charo-san-antonio-corrales",
+      "route_name": "Charo (San Antonio Corrales)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-chihuerio",
+      "route_name": "Chihuerio",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 131,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-chucandiro",
+      "route_name": "Chucandiro",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-circuito-carrillo",
+      "route_name": "Circuito Carrillo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-ciudad-de-hidalgo",
+      "route_name": "CD Hidalgo",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 27,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-coeneo",
+      "route_name": "Coeneo",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 68,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-cointzio",
+      "route_name": "Cointzio",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 24,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-amarilla-2",
+      "route_name": "Amarilla 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-amarilla-tenencia-morelos",
+      "route_name": "Amarilla Tenencia Morelos",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-azul-a-soriana-cbta",
+      "route_name": "Azul A Soriana-CBTA",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-azul-a-soriana-vergel",
+      "route_name": "Azul A Soriana-Vergel",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-azul-b-michelena",
+      "route_name": "Azul B Michelena",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-azul-b-xangari",
+      "route_name": "Azul B Xangari",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-combi-azul-c",
+      "route_name": "Azul C",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-coral-1",
+      "route_name": "Coral 1",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-coral-2",
+      "route_name": "Coral 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-coral-2a",
+      "route_name": "Coral 2 A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-crema-1",
+      "route_name": "Crema 1",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-crema-2",
+      "route_name": "Crema 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-crema-2a",
+      "route_name": "Crema 2A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-dorado-industrial",
+      "route_name": "Dorado (Industrial)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-dorado-lomas-de-morelia",
+      "route_name": "Dorado (Lomas de Morelia)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-durazo-santa-maria",
+      "route_name": "Durazno - Santa Maria",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-el-pedregal",
+      "route_name": "El Pedregal",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-gris-1-circuito",
+      "route_name": "Gris 1 Circuito",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 51,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-gris-3-furamo",
+      "route_name": "Gris 3 Furamo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-gris-3-oxxo",
+      "route_name": "Gris 3 Oxxo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-gris-4",
+      "route_name": "Gris 4",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 30,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-guinda-1-mora",
+      "route_name": "Guinda 1 Mora",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-guinda-1-praderas",
+      "route_name": "Guinda 1 Praderas",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-guinda-2",
+      "route_name": "Guinda 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-jesus-del-monte",
+      "route_name": "Ruta Jesus Del Monte",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-1-aldea",
+      "route_name": "Morada 1 Aldea",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-1-buenos-aires",
+      "route_name": "Morada 1 Buenos Aires",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-1-mision-del-valle",
+      "route_name": "Morada 1 Misión del Valle",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-2-lomas-de-morelia",
+      "route_name": "Morada 2 Lomas de Morelia",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-2-satelite",
+      "route_name": "Morada 2 Satelite",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-morada-2a",
+      "route_name": "Morada 2A",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 20,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-1-issste",
+      "route_name": "Ruta Naranja 1 Issste",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-1-la-soledad",
+      "route_name": "Ruta Naranja 1 La Soledad",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-2-3-de-agosto",
+      "route_name": "Ruta Naranja 2-3 De Agosto",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-2-santa-fe",
+      "route_name": "Ruta Naranja 2 Santa Fe",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-centro-puerta-del-sol",
+      "route_name": "Ruta Naranja 3 Centro-Puerta Del Sol",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-santa-maria-erandeni",
+      "route_name": "Ruta Naranja 3 Santa Maria-Erandeni",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-santa-maria-ita",
+      "route_name": "Ruta Naranja 3 Santa Maria-Ita",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-naranja-3-trico-metropolis",
+      "route_name": "Ruta Naranja 3 Trico-Metropolis",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-negra-1",
+      "route_name": "Negra 1",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-negra-2",
+      "route_name": "Negra 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-oro-verde-encinos",
+      "route_name": "Oro Verde Encinos",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-oro-verde-soledad",
+      "route_name": "Oro Verde Soledad",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-oro-verde-trincheras",
+      "route_name": "Oro Verde Trincheras",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-paloma-azul-arquito",
+      "route_name": "Paloma Azul Arquito",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 12,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-paloma-azul-campina",
+      "route_name": "Paloma Azul Campina",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-paloma-azul-zimpanio",
+      "route_name": "Paloma Azul Zimpanio",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-panteon",
+      "route_name": "Panteon",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-por-torreon-nuevo",
+      "route_name": "Chiquimitio (Por Torreon Nuevo)",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 26,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-prados-verdes-a",
+      "route_name": "Prados Verdes A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-prados-verdes-b",
+      "route_name": "Prados Verdes B",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-1",
+      "route_name": "Roja 1 Punhuato",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-1-comercial-mexicana",
+      "route_name": "Roja 1 Comercial Mexicana",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-2-oken",
+      "route_name": "Roja 2 Oken",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-2-villas-del-sol",
+      "route_name": "Roja 2 Villas del Sol",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-3",
+      "route_name": "Roja 3",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-3a",
+      "route_name": "Roja 3A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-3b",
+      "route_name": "Roja 3B",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-4-tinijaro",
+      "route_name": "Roja 4 Tinijaro",
+      "status": "rejected",
+      "publishable": false,
+      "issue_count": 40,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-4-tzindurio",
+      "route_name": "Roja 4 Tzindurio",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-4a",
+      "route_name": "Roja 4A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-roja-4m",
+      "route_name": "Roja 4M",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-rosa-2",
+      "route_name": "Rosa 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-rosa-2b",
+      "route_name": "Rosa 2B",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-rosa-3",
+      "route_name": "Rosa 3",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-rosa-metropolis-estrella",
+      "route_name": "Rosa Metropolis - Estrella",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-rosa-puerta-del-sol-galaxia",
+      "route_name": "Rosa Puerta del Sol - Galaxia",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-ruta-2",
+      "route_name": "Ruta 2 (Contra Reloj)",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-trincheras",
+      "route_name": "Trincheras",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-1",
+      "route_name": "Verde 1",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-2",
+      "route_name": "Verde 2",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-3-indeco",
+      "route_name": "Verde 3 INDECO",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-3-lomas-del-valle",
+      "route_name": "Verde 3 Lomas del Valle",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-4",
+      "route_name": "Verde 4",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    },
+    {
+      "route_id": "ruta-verde-4b",
+      "route_name": "Verde 4B",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
+      "directions": [
+        "ida",
+        "vuelta"
+      ]
+    }
+  ]
+}

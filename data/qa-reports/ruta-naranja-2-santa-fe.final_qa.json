@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-2-santa-fe.geojson",
+  "route_id": "ruta-naranja-2-santa-fe",
+  "route_name": "Ruta Naranja 2 Santa Fe",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.78,
+      "max_snap_m": 24.75,
+      "confidence": 0.983,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.52,
+      "max_snap_m": 20.03,
+      "confidence": 0.984,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.632876+00:00"
+}

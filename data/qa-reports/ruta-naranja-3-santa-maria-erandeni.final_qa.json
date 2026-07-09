@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-3-santa-maria-erandeni.geojson",
+  "route_id": "ruta-naranja-3-santa-maria-erandeni",
+  "route_name": "Ruta Naranja 3 Santa Maria-Erandeni",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.78,
+      "max_snap_m": 13.98,
+      "confidence": 0.988,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.04,
+      "max_snap_m": 20.03,
+      "confidence": 0.987,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.686173+00:00"
+}

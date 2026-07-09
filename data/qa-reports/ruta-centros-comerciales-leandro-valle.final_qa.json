@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-centros-comerciales-leandro-valle.geojson",
+  "route_id": "ruta-centros-comerciales-leandro-valle",
+  "route_name": "Centros Comerciales (Lenadro Valle)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.02,
+      "max_snap_m": 15.07,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.97,
+      "max_snap_m": 32.28,
+      "confidence": 0.987,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.395568+00:00"
+}

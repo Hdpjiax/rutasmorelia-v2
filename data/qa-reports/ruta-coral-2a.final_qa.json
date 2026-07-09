@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-coral-2a.geojson",
+  "route_id": "ruta-coral-2a",
+  "route_name": "Coral 2 A",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 4.26,
+      "max_snap_m": 108.65,
+      "confidence": 0.981,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.85,
+      "max_snap_m": 17.11,
+      "confidence": 0.987,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.980612+00:00"
+}

@@ -1,0 +1,31 @@
+{
+  "file": "data/processed/matched/ruta-coral-1.geojson",
+  "route_id": "ruta-coral-1",
+  "route_name": "Coral 1",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 14.64,
+      "max_snap_m": 111.9,
+      "confidence": 0.935,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 13.68,
+      "max_snap_m": 94.3,
+      "confidence": 0.939,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T05:09:54.895Z",
+  "transport_type": "combi"
+}

@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-1-la-soledad.geojson",
+  "route_id": "ruta-naranja-1-la-soledad",
+  "route_name": "Ruta Naranja 1 La Soledad",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.99,
+      "max_snap_m": 13.98,
+      "confidence": 0.987,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.81,
+      "max_snap_m": 19.98,
+      "confidence": 0.988,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.574304+00:00"
+}

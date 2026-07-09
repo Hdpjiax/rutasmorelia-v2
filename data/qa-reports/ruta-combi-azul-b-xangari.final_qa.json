@@ -1,0 +1,31 @@
+{
+  "file": "data/processed/matched/ruta-combi-azul-b-xangari.geojson",
+  "route_id": "ruta-combi-azul-b-xangari",
+  "route_name": "Azul B Xangari",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.44,
+      "max_snap_m": 19.3,
+      "confidence": 0.989,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.64,
+      "max_snap_m": 23.88,
+      "confidence": 0.988,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T05:06:19.134Z",
+  "transport_type": "combi"
+}

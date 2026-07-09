@@ -1,0 +1,31 @@
+{
+  "file": "data/processed/matched/ruta-el-pedregal.geojson",
+  "route_id": "ruta-el-pedregal",
+  "route_name": "El Pedregal",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 5.23,
+      "max_snap_m": 209.6,
+      "confidence": 0.977,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 3.19,
+      "max_snap_m": 59.05,
+      "confidence": 0.986,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T07:33:43.187Z",
+  "transport_type": "combi"
+}

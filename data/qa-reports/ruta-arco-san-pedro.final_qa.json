@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-arco-san-pedro.geojson",
+  "route_id": "ruta-arco-san-pedro",
+  "route_name": "Arcos San Pedro",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 10.51,
+      "max_snap_m": 34.19,
+      "confidence": 0.953,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 7.73,
+      "max_snap_m": 39.62,
+      "confidence": 0.966,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:09.901458+00:00"
+}

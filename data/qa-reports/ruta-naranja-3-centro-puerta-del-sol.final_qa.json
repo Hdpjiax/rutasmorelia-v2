@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-3-centro-puerta-del-sol.geojson",
+  "route_id": "ruta-naranja-3-centro-puerta-del-sol",
+  "route_name": "Ruta Naranja 3 Centro-Puerta Del Sol",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 4.55,
+      "max_snap_m": 19.17,
+      "confidence": 0.98,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 3.38,
+      "max_snap_m": 20.03,
+      "confidence": 0.985,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.659934+00:00"
+}

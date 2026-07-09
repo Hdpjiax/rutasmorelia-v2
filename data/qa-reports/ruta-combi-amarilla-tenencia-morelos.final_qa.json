@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-combi-amarilla-tenencia-morelos.geojson",
+  "route_id": "ruta-combi-amarilla-tenencia-morelos",
+  "route_name": "Amarilla Tenencia Morelos",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.37,
+      "max_snap_m": 19.29,
+      "confidence": 0.989,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.67,
+      "max_snap_m": 13.56,
+      "confidence": 0.993,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.724117+00:00"
+}

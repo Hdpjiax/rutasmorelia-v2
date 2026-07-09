@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-cafe-oro-2a.geojson",
+  "route_id": "ruta-cafe-oro-2a",
+  "route_name": "Café Oro 2A",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 5.43,
+      "max_snap_m": 284.42,
+      "confidence": 0.976,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.71,
+      "max_snap_m": 23.18,
+      "confidence": 0.988,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:10.114255+00:00"
+}

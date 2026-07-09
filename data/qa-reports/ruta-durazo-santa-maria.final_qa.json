@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-durazo-santa-maria.geojson",
+  "route_id": "ruta-durazo-santa-maria",
+  "route_name": "Durazno - Santa Maria",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.66,
+      "max_snap_m": 10.15,
+      "confidence": 0.993,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.62,
+      "max_snap_m": 7.34,
+      "confidence": 0.993,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.120247+00:00"
+}

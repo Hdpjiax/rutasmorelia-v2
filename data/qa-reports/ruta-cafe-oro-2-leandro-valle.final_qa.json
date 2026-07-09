@@ -1,0 +1,30 @@
+{
+  "file": "data/processed/matched/ruta-cafe-oro-2-leandro-valle.geojson",
+  "route_id": "ruta-cafe-oro-2-leandro-valle",
+  "route_name": "Café - Oro 2 (Leandro Valle)",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 1.95,
+      "max_snap_m": 11.28,
+      "confidence": 0.991,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T05:01:20.490Z"
+}

@@ -1,0 +1,929 @@
+[
+  {
+    "routeId": "ruta-alberca-gertrudis",
+    "routeName": "Ruta Alberca Gertrudis",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/79_ALBERCA_GERTRUDIS/KML_alberga_g/Alberca_Gertrudis_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/79_ALBERCA_GERTRUDIS"
+  },
+  {
+    "routeId": "ruta-alberca-metropolis",
+    "routeName": "Ruta Alberca Metropolis",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/78_ALBERCA_METROPOLIS/KML_alberca_m/Alberca_Metropolis_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/78_ALBERCA_METROPOLIS"
+  },
+  {
+    "routeId": "ruta-amarilla-centro",
+    "routeName": "Ruta Amarilla 1 Centro",
+    "color": "#FFC800",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/3_COMBI_AMARILLA_1_CENTRO/KML/Amarilla_1_centro.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/3_COMBI_AMARILLA_1_CENTRO"
+  },
+  {
+    "routeId": "ruta-arco-san-pedro",
+    "routeName": "Ruta Arco San Pedro",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/1_ARCO_SAN_PEDRO/KML_asp/Arcos_San_Pedro_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/1_ARCO_SAN_PEDRO"
+  },
+  {
+    "routeId": "ruta-arroyo-colorado",
+    "routeName": "Ruta Arroyo Colorado",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/2_ARROYO_COLORADO/KML_ac/Arroyo_Colorado_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/2_ARROYO_COLORADO"
+  },
+  {
+    "routeId": "ruta-atecuaro",
+    "routeName": "Ruta Atecuaro",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/3_ATECUARO/KML_atecuaro/Atécuaro_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/3_ATECUARO"
+  },
+  {
+    "routeId": "ruta-cafe-1",
+    "routeName": "Ruta Cafe 1",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/10_CAFE_1/KML/Café_1.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/10_CAFE_1"
+  },
+  {
+    "routeId": "ruta-cafe-1a",
+    "routeName": "Ruta Cafe 1A",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/11_CAFE_1A/KML/Café 1A.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/11_CAFE_1A"
+  },
+  {
+    "routeId": "ruta-cafe-oro-2-leandro-valle",
+    "routeName": "Ruta Cafe Oro 2 Leandro Valle",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/13_CAFE_ORO_2_LEANDRO_VALLE/KML/Café-Oro_2_Leandro_Valle.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/13_CAFE_ORO_2_LEANDRO_VALLE"
+  },
+  {
+    "routeId": "ruta-cafe-oro-2-rafael-carrillo",
+    "routeName": "Ruta Cafe Oro 2 Rafael Carrillo",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/14_CAFE_ORO_2_RAFAEL_CARRILLO/KML/Café_Oro_2_Rafael_Carrillo.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/14_CAFE_ORO_2_RAFAEL_CARRILLO"
+  },
+  {
+    "routeId": "ruta-cafe-oro-2a",
+    "routeName": "Ruta Cafe Oro 2A",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/15_CAFE_ORO_2A/KML/Café_Oro_2A.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/15_CAFE_ORO_2A"
+  },
+  {
+    "routeId": "ruta-cafe-oro-2b-madero",
+    "routeName": "Ruta Cafe Oro 2B Madero",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/16_CAFE_ORO_2B_MADERO/KML/Café_Oro_2B_Madero.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/16_CAFE_ORO_2B_MADERO"
+  },
+  {
+    "routeId": "ruta-cafe-oro-2b-michoacan",
+    "routeName": "Ruta Cafe Oro 2B Michoacan",
+    "color": "#6F4E37",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/17_CAFE_ORO_2B_MICHOACAN/KML/Café_Oro_2B_Michoacán.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/17_CAFE_ORO_2B_MICHOACAN"
+  },
+  {
+    "routeId": "ruta-campestre-mision-del-valle",
+    "routeName": "Ruta Campestre Mision Del Valle",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/4_CAMPESTRE_MISION_DEL_VALLE/KML_cmv/Campestre_Misión_del_Valle_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/4_CAMPESTRE_MISION_DEL_VALLE"
+  },
+  {
+    "routeId": "ruta-campestre-posta-trebol-monarca",
+    "routeName": "Ruta Campestre Posta Trebol-Monarca",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/5_CAMPESTRE_POSTA_TREBOL-MONARCA/KML_campestre_ptm/Campestre_Posta_Trébol-Monarca_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/5_CAMPESTRE_POSTA_TREBOL-MONARCA"
+  },
+  {
+    "routeId": "ruta-canteras-bachilleres",
+    "routeName": "Ruta Canteras Bachilleres",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/6_CANTERAS_BACHILLERES/KML_canteras_bachilleres/Canteras_Bachilleres_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/6_CANTERAS_BACHILLERES"
+  },
+  {
+    "routeId": "ruta-capula",
+    "routeName": "Ruta Capula",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/7_CAPULA/KML_capula/Capula_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/7_CAPULA"
+  },
+  {
+    "routeId": "ruta-centros-comerciales-leandro-valle",
+    "routeName": "Ruta Centros Comerciales-Leandro Valle",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/9_CENTROS_COMERCIALES-LEANDRO_VALLE/KML_cclv/Centros_Comerciales_Leandro_Valle_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/9_CENTROS_COMERCIALES-LEANDRO_VALLE"
+  },
+  {
+    "routeId": "ruta-centros-comerciales-lucio-cabanas",
+    "routeName": "Ruta Centros Comerciales-Lucio Cabañas",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/10_CENTROS_COMERCIALES-LUCIO_CABAÑAS/KML_cclc/Centros_Comerciales_Lucio_Cabañas_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/10_CENTROS_COMERCIALES-LUCIO_CABAÑAS"
+  },
+  {
+    "routeId": "ruta-charo",
+    "routeName": "Ruta Charo",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/11_CHARO/KML_charo/Charo_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/11_CHARO"
+  },
+  {
+    "routeId": "ruta-charo-indaparapeo-atapaneo-issste-soledad",
+    "routeName": "Ruta Charo Indaparapeo Atapaneo Issste Soledad",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/12_CHARO_INDAPARAPEO_ATAPANEO_ISSSTE_SOLEDAD/KML_ciais/Charo_Indapa_Atapa_Issste_Soledad_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/12_CHARO_INDAPARAPEO_ATAPANEO_ISSSTE_SOLEDAD"
+  },
+  {
+    "routeId": "ruta-charo-san-antonio-corrales",
+    "routeName": "Ruta Charo-San Antonio Corrales",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/13_CHARO-SAN_ANTONIO_CORRALES/KML_csac/Charo_San_Antonio_Corrales_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/13_CHARO-SAN_ANTONIO_CORRALES"
+  },
+  {
+    "routeId": "ruta-chihuerio",
+    "routeName": "Ruta Chihuerio",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/14_CHIHUERIO/KML_chihuerio/Chihuerio_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/14_CHIHUERIO"
+  },
+  {
+    "routeId": "ruta-chucandiro",
+    "routeName": "Ruta Chucandiro",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/16_CHUCANDIRO/KML_chucandiro/Chucándiro_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/16_CHUCANDIRO"
+  },
+  {
+    "routeId": "ruta-circuito-carrillo",
+    "routeName": "Ruta Circuito Carrillo",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/81_CIRCUITO_CARRILLO/KML_circuito_carrillo/Circuito_Carrillo_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/81_CIRCUITO_CARRILLO"
+  },
+  {
+    "routeId": "ruta-ciudad-de-hidalgo",
+    "routeName": "Ruta Ciudad De Hidalgo",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/8_CIUDAD_DE_HIDALGO/KML_cdhidalgo/Ciudad_de_Hildago_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/8_CIUDAD_DE_HIDALGO"
+  },
+  {
+    "routeId": "ruta-coeneo",
+    "routeName": "Ruta Coeneo",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/17_COENEO/KML_coeneo/Coeneo_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/17_COENEO"
+  },
+  {
+    "routeId": "ruta-cointzio",
+    "routeName": "Ruta Cointzio",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/18_COINTZIO/KML_cointzio/Cointzio_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/18_COINTZIO"
+  },
+  {
+    "routeId": "ruta-combi-amarilla-2",
+    "routeName": "Ruta Combi Amarilla 2",
+    "color": "#FFC800",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/4_COMBI_AMARILLA_2/KML/Amarilla_2.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/4_COMBI_AMARILLA_2"
+  },
+  {
+    "routeId": "ruta-combi-amarilla-tenencia-morelos",
+    "routeName": "Ruta Combi Amarilla Tenencia Morelos",
+    "color": "#FFC800",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/2_COMBI_AMARILLA_TENENCIA_MORELOS/KML/Amarilla Tenencia Morelos.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/2_COMBI_AMARILLA_TENENCIA_MORELOS"
+  },
+  {
+    "routeId": "ruta-combi-azul-a-soriana-cbta",
+    "routeName": "Ruta Combi Azul A Soriana-Cbta",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/5_COMBI_AZUL_A_SORIANA-CBTA/KML/Azul_A_Soriana-CBTA.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/5_COMBI_AZUL_A_SORIANA-CBTA"
+  },
+  {
+    "routeId": "ruta-combi-azul-a-soriana-vergel",
+    "routeName": "Ruta Combi Azul A Soriana-Vergel",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/6_COMBI_AZUL_A_SORIANA-VERGEL/KML/Azul_A_Soriana-Vergel.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/6_COMBI_AZUL_A_SORIANA-VERGEL"
+  },
+  {
+    "routeId": "ruta-combi-azul-b-michelena",
+    "routeName": "Ruta Combi Azul B Michelena",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/7_COMBI_AZUL_B_MICHELENA/KML/Azul_B_Michelena.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/7_COMBI_AZUL_B_MICHELENA"
+  },
+  {
+    "routeId": "ruta-combi-azul-b-xangari",
+    "routeName": "Ruta Combi Azul B Xangari",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/8_COMBI_AZUL_B_XANGARI/KML/Azul B Xangari.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/8_COMBI_AZUL_B_XANGARI"
+  },
+  {
+    "routeId": "ruta-combi-azul-c",
+    "routeName": "Ruta Combi Azul C",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/9_COMBI_AZUL_C/KML/Azul_C.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/9_COMBI_AZUL_C"
+  },
+  {
+    "routeId": "ruta-coral-1",
+    "routeName": "Ruta Coral 1",
+    "color": "#FF6F61",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/18_CORAL_1/KML/Coral_1.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/18_CORAL_1"
+  },
+  {
+    "routeId": "ruta-coral-2",
+    "routeName": "Ruta Coral 2",
+    "color": "#FF6F61",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/19_CORAL_2/KML/Coral_2.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/19_CORAL_2"
+  },
+  {
+    "routeId": "ruta-coral-2a",
+    "routeName": "Ruta Coral 2A",
+    "color": "#FF6F61",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/20_CORAL_2A/KML/Coral_2A.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/20_CORAL_2A"
+  },
+  {
+    "routeId": "ruta-crema-1",
+    "routeName": "Ruta Crema 1",
+    "color": "#C4A574",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/21_CREMA_1/KML/Crema_1.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/21_CREMA_1"
+  },
+  {
+    "routeId": "ruta-crema-2",
+    "routeName": "Ruta Crema 2",
+    "color": "#C4A574",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/22_CREMA_2/KML/Crema_2.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/22_CREMA_2"
+  },
+  {
+    "routeId": "ruta-crema-2a",
+    "routeName": "Ruta Crema 2A",
+    "color": "#C4A574",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/23_CREMA_2A/KML/Crema_2A.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/23_CREMA_2A"
+  },
+  {
+    "routeId": "ruta-dorado-industrial",
+    "routeName": "Ruta Dorado Industrial",
+    "color": "#D4A017",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/80_DORADO_INDUSTRIAL/KML_dorado/Dorado_Industrial_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/80_DORADO_INDUSTRIAL"
+  },
+  {
+    "routeId": "ruta-dorado-lomas-de-morelia",
+    "routeName": "Ruta Dorado-Lomas De Morelia",
+    "color": "#D4A017",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/89_DORADO-LOMAS_DE_MORELIA/KML_dorado_lomas/Dorado_Lomas_de_Morelia_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/89_DORADO-LOMAS_DE_MORELIA"
+  },
+  {
+    "routeId": "ruta-durazo-santa-maria",
+    "routeName": "Ruta Durazo-Santa Maria",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/87_DURAZO-SANTA_MARIA/KML_durazno_maría/Durazno_Santa_Maria_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/87_DURAZO-SANTA_MARIA"
+  },
+  {
+    "routeId": "ruta-el-pedregal",
+    "routeName": "Ruta El Pedregal",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/82_EL_PEDREGAL/KML_pedregal/El_Pedregal_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/82_EL_PEDREGAL"
+  },
+  {
+    "routeId": "ruta-gris-1-circuito",
+    "routeName": "Ruta Gris 1 Circuito",
+    "color": "#757575",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/24_GRIS_1_CIRCUITO/KML/Gris_1_Circuito.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/24_GRIS_1_CIRCUITO"
+  },
+  {
+    "routeId": "ruta-gris-3-furamo",
+    "routeName": "Ruta Gris 3 Furamo",
+    "color": "#757575",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/26_GRIS_3_FURAMO/KML/Gris_3_Furamo.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/26_GRIS_3_FURAMO"
+  },
+  {
+    "routeId": "ruta-gris-3-oxxo",
+    "routeName": "Ruta Gris 3 Oxxo",
+    "color": "#757575",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/27_GRIS_3_OXXO/KML/Gris_3_Oxxo.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/27_GRIS_3_OXXO"
+  },
+  {
+    "routeId": "ruta-gris-4",
+    "routeName": "Ruta Gris 4",
+    "color": "#757575",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/28_GRIS_4/KML/Gris_4.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/28_GRIS_4"
+  },
+  {
+    "routeId": "ruta-guinda-1-mora",
+    "routeName": "Ruta Guinda 1 Mora",
+    "color": "#880E4F",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/29_GUINDA_1_MORA/KML/Guinda_1_Mora.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/29_GUINDA_1_MORA"
+  },
+  {
+    "routeId": "ruta-guinda-1-praderas",
+    "routeName": "Ruta Guinda 1 Praderas",
+    "color": "#880E4F",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/30_GUINDA_1_PRADERAS/KML/Guinda_1_Praderas.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/30_GUINDA_1_PRADERAS"
+  },
+  {
+    "routeId": "ruta-guinda-2",
+    "routeName": "Ruta Guinda 2",
+    "color": "#880E4F",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/31_GUINDA_2/KML/Guinda_2.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/31_GUINDA_2"
+  },
+  {
+    "routeId": "ruta-jesus-del-monte",
+    "routeName": "Ruta Jesus Del Monte",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/19_JESUS_DEL_MONTE/KML/Jesus_Del_Monte.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/19_JESUS_DEL_MONTE"
+  },
+  {
+    "routeId": "ruta-morada-1-aldea",
+    "routeName": "Ruta Morada 1 Aldea",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/32_MORADA_1_ALDEA/KML/Morada_1_Aldea.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/32_MORADA_1_ALDEA"
+  },
+  {
+    "routeId": "ruta-morada-1-buenos-aires",
+    "routeName": "Ruta Morada 1 Buenos Aires",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/33_MORADA_1_BUENOS_AIRES/KML/Morada_1_Buenos_Aires.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/33_MORADA_1_BUENOS_AIRES"
+  },
+  {
+    "routeId": "ruta-morada-1-mision-del-valle",
+    "routeName": "Ruta Morada 1 Mision Del Valle",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/34_MORADA_1_MISION_DEL_VALLE/KML/Morada_1_Misión_del_Valle.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/34_MORADA_1_MISION_DEL_VALLE"
+  },
+  {
+    "routeId": "ruta-morada-2-lomas-de-morelia",
+    "routeName": "Ruta Morada 2 Lomas De Morelia",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/35_MORADA_2_LOMAS_DE_MORELIA/KML/Morada_2_Lomas_de_Morelia.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/35_MORADA_2_LOMAS_DE_MORELIA"
+  },
+  {
+    "routeId": "ruta-morada-2-satelite",
+    "routeName": "Ruta Morada 2 Satelite",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/36_MORADA_2_SATELITE/KML/Morada_2_Satélite.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/36_MORADA_2_SATELITE"
+  },
+  {
+    "routeId": "ruta-morada-2a",
+    "routeName": "Ruta Morada  2A",
+    "color": "#7B1FA2",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/37_MORADA_ 2A/KML/Morada_2A.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/37_MORADA_ 2A"
+  },
+  {
+    "routeId": "ruta-naranja-1-issste",
+    "routeName": "Ruta Naranja 1 Issste",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/38_NARANJA_1_ISSSTE/KML_naranja_issste/Naranja1_issste_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/38_NARANJA_1_ISSSTE"
+  },
+  {
+    "routeId": "ruta-naranja-1-la-soledad",
+    "routeName": "Ruta Naranja 1 La Soledad",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/39_NARANJA_1_LA_SOLEDAD/KML_naranja1_LaSoledad/Naranja_1_La_Soledad_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/39_NARANJA_1_LA_SOLEDAD"
+  },
+  {
+    "routeId": "ruta-naranja-2-3-de-agosto",
+    "routeName": "Ruta Naranja 2-3 De Agosto",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/40_NARANJA_2-3_DE_AGOSTO/KML_naranja23a/Naranja2_3_de_Agosto_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/40_NARANJA_2-3_DE_AGOSTO"
+  },
+  {
+    "routeId": "ruta-naranja-2-santa-fe",
+    "routeName": "Ruta Naranja 2 Santa Fe",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/41_NARANJA_2_SANTA_FE/KML_naranja2_sf/Naranja2_SantaFe_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/41_NARANJA_2_SANTA_FE"
+  },
+  {
+    "routeId": "ruta-naranja-3-centro-puerta-del-sol",
+    "routeName": "Ruta Naranja 3 Centro-Puerta Del Sol",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/42_NARANJA_3_CENTRO-PUERTA_DEL_SOL/KML_naranja3_cps/Naranja_3_Centro_PuertaSol_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/42_NARANJA_3_CENTRO-PUERTA_DEL_SOL"
+  },
+  {
+    "routeId": "ruta-naranja-3-santa-maria-erandeni",
+    "routeName": "Ruta Naranja 3 Santa Maria-Erandeni",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/44_NARANJA_3_SANTA_MARIA-ERANDENI/KML_naranja3_sme/Naranja3_SantaMaría_Erandeni_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/44_NARANJA_3_SANTA_MARIA-ERANDENI"
+  },
+  {
+    "routeId": "ruta-naranja-3-santa-maria-ita",
+    "routeName": "Ruta Naranja 3 Santa Maria-Ita",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/45_NARANJA_3_SANTA_MARIA-ITA/KML_naraja3_smita/Naranja_3_SantaMaría_ITA_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/45_NARANJA_3_SANTA_MARIA-ITA"
+  },
+  {
+    "routeId": "ruta-naranja-3-trico-metropolis",
+    "routeName": "Ruta Naranja 3 Trico-Metropolis",
+    "color": "#F57C00",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/46_NARANJA_3_TRICO-METROPOLIS/KML_naranja3_trico/Naranja_3_Trico_Metropolis_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/46_NARANJA_3_TRICO-METROPOLIS"
+  },
+  {
+    "routeId": "ruta-negra-1",
+    "routeName": "Ruta Negra 1",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/47_NEGRA_1/KML_negra1/Negra_1_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/47_NEGRA_1"
+  },
+  {
+    "routeId": "ruta-negra-2",
+    "routeName": "Ruta Negra 2",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/48_NEGRA_2/KML_negra2/Negra 2_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/48_NEGRA_2"
+  },
+  {
+    "routeId": "ruta-oro-verde-encinos",
+    "routeName": "Ruta Oro Verde Encinos",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/49_ORO_VERDE_ENCINOS/KML_ove/Oro Verde Encinos.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/49_ORO_VERDE_ENCINOS"
+  },
+  {
+    "routeId": "ruta-oro-verde-soledad",
+    "routeName": "Ruta Oro Verde Soledad",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/50_ORO_VERDE_SOLEDAD/KML_ovs/Oro Verde Soledad_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/50_ORO_VERDE_SOLEDAD"
+  },
+  {
+    "routeId": "ruta-oro-verde-trincheras",
+    "routeName": "Ruta Oro Verde Trincheras",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/51_ORO_VERDE_TRINCHERAS/KML_ovt/Oro_Verde_Trincheras_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/51_ORO_VERDE_TRINCHERAS"
+  },
+  {
+    "routeId": "ruta-paloma-azul-arquito",
+    "routeName": "Ruta Paloma Azul Arquito",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/52_PALOMA_AZUL_ARQUITO/KML_paa/Paloma_Azul_Arquito_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/52_PALOMA_AZUL_ARQUITO"
+  },
+  {
+    "routeId": "ruta-paloma-azul-campina",
+    "routeName": "Ruta Paloma Azul Campiña",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/53_PALOMA_AZUL_CAMPIÑA/KML_pac/Paloma_Azul_Campiña_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/53_PALOMA_AZUL_CAMPIÑA"
+  },
+  {
+    "routeId": "ruta-paloma-azul-zimpanio",
+    "routeName": "Ruta Paloma Azul Zimpanio",
+    "color": "#1565C0",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/54_PALOMA_AZUL_ZIMPANIO/KML_paz/Paloma_Azul_Zimpanio_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/54_PALOMA_AZUL_ZIMPANIO"
+  },
+  {
+    "routeId": "ruta-panteon",
+    "routeName": "Ruta Panteon",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/83_PANTEON/KML_panteón/Panteon_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/83_PANTEON"
+  },
+  {
+    "routeId": "ruta-por-torreon-nuevo",
+    "routeName": "Ruta Por Torreon Nuevo",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "foraneo",
+    "sourceKml": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/15CHIQUIMITIO_POR_TORREON_NUEVO/KML_chiquimitio_tn/Chiquimitío_por_Torreón_Nuevo_kml.kml",
+    "sourceFolder": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/15CHIQUIMITIO_POR_TORREON_NUEVO"
+  },
+  {
+    "routeId": "ruta-prados-verdes-a",
+    "routeName": "Ruta Prados Verdes A",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/84_PRADOS_VERDES_A/KML_prados_verdesA/Prados_Verdes_A_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/84_PRADOS_VERDES_A"
+  },
+  {
+    "routeId": "ruta-prados-verdes-b",
+    "routeName": "Ruta Prados Verdes B",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/85_PRADOS_VERDES_B/KML_prados_verdesB/Prados_Verdes_B_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/85_PRADOS_VERDES_B"
+  },
+  {
+    "routeId": "ruta-roja-1",
+    "routeName": "Ruta Roja 1 Punhuato",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/56_ROJA_1_PUNHUATO/KML_rp/Roja_1_Punhuato_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/56_ROJA_1_PUNHUATO"
+  },
+  {
+    "routeId": "ruta-roja-1-comercial-mexicana",
+    "routeName": "Ruta Roja 1 Comercial Mexicana",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/55_ROJA_1_COMERCIAL_MEXICANA/KML_rcm/Roja_1_Comercial_Mexicana_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/55_ROJA_1_COMERCIAL_MEXICANA"
+  },
+  {
+    "routeId": "ruta-roja-2-oken",
+    "routeName": "Ruta Roja 2 Oken",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/57_ROJA_2_OKEN/KML_oken/Roja_2_Oken_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/57_ROJA_2_OKEN"
+  },
+  {
+    "routeId": "ruta-roja-2-villas-del-sol",
+    "routeName": "Ruta Roja 2 Villas Del Sol",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/58_ROJA_2_VILLAS_DEL_SOL/KML_rvillas/Roja 2 Villas del Sol_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/58_ROJA_2_VILLAS_DEL_SOL"
+  },
+  {
+    "routeId": "ruta-roja-3",
+    "routeName": "Ruta Roja 3",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/59_ROJA_3/KML_roja3/Roja_3_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/59_ROJA_3"
+  },
+  {
+    "routeId": "ruta-roja-3a",
+    "routeName": "Ruta Roja 3A",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/60_ROJA_3A/KML_roja3A/Roja_3A_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/60_ROJA_3A"
+  },
+  {
+    "routeId": "ruta-roja-3b",
+    "routeName": "Ruta Roja 3B",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/61_ROJA_3B/KML_roja3B/Roja_3B_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/61_ROJA_3B"
+  },
+  {
+    "routeId": "ruta-roja-4-tinijaro",
+    "routeName": "Ruta Roja 4 Tinijaro",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/62_ROJA_4_TINIJARO/KML_tinijaro/Roja_4_Tinijaro_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/62_ROJA_4_TINIJARO"
+  },
+  {
+    "routeId": "ruta-roja-4-tzindurio",
+    "routeName": "Ruta Roja 4 Tzindurio",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/63_ROJA_4_TZINDURIO/KML_tzindurio/Roja_4_Tzindurio_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/63_ROJA_4_TZINDURIO"
+  },
+  {
+    "routeId": "ruta-roja-4a",
+    "routeName": "Ruta Roja 4A",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/64_ROJA_4A/KML_roja4A/Roja_4A_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/64_ROJA_4A"
+  },
+  {
+    "routeId": "ruta-roja-4m",
+    "routeName": "Ruta Roja 4M",
+    "color": "#E53935",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/65_ROJA_4M/KML_roja4M/Roja_4M_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/65_ROJA_4M"
+  },
+  {
+    "routeId": "ruta-rosa-2",
+    "routeName": "Ruta Rosa 2",
+    "color": "#E91E63",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/66_ROSA_2/KML_rosa2/Rosa_2_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/66_ROSA_2"
+  },
+  {
+    "routeId": "ruta-rosa-2b",
+    "routeName": "Ruta Rosa 2B",
+    "color": "#E91E63",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/67_ROSA_2B/KML_rosa2B/Rosa_2B_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/67_ROSA_2B"
+  },
+  {
+    "routeId": "ruta-rosa-3",
+    "routeName": "Ruta Rosa 3",
+    "color": "#E91E63",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/68_ROSA_3/KML_rosa3/Rosa_3_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/68_ROSA_3"
+  },
+  {
+    "routeId": "ruta-rosa-metropolis-estrella",
+    "routeName": "Ruta Rosa Metropolis-Estrella",
+    "color": "#E91E63",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/69_ROSA_METROPOLIS-ESTRELLA/KML_me/Rosa_Metropolis-Estrella_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/69_ROSA_METROPOLIS-ESTRELLA"
+  },
+  {
+    "routeId": "ruta-rosa-puerta-del-sol-galaxia",
+    "routeName": "Ruta Rosa Puerta Del Sol-Galaxia",
+    "color": "#E91E63",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/70_ROSA_PUERTA_DEL_SOL-GALAXIA/KML_rpsg/Rosa_Puerta_del_Sol-Galaxia_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/70_ROSA_PUERTA_DEL_SOL-GALAXIA"
+  },
+  {
+    "routeId": "ruta-ruta-2",
+    "routeName": "Ruta Ruta 2",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/77_RUTA_2/KML_ruta2/Ruta_2_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/77_RUTA_2"
+  },
+  {
+    "routeId": "ruta-trincheras",
+    "routeName": "Ruta Trincheras",
+    "color": "#3b82f6",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/88_TRINCHERAS/KML_trincheras/Trincheras_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/88_TRINCHERAS"
+  },
+  {
+    "routeId": "ruta-verde-1",
+    "routeName": "Ruta Verde 1",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/71_VERDE_1/KML_verde1/Verde_1_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/71_VERDE_1"
+  },
+  {
+    "routeId": "ruta-verde-2",
+    "routeName": "Ruta Verde 2",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/72_VERDE_2/KML_verde2/Verde_2_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/72_VERDE_2"
+  },
+  {
+    "routeId": "ruta-verde-3-indeco",
+    "routeName": "Ruta Verde 3 Indeco",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/73_VERDE_3_INDECO/KML_indeco/Verde_3_INDECO_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/73_VERDE_3_INDECO"
+  },
+  {
+    "routeId": "ruta-verde-3-lomas-del-valle",
+    "routeName": "Ruta Verde 3 Lomas Del Valle",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/74_VERDE_3_LOMAS_DEL_VALLE/KML_v3lv/Verde_3_Lomas_del_Valle_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/74_VERDE_3_LOMAS_DEL_VALLE"
+  },
+  {
+    "routeId": "ruta-verde-4",
+    "routeName": "Ruta Verde 4",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/75_VERDE_4/KML_verde4/Verde_4_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/75_VERDE_4"
+  },
+  {
+    "routeId": "ruta-verde-4b",
+    "routeName": "Ruta Verde 4B",
+    "color": "#2E7D32",
+    "casingColor": "#222222",
+    "transportType": "combi",
+    "sourceKml": "rutastransporte/01_RUTAS_DE_COMBI/76_VERDE_4B/KML_verde4B/Verde_4B_kml.kml",
+    "sourceFolder": "rutastransporte/01_RUTAS_DE_COMBI/76_VERDE_4B"
+  }
+]

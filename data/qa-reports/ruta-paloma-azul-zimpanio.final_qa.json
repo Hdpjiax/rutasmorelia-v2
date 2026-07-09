@@ -1,0 +1,30 @@
+{
+  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-paloma-azul-zimpanio.geojson",
+  "route_id": "ruta-paloma-azul-zimpanio",
+  "route_name": "Paloma Azul Zimpanio",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
+  "directions": [
+    {
+      "direction": "ida",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 2.85,
+      "max_snap_m": 13.83,
+      "confidence": 0.987,
+      "issues": []
+    },
+    {
+      "direction": "vuelta",
+      "qa_status": "approved",
+      "validator": "valhalla+osrm",
+      "avg_snap_m": 1.81,
+      "max_snap_m": 11.93,
+      "confidence": 0.992,
+      "issues": []
+    }
+  ],
+  "pass": true,
+  "validated_at": "2026-07-09T00:47:11.983795+00:00"
+}
