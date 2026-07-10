@@ -28,7 +28,6 @@ import {
   Home,
   Briefcase,
   Clock,
-  Focus,
 } from 'lucide-react';
 import { mockSupabaseClient, mockDb, type Route } from '@/lib/supabase/client';
 import { planTrip, type Coordinate, type TripPlan } from '@/lib/routing/planner';
@@ -170,12 +169,6 @@ export default function HomeApp() {
   const [recentRoutes, setRecentRoutes] = useState<RecentRoute[]>([]);
   const [homePlace, setHomePlace] = useState<SavedPlaceSlot>(null);
   const [workPlace, setWorkPlace] = useState<SavedPlaceSlot>(null);
-  /** Usuario movió el mapa lejos del encuadre de la ruta/viaje */
-  const [mapNeedsReframe, setMapNeedsReframe] = useState(false);
-  const lastFitBoundsRef = useRef<[[number, number], [number, number]] | null>(null);
-  const suppressMoveRef = useRef(false);
-  const selectedRouteIdRef = useRef<string | null>(null);
-  const tripPlansLenRef = useRef(0);
 
   const [styleLoaded, setStyleLoaded] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -724,27 +717,10 @@ export default function HomeApp() {
     (bounds: [[number, number], [number, number]], padding = 56) => {
       const map = mapRef.current;
       if (!map) return;
-      lastFitBoundsRef.current = bounds;
-      suppressMoveRef.current = true;
-      setMapNeedsReframe(false);
       map.fitBounds(bounds, { padding, maxZoom: 15, essential: true });
-      window.setTimeout(() => {
-        suppressMoveRef.current = false;
-      }, 600);
     },
     []
   );
-
-  const reframeActiveContent = useCallback(() => {
-    if (lastFitBoundsRef.current) {
-      fitMapToBounds(lastFitBoundsRef.current);
-      return;
-    }
-    // Fallback: GPS o centro Morelia
-    if (originCoords) {
-      mapRef.current?.flyTo({ center: originCoords, zoom: 15, essential: true });
-    }
-  }, [fitMapToBounds, originCoords]);
 
   // Planificador: asegura shapes (caché / lazy) antes de calcular
   useEffect(() => {
@@ -833,13 +809,6 @@ export default function HomeApp() {
     };
   }, [originCoords, destinationCoords, setGeometriesLoading]);
 
-  useEffect(() => {
-    selectedRouteIdRef.current = selectedRouteId;
-  }, [selectedRouteId]);
-  useEffect(() => {
-    tripPlansLenRef.current = tripPlans.length;
-  }, [tripPlans.length]);
-
   const handleMapReady = useCallback((m: MapLibreMap) => {
     mapRef.current = m;
     setStyleLoaded(true);
@@ -847,14 +816,6 @@ export default function HomeApp() {
     void import('maplibre-gl').then((mod) => {
       mlRef.current = mod;
     });
-    const onMoveEnd = () => {
-      if (suppressMoveRef.current) return;
-      if (!lastFitBoundsRef.current) return;
-      if (!selectedRouteIdRef.current && tripPlansLenRef.current === 0) return;
-      setMapNeedsReframe(true);
-    };
-    m.on('dragend', onMoveEnd);
-    m.on('zoomend', onMoveEnd);
   }, []);
 
   /** Cierra teclado iOS/Android antes de animar mapa o panel. */
@@ -1021,8 +982,6 @@ export default function HomeApp() {
       const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
       source?.setData({ type: 'FeatureCollection', features: [] });
       setTripStopsData(map, []);
-      lastFitBoundsRef.current = null;
-      setMapNeedsReframe(false);
     }
   }, [selectedRouteId, styleLoaded, tripPlans.length, routes, routeDirection, fitMapToBounds]);
 
@@ -2246,71 +2205,6 @@ export default function HomeApp() {
                 </div>
               );
             })()}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Reencuadre: volver a ver ruta / viaje / GPS */}
-      <AnimatePresence>
-        {!resultsOpen && (selectedRouteId || tripPlans.length > 0) && (
-          <motion.div
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 8 }}
-            className="pointer-events-auto absolute z-30 flex flex-col gap-1.5"
-            style={{
-              right: 'max(0.5rem, var(--vm-safe-right))',
-              bottom: selectedRouteId
-                ? 'calc(11.5rem + var(--vm-safe-bottom))'
-                : 'calc(5.5rem + var(--vm-safe-bottom))',
-            }}
-          >
-            {mapNeedsReframe && (
-              <button
-                type="button"
-                onClick={reframeActiveContent}
-                className="vm-panel flex min-h-11 max-w-[11rem] touch-manipulation items-center gap-1.5 rounded-2xl border px-3 py-2 text-left text-[11px] font-bold text-slate-800 shadow-lg cursor-pointer"
-              >
-                <Focus className="h-4 w-4 shrink-0 text-emerald-700" />
-                {selectedRouteId ? 'Volver a ver ruta completa' : 'Centrar viaje completo'}
-              </button>
-            )}
-            {selectedRouteId && (
-              <button
-                type="button"
-                onClick={reframeActiveContent}
-                className="vm-btn-icon !h-11 !w-11 !rounded-xl"
-                title="Centrar ruta seleccionada"
-                aria-label="Centrar ruta seleccionada"
-              >
-                <RouteIcon className="h-5 w-5 text-slate-700" />
-              </button>
-            )}
-            {tripPlans.length > 0 && (
-              <button
-                type="button"
-                onClick={reframeActiveContent}
-                className="vm-btn-icon !h-11 !w-11 !rounded-xl"
-                title="Centrar viaje completo"
-                aria-label="Centrar viaje completo"
-              >
-                <Navigation className="h-5 w-5 text-slate-700" />
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={requestLocation}
-              disabled={locating}
-              className="vm-btn-icon !h-11 !w-11 !rounded-xl"
-              title="Centrar mi ubicación"
-              aria-label="Centrar mi ubicación"
-            >
-              {locating ? (
-                <Loader2 className="h-5 w-5 animate-spin text-emerald-700" />
-              ) : (
-                <LocateFixed className="h-5 w-5 text-emerald-700" />
-              )}
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
