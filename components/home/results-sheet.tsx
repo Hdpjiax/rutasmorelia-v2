@@ -1,18 +1,27 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   motion,
   AnimatePresence,
   useDragControls,
   type PanInfo,
 } from 'motion/react';
-import { Heart, Navigation, Route as RouteIcon, X } from 'lucide-react';
+import { Heart, Map, Navigation, Route as RouteIcon, X } from 'lucide-react';
 import { FocusTrap } from '@/components/ui/focus-trap';
 import { cn } from '@/lib/utils/cn';
 
 export type SheetPanel = 'results' | 'routes' | 'favorites';
-export type SheetSnap = 'peek' | 'mid' | 'full';
+
+/** Solo dos estados: abierto (~60% vh) o cerrado. Sin peek/mid/full. */
+const OPEN_VH = 60;
+
+type FooterAction = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  testId?: string;
+};
 
 type Props = {
   open: boolean;
@@ -21,27 +30,9 @@ type Props = {
   onPanelChange: (p: SheetPanel) => void;
   onClose: () => void;
   children: React.ReactNode;
+  /** Acción primaria fija (p. ej. Ver en el mapa). Siempre visible en móvil. */
+  footerAction?: FooterAction | null;
 };
-
-const SNAP_VH: Record<SheetSnap, number> = {
-  peek: 22,
-  mid: 52,
-  full: 78,
-};
-
-function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): SheetSnap | 'close' {
-  if (velocityY > 450 || offsetY > 64) return 'close';
-  if (velocityY < -650 || offsetY < -70) {
-    if (current === 'peek') return 'mid';
-    return 'full';
-  }
-  if (offsetY > 28) return 'close';
-  if (offsetY < -28) {
-    if (current === 'peek') return 'mid';
-    return 'full';
-  }
-  return current;
-}
 
 export function ResultsSheet({
   open,
@@ -50,55 +41,37 @@ export function ResultsSheet({
   onPanelChange,
   onClose,
   children,
+  footerAction,
 }: Props) {
-  const [snap, setSnap] = useState<SheetSnap>('mid');
   const dragControls = useDragControls();
   const touchStartYRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (open) setSnap('mid');
-  }, [open]);
-
   const closeSheet = useCallback(() => {
     touchStartYRef.current = null;
+    // Cerrar teclado antes de animar el panel (iOS)
+    if (typeof document !== 'undefined') {
+      const el = document.activeElement;
+      if (el instanceof HTMLElement) el.blur();
+    }
     onClose();
   }, [onClose]);
 
   const onDragEnd = useCallback(
     (_: unknown, info: PanInfo) => {
       if (isDesktop) return;
-      const next = snapFromDrag(info.offset.y, info.velocity.y, snap);
-      if (next === 'close') {
+      // Solo cierra: no hay alturas intermedias
+      if (info.velocity.y > 350 || info.offset.y > 48) {
         closeSheet();
-        return;
       }
-      setSnap(next);
     },
-    [closeSheet, isDesktop, snap]
+    [closeSheet, isDesktop]
   );
-
-  const heightVh = SNAP_VH[snap];
-  const mapMostlyVisible = !isDesktop && snap === 'peek';
 
   return (
     <AnimatePresence>
       {open && (
         <>
-          {!isDesktop && (
-            <motion.button
-              type="button"
-              aria-label="Cerrar panel y ver mapa"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: mapMostlyVisible ? 0 : snap === 'full' ? 0.28 : 0.12 }}
-              exit={{ opacity: 0 }}
-              className={cn(
-                'pointer-events-auto fixed inset-0 z-40 bg-slate-900',
-                mapMostlyVisible ? 'pointer-events-none' : 'cursor-pointer'
-              )}
-              onPointerUp={closeSheet}
-            />
-          )}
-
+          {/* Desktop: overlay modal bloqueante. Móvil: SIN overlay — el mapa sigue usable. */}
           {isDesktop && (
             <motion.button
               type="button"
@@ -132,19 +105,19 @@ export function ResultsSheet({
               animate={
                 isDesktop
                   ? { opacity: 1, scale: 1, y: 0 }
-                  : { opacity: 1, y: 0, height: `${heightVh}vh` }
+                  : { opacity: 1, y: 0, height: `${OPEN_VH}vh` }
               }
               exit={
                 isDesktop
                   ? { opacity: 0, scale: 0.96, y: 8 }
                   : { opacity: 0, y: '100%' }
               }
-              transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 36 }}
               drag={!isDesktop ? 'y' : false}
               dragControls={dragControls}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.04, bottom: 0.9 }}
+              dragElastic={{ top: 0.02, bottom: 0.85 }}
               dragMomentum={false}
               onDragEnd={onDragEnd}
               className={
@@ -152,31 +125,15 @@ export function ResultsSheet({
                   ? 'pointer-events-auto vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
                   : 'pointer-events-auto vm-panel relative flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
               }
-              style={!isDesktop ? { maxHeight: '88dvh' } : undefined}
+              style={!isDesktop ? { maxHeight: '70dvh', minHeight: '48vh' } : undefined}
+              role={!isDesktop ? 'dialog' : undefined}
+              aria-modal={isDesktop ? true : undefined}
             >
+              {/* Cabecera móvil: asa (gesto complementario) + X grande (acción principal) */}
               {!isDesktop && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Cerrar panel y ver mapa"
-                    title="Cerrar"
-                    className="pointer-events-auto absolute right-3 top-3 z-[70] flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-slate-200 text-slate-900 shadow-sm active:scale-95"
-                    onPointerDown={(event) => event.stopPropagation()}
-                    onPointerUp={(event) => {
-                      event.stopPropagation();
-                      event.preventDefault();
-                      closeSheet();
-                    }}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      closeSheet();
-                    }}
-                  >
-                    <X className="h-5 w-5" aria-hidden />
-                  </button>
-
+                <div className="relative flex shrink-0 items-center justify-between px-2 pt-1">
                   <div
-                    className="flex min-h-16 shrink-0 cursor-grab flex-col items-center justify-center select-none active:cursor-grabbing"
+                    className="flex min-h-11 flex-1 cursor-grab flex-col items-center justify-center select-none active:cursor-grabbing"
                     style={{ touchAction: 'none' }}
                     onPointerDown={(event) => {
                       if (!event.isPrimary) return;
@@ -186,35 +143,35 @@ export function ResultsSheet({
                     onPointerUp={(event) => {
                       const startY = touchStartYRef.current;
                       touchStartYRef.current = null;
-                      if (startY !== null && event.clientY - startY > 42) closeSheet();
+                      if (startY !== null && event.clientY - startY > 40) closeSheet();
                     }}
                     onPointerCancel={() => {
                       touchStartYRef.current = null;
                     }}
-                    role="slider"
-                    aria-valuetext={
-                      snap === 'peek' ? 'Panel reducido' : snap === 'mid' ? 'Panel medio' : 'Panel ampliado'
-                    }
-                    aria-label="Deslizar hacia abajo para cerrar el panel"
-                    tabIndex={0}
-                    onKeyDown={(event) => {
-                      if (event.key === 'ArrowDown' || event.key === 'Escape') closeSheet();
-                      if (event.key === 'ArrowUp') {
-                        if (snap === 'peek') setSnap('mid');
-                        else setSnap('full');
-                      }
+                    aria-label="Deslizar hacia abajo para cerrar (opcional)"
+                  >
+                    <span className="mt-1 h-1.5 w-12 rounded-full bg-slate-300" aria-hidden />
+                    <span className="sr-only">Desliza hacia abajo para cerrar</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-label="Cerrar y ver mapa"
+                    title="Cerrar"
+                    data-testid="sheet-close"
+                    className="pointer-events-auto absolute right-2 top-1 z-[70] flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-slate-200 text-slate-900 shadow-sm active:scale-95"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      closeSheet();
                     }}
                   >
-                    <div className="flex w-full justify-center pb-1 pt-2">
-                      <span className="h-1.5 w-14 rounded-full bg-slate-400" />
-                    </div>
-                    <p className="pb-2 text-[10px] font-semibold text-slate-500">
-                      Desliza hacia abajo para cerrar
-                    </p>
-                  </div>
-                </>
+                    <X className="h-5 w-5" aria-hidden />
+                  </button>
+                </div>
               )}
 
+              {/* Pestañas */}
               <div
                 className="flex shrink-0 items-center justify-between gap-2 px-3 py-2"
                 style={{ borderBottom: '1px solid var(--vm-card-border)' }}
@@ -234,13 +191,11 @@ export function ResultsSheet({
                         type="button"
                         role="tab"
                         aria-selected={panel === tab.id}
-                        onClick={() => {
-                          onPanelChange(tab.id);
-                          if (!isDesktop && snap === 'peek') setSnap('mid');
-                        }}
-                        className={`vm-press flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-bold cursor-pointer ${
+                        onClick={() => onPanelChange(tab.id)}
+                        className={cn(
+                          'vm-press flex min-h-11 shrink-0 items-center gap-1 rounded-full px-3 py-2 text-[11px] font-bold cursor-pointer touch-manipulation',
                           panel === tab.id ? 'vm-chip-active' : 'vm-chip'
-                        }`}
+                        )}
                       >
                         <Icon className="h-3.5 w-3.5" aria-hidden />
                         {tab.label}
@@ -253,25 +208,53 @@ export function ResultsSheet({
                   <button
                     type="button"
                     onClick={closeSheet}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
                     aria-label="Cerrar y ver mapa"
                     title="Cerrar"
                   >
-                    <X className="h-4 w-4" aria-hidden />
+                    <X className="h-5 w-5" aria-hidden />
                   </button>
                 )}
               </div>
 
+              {/* Contenido con scroll propio — no pelea con el drag del asa */}
               <div
-                className={cn(
-                  'min-h-0 flex-1 overflow-y-auto overscroll-contain',
-                  !isDesktop && snap === 'peek' && 'max-h-[12vh]'
-                )}
+                className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
                 role="tabpanel"
                 style={{ touchAction: 'pan-y' }}
               >
                 {children}
               </div>
+
+              {/* CTA fija: Ver en el mapa (no depender del gesto) */}
+              {footerAction && (
+                <div
+                  className="shrink-0 border-t border-slate-200/80 bg-white/95 px-3 py-2.5 backdrop-blur-sm"
+                  style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+                >
+                  <button
+                    type="button"
+                    data-testid={footerAction.testId ?? 'sheet-view-map'}
+                    disabled={footerAction.disabled}
+                    onClick={() => {
+                      if (typeof document !== 'undefined') {
+                        const el = document.activeElement;
+                        if (el instanceof HTMLElement) el.blur();
+                      }
+                      footerAction.onClick();
+                    }}
+                    className={cn(
+                      'flex min-h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition active:scale-[0.99]',
+                      footerAction.disabled
+                        ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                        : 'cursor-pointer bg-emerald-600 text-white shadow-md hover:bg-emerald-700'
+                    )}
+                  >
+                    <Map className="h-4 w-4 shrink-0" aria-hidden />
+                    {footerAction.label}
+                  </button>
+                </div>
+              )}
             </motion.div>
           </FocusTrap>
         </>

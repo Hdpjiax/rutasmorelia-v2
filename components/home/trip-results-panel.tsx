@@ -78,7 +78,7 @@ export function TripResultsPanel({
         <EmptyState
           variant="generic"
           title="¿Cómo llegar?"
-          description="Elige origen y destino (o toca el mapa). Te mostramos combis y opciones aquí. Los puntos de subida/bajada son virtuales, no paradas oficiales."
+          description="Elige origen y destino (o toca el mapa). Te mostramos combis y opciones con puntos sugeridos para subir y bajar."
           actionLabel={originCoords ? 'Elegir destino' : 'Empezar: ¿desde dónde sales?'}
           onAction={onStartSearch}
           secondaryLabel="O ver todas las rutas del mapa"
@@ -259,7 +259,7 @@ export function TripResultsPanel({
               {firstWalk && firstWalk.distance > 0 && (
                 <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-sky-800">
                   <Footprints className="h-3.5 w-3.5" aria-hidden />
-                  {formatWalkMeters(firstWalk.distance)} hasta el punto virtual de subida
+                  Camina {formatWalkMeters(firstWalk.distance)} hasta el punto de subida
                 </p>
               )}
 
@@ -289,8 +289,8 @@ export function TripResultsPanel({
                 ))}
               </div>
               <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-[9px] font-medium leading-relaxed text-amber-950">
-                Subida, bajada y transbordo son <strong>puntos virtuales</strong> (no paradas
-                oficiales). En el mapa se marcan con etiquetas.
+                Los puntos de <strong>subida y bajada</strong> son sugeridos (aprox.). En el mapa
+                se marcan con etiquetas Sube / Baja.
               </p>
             </motion.button>
           );

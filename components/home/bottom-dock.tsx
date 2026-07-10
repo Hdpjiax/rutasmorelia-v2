@@ -101,7 +101,7 @@ function DockBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-slate-800 transition cursor-pointer disabled:opacity-40',
+        'flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2.5 text-slate-800 transition cursor-pointer disabled:opacity-40',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700',
         hover
       )}

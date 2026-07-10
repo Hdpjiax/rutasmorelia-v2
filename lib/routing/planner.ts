@@ -168,7 +168,7 @@ export async function planTrip(
       segments: [
         {
           type: 'walk',
-          instruction: `Caminar ${formatWalk(walk1Dist)} hasta el punto virtual de subida`,
+          instruction: `Camina ${formatWalk(walk1Dist)} hasta este punto para subir`,
           distance: walk1Dist,
           duration: walk1Dist / walkSpeed,
           walkFrom: origin,
@@ -177,7 +177,7 @@ export async function planTrip(
         },
         {
           type: 'ride',
-          instruction: `Subir a ${shape.route_name} (${dirLabel}) · ~${Math.max(1, Math.round(rideDuration / 60))} min en ruta`,
+          instruction: `Sube cerca de · ${shape.route_name} (${dirLabel}) · ~${Math.max(1, Math.round(rideDuration / 60))} min`,
           distance: rideDistance,
           duration: rideDuration,
           routeId: shape.route_id,
@@ -189,7 +189,7 @@ export async function planTrip(
         },
         {
           type: 'walk',
-          instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (punto virtual)`,
+          instruction: `Baja y camina ${formatWalk(walk2Dist)} hasta tu destino`,
           distance: walk2Dist,
           duration: walk2Dist / walkSpeed,
           walkFrom: alight,
@@ -309,7 +309,7 @@ export async function planTrip(
           segments: [
             {
               type: 'walk',
-              instruction: `Caminar ${formatWalk(walk1Dist)} hasta el punto virtual de subida`,
+              instruction: `Camina ${formatWalk(walk1Dist)} hasta este punto para subir`,
               distance: walk1Dist,
               duration: walk1Dist / walkSpeed,
               walkFrom: origin,
@@ -318,7 +318,7 @@ export async function planTrip(
             },
             {
               type: 'ride',
-              instruction: `1ª · ${a.shape.route_name} (${a.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride1Dist / transitSpeed / 60))} min`,
+              instruction: `1ª · Sube cerca de · ${a.shape.route_name} (${a.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride1Dist / transitSpeed / 60))} min`,
               distance: ride1Dist,
               duration: ride1Dist / transitSpeed,
               routeId: a.shape.route_id,
@@ -330,7 +330,7 @@ export async function planTrip(
             },
             {
               type: 'walk',
-              instruction: `Transbordo · caminar ${formatWalk(realTransferWalk)} entre puntos virtuales`,
+              instruction: `Transbordo · camina ${formatWalk(realTransferWalk)} al siguiente punto de subida`,
               distance: realTransferWalk,
               duration: realTransferWalk / walkSpeed,
               walkFrom: xferOff,
@@ -339,7 +339,7 @@ export async function planTrip(
             },
             {
               type: 'ride',
-              instruction: `2ª · ${b.shape.route_name} (${b.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride2Dist / transitSpeed / 60))} min`,
+              instruction: `2ª · Sube cerca de · ${b.shape.route_name} (${b.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride2Dist / transitSpeed / 60))} min`,
               distance: ride2Dist,
               duration: ride2Dist / transitSpeed,
               routeId: b.shape.route_id,
@@ -351,7 +351,7 @@ export async function planTrip(
             },
             {
               type: 'walk',
-              instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (punto virtual)`,
+              instruction: `Baja y camina ${formatWalk(walk2Dist)} hasta tu destino`,
               distance: walk2Dist,
               duration: walk2Dist / walkSpeed,
               walkFrom: alight2Pt,

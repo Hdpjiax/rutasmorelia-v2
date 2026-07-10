@@ -65,7 +65,57 @@ export type BuildTripUrlOpts = {
   base?: string;
 };
 
-/** Construye URL compartible del viaje (sin basura en query). */
+/** Query keys usadas solo en enlaces de compartir (no se escriben en la barra al navegar). */
+export const TRIP_SHARE_PARAM_KEYS = [
+  'from',
+  'to',
+  'fromLabel',
+  'toLabel',
+  'ol',
+  'dl',
+  'route',
+  'plan',
+] as const;
+
+/** True si la URL trae un viaje o ruta compartida. */
+export function hasTripShareParams(search?: string): boolean {
+  const sp = new URLSearchParams(
+    search ?? (typeof window !== 'undefined' ? window.location.search : '')
+  );
+  return TRIP_SHARE_PARAM_KEYS.some((k) => {
+    const v = sp.get(k);
+    return v != null && v !== '';
+  });
+}
+
+/** Quita params de viaje de un query string; conserva el resto (p. ej. admin). */
+export function stripTripShareSearchParams(search: string): string {
+  const raw = search.startsWith('?') ? search.slice(1) : search;
+  const sp = new URLSearchParams(raw);
+  for (const k of TRIP_SHARE_PARAM_KEYS) sp.delete(k);
+  const next = sp.toString();
+  return next ? `?${next}` : '';
+}
+
+/**
+ * Quita params de viaje de la barra de direcciones sin recargar.
+ * No toca otros params (p. ej. admin).
+ */
+export function clearTripShareParamsFromLocation(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const url = new URL(window.location.href);
+    const before = url.search;
+    url.search = stripTripShareSearchParams(url.search);
+    if (url.search !== before) {
+      window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Construye URL compartible del viaje (solo para botones Compartir / Copiar enlace). */
 export function buildTripShareUrl(opts: BuildTripUrlOpts): string {
   const base =
     opts.base ??
@@ -73,10 +123,8 @@ export function buildTripShareUrl(opts: BuildTripUrlOpts): string {
       ? `${window.location.origin}${window.location.pathname}`
       : '/');
   const url = new URL(base, typeof window !== 'undefined' ? window.location.origin : 'http://local');
-  // limpia params de viaje previos
-  ['from', 'to', 'fromLabel', 'toLabel', 'ol', 'dl', 'route', 'plan', 'admin'].forEach((k) =>
-    url.searchParams.delete(k)
-  );
+  // limpia params de viaje previos (no admin: no se incluye en enlaces de viaje)
+  TRIP_SHARE_PARAM_KEYS.forEach((k) => url.searchParams.delete(k));
 
   if (opts.origin) url.searchParams.set('from', formatCoordParam(opts.origin));
   if (opts.destination) url.searchParams.set('to', formatCoordParam(opts.destination));

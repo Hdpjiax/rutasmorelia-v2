@@ -27,6 +27,8 @@ export {
 } from '@/lib/trip/format';
 export {
   buildTripShareUrl,
+  clearTripShareParamsFromLocation,
+  hasTripShareParams,
   readTripUrlState,
   shareOrCopyTripUrl,
   parseCoordParam,

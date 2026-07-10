@@ -265,7 +265,7 @@ export function SearchBar({
               type="button"
               onClick={onRequestLocation}
               disabled={locating}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 py-2.5 text-[11px] font-bold text-emerald-950 cursor-pointer disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-emerald-700"
+              className="flex min-h-11 flex-1 touch-manipulation items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 py-2.5 text-[11px] font-bold text-emerald-950 cursor-pointer disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-emerald-700"
             >
               {locating ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
@@ -278,7 +278,7 @@ export function SearchBar({
               type="button"
               onClick={onSeeOptions}
               disabled={!originReady || !destinationReady}
-              className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-slate-900 py-2.5 text-[11px] font-bold text-white cursor-pointer disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-emerald-700"
+              className="flex min-h-11 flex-1 touch-manipulation items-center justify-center gap-1 rounded-xl bg-slate-900 py-2.5 text-[11px] font-bold text-white cursor-pointer disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-emerald-700"
             >
               {planning ? 'Buscando…' : 'Ver opciones'}
             </button>
@@ -320,7 +320,7 @@ function SuggestionsList({
           <button
             type="button"
             onClick={() => onSelect(place)}
-            className="flex w-full flex-col px-2.5 py-1.5 text-left hover:bg-emerald-50 cursor-pointer focus-visible:bg-emerald-50 focus-visible:outline-none border-b border-slate-50 last:border-0"
+            className="flex min-h-11 w-full touch-manipulation flex-col justify-center px-2.5 py-2 text-left hover:bg-emerald-50 cursor-pointer focus-visible:bg-emerald-50 focus-visible:outline-none border-b border-slate-50 last:border-0"
           >
             <span className="truncate text-[12px] font-semibold leading-tight text-slate-900">
               {place.name}

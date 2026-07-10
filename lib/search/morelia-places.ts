@@ -138,6 +138,19 @@ function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
       break;
     }
     if (word.slice(0, 3) === q.slice(0, 3)) score += 12;
+    // Typos cortos: morda→morada, cam→camelinas (prefijo)
+    if (q.length >= 3 && word.startsWith(q.slice(0, Math.min(3, q.length)))) score += 18;
+    if (q.length >= 4 && word.length >= 4) {
+      let dist = 0;
+      const a = q.slice(0, 6);
+      const b = word.slice(0, 6);
+      // distancia simple (no importar levenshtein aquí para no ciclar)
+      const maxL = Math.max(a.length, b.length);
+      for (let i = 0; i < maxL; i++) {
+        if (a[i] !== b[i]) dist++;
+      }
+      if (dist <= 2) score += 22;
+    }
   }
 
   return score;

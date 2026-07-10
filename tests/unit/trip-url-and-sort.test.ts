@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTripShareUrl,
+  hasTripShareParams,
   parseCoordParam,
   readTripUrlState,
+  stripTripShareSearchParams,
 } from '@/lib/trip/url-state';
 import { sortTripPlans, transferCount, type PlanSortMode } from '@/lib/trip/format';
 import type { TripPlan } from '@/lib/routing/planner';
@@ -51,6 +53,22 @@ describe('trip URL state', () => {
     expect(url).toContain('from=');
     expect(url).toContain('to=');
     expect(url).toContain('fromLabel=Catedral');
+  });
+
+  it('detecta params de viaje compartido', () => {
+    expect(hasTripShareParams('?from=-101.19,19.70&to=-101.17,19.68')).toBe(true);
+    expect(hasTripShareParams('?admin=login')).toBe(false);
+    expect(hasTripShareParams('')).toBe(false);
+  });
+
+  it('limpia params de viaje sin tocar admin', () => {
+    const next = stripTripShareSearchParams(
+      '?from=-101.19,19.70&to=-101.17,19.68&fromLabel=Centro&admin=login'
+    );
+    expect(next).toContain('admin=login');
+    expect(next).not.toContain('from=');
+    expect(next).not.toContain('to=');
+    expect(next).not.toContain('fromLabel=');
   });
 });
 
