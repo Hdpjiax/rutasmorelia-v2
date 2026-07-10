@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { projectPath } from '@/lib/server/project-root';
 
 /** `note` = solo borrador guardado; `needs_review` = enviada explícitamente a revisión */
 export type ReviewNoteStatus = 'note' | 'needs_review';
@@ -27,7 +28,7 @@ export interface ReviewNotesFile {
   notes: ReviewNote[];
 }
 
-const NOTES_PATH = path.join(process.cwd(), 'data', 'qa-reports', 'review-notes.json');
+const NOTES_PATH = projectPath('data', 'qa-reports', 'review-notes.json');
 
 export async function loadReviewNotes(): Promise<ReviewNote[]> {
   try {

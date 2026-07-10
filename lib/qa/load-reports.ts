@@ -3,8 +3,9 @@ import path from 'path';
 import type { QaFinalReport, QaMatchFeatureReport, QaSummary } from './types';
 import { loadRouteTransportMap } from '@/lib/transport/load-route-transport-map';
 import { normalizeTransportType, toStoredTransportType } from '@/lib/transport/classify';
+import { projectPath } from '@/lib/server/project-root';
 
-const QA_DIR = path.join(process.cwd(), 'data', 'qa-reports');
+const QA_DIR = projectPath('data', 'qa-reports');
 
 export async function loadQaSummary(): Promise<QaSummary | null> {
   try {

@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { NextResponse } from 'next/server';
 import { refreshQaSummary } from '@/lib/qa/mark-route-review';
+import { projectPath, projectRoot } from '@/lib/server/project-root';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,14 +21,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'routeId inválido' }, { status: 400 });
     }
 
-    const root = process.cwd();
+    const root = projectRoot();
     const files = [
-      path.join(root, 'data', 'processed', 'matched', `${safeId}.geojson`),
-      path.join(root, 'data', 'processed', 'geojson', `${safeId}.geojson`),
-      path.join(root, 'public', 'routes', `${safeId}.geojson`),
-      path.join(root, 'data', 'qa-reports', `${safeId}.final_qa.json`),
-      path.join(root, 'data', 'qa-reports', `${safeId}.qa.json`),
-      path.join(root, 'data', 'processed', 'supabase-mirror', `${safeId}.json`),
+      projectPath('data', 'processed', 'matched', `${safeId}.geojson`),
+      projectPath('data', 'processed', 'geojson', `${safeId}.geojson`),
+      projectPath('public', 'routes', `${safeId}.geojson`),
+      projectPath('data', 'qa-reports', `${safeId}.final_qa.json`),
+      projectPath('data', 'qa-reports', `${safeId}.qa.json`),
+      projectPath('data', 'processed', 'supabase-mirror', `${safeId}.json`),
     ];
 
     const removed: string[] = [];
@@ -41,7 +42,7 @@ export async function DELETE(
     }
 
     // Quitar del index.json
-    const indexPath = path.join(root, 'public', 'routes', 'index.json');
+    const indexPath = projectPath('public', 'routes', 'index.json');
     try {
       const raw = await fs.readFile(indexPath, 'utf-8');
       const index = JSON.parse(raw) as { type?: string; routes?: Array<{ id: string }> };
@@ -57,7 +58,7 @@ export async function DELETE(
 
     // Quitar nota de revisión si existe
     try {
-      const notesPath = path.join(root, 'data', 'qa-reports', 'review-notes.json');
+      const notesPath = projectPath('data', 'qa-reports', 'review-notes.json');
       const raw = await fs.readFile(notesPath, 'utf-8');
       const data = JSON.parse(raw) as { notes?: Array<{ route_id: string }> };
       if (Array.isArray(data.notes)) {

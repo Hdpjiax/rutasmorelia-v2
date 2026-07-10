@@ -2,8 +2,9 @@ import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import type { QaFinalReport, QaIssue, QaSummary } from './types';
 import { loadAllFinalReports } from './load-reports';
+import { projectPath } from '@/lib/server/project-root';
 
-const QA_DIR = path.join(process.cwd(), 'data', 'qa-reports');
+const QA_DIR = projectPath('data', 'qa-reports');
 
 export async function refreshQaSummary(): Promise<QaSummary> {
   const reports = await loadAllFinalReports();

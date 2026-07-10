@@ -10,6 +10,7 @@ import {
   normalizeTransportType,
   toStoredTransportType,
 } from '@/lib/transport/classify';
+import { projectPath } from '@/lib/server/project-root';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -34,7 +35,7 @@ function directionOf(f: { properties?: Record<string, unknown> | null }): string
 
 async function readPreviousReport(safeId: string): Promise<QaFinalReport | null> {
   try {
-    const reportPath = path.join(process.cwd(), 'data', 'qa-reports', `${safeId}.final_qa.json`);
+    const reportPath = projectPath('data', 'qa-reports', `${safeId}.final_qa.json`);
     const raw = await fs.readFile(reportPath, 'utf-8');
     return JSON.parse(raw) as QaFinalReport;
   } catch {
@@ -162,7 +163,7 @@ async function syncRouteToSupabase(params: {
 
   // Espejo local durable (útil sin Supabase cloud)
   try {
-    const mirrorDir = path.join(process.cwd(), 'data', 'processed', 'supabase-mirror');
+    const mirrorDir = projectPath('data', 'processed', 'supabase-mirror');
     await fs.mkdir(mirrorDir, { recursive: true });
     await fs.writeFile(
       path.join(mirrorDir, `${safeId}.json`),
@@ -350,9 +351,9 @@ export async function POST(
     }
 
     // 2. Persistir GeoJSON (siempre matched + processed — lo que ve el admin)
-    const matchedPath = path.join(process.cwd(), 'data', 'processed', 'matched', `${safeId}.geojson`);
-    const processedPath = path.join(process.cwd(), 'data', 'processed', 'geojson', `${safeId}.geojson`);
-    const publicPath = path.join(process.cwd(), 'public', 'routes', `${safeId}.geojson`);
+    const matchedPath = projectPath('data', 'processed', 'matched', `${safeId}.geojson`);
+    const processedPath = projectPath('data', 'processed', 'geojson', `${safeId}.geojson`);
+    const publicPath = projectPath('public', 'routes', `${safeId}.geojson`);
 
     const geojsonStr = JSON.stringify(geojson, null, 2);
 
@@ -396,7 +397,7 @@ export async function POST(
       }
     }
 
-    const reportPath = path.join(process.cwd(), 'data', 'qa-reports', `${safeId}.final_qa.json`);
+    const reportPath = projectPath('data', 'qa-reports', `${safeId}.final_qa.json`);
     await fs.mkdir(path.dirname(reportPath), { recursive: true });
     await fs.writeFile(reportPath, JSON.stringify(finalReport, null, 2), 'utf-8');
 
@@ -443,7 +444,7 @@ export async function POST(
 }
 
 async function updateRoutesIndex(report: QaFinalReport, geojson: any) {
-  const indexPath = path.join(process.cwd(), 'public', 'routes', 'index.json');
+  const indexPath = projectPath('public', 'routes', 'index.json');
   let indexData = { type: 'routes-index', routes: [] as any[] };
 
   try {

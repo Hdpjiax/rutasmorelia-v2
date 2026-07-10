@@ -29,7 +29,8 @@ export function windowsToWslPath(winPath: string): string {
 async function getValhallaUrlCandidates(): Promise<string[]> {
   let envUrl = 'http://127.0.0.1:8002';
   try {
-    const envPath = path.join(process.cwd(), '.env-valhalla');
+    // turbopackIgnore: no trazar todo el proyecto en Vercel
+    const envPath = path.join(/* turbopackIgnore: true */ process.cwd(), '.env-valhalla');
     const raw = await fs.readFile(envPath, 'utf-8');
     for (const line of raw.split('\n')) {
       const trimmed = line.trim();
@@ -136,7 +137,7 @@ async function startValhallaService(): Promise<void> {
     throw new Error('Arranque automático de Valhalla desactivado en tests.');
   }
 
-  const projectRoot = process.cwd();
+  const projectRoot = /* turbopackIgnore: true */ process.cwd();
   console.log('[Valhalla] Arrancando servicio automáticamente…');
 
   if (process.platform === 'win32') {
@@ -246,7 +247,7 @@ export async function ensureValhallaReady(options?: {
 
       // Último intento: status vía wsl (el servicio puede estar solo visible en WSL)
       try {
-        const wslPath = windowsToWslPath(process.cwd());
+        const wslPath = windowsToWslPath(/* turbopackIgnore: true */ process.cwd());
         await execFileAsync(
           'wsl',
           ['-e', 'bash', `${wslPath}/scripts/valhalla_status_wsl.sh`],
