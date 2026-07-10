@@ -1,0 +1,14 @@
+/*
+ * El mensaje de bienvenida recibe left/right inline para móvil.
+ * En escritorio esos valores anulaban las clases responsivas y lo desplazaban
+ * fuera del viewport. Se corrige solo en desktop, conservando la animación de Motion.
+ */
+@media (min-width: 640px) {
+  #main-content > [class*="sm:w-[min(92vw,380px)]"] {
+    left: 50% !important;
+    right: auto !important;
+    width: min(92vw, 380px) !important;
+    translate: -50% 0;
+    bottom: calc(4.75rem + var(--vm-safe-bottom)) !important;
+  }
+}
