@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#66BB6A",
-    "casingColor": "#2E7D32"
+    "casingColor": "#2E7D32",
+    "routeName": "Campestre Misión Del Valle"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/4_CAMPESTRE_MISION_DEL_VALLE/KML_cmv/Campestre_Misión_del_Valle_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-campestre-mision-del-valle",
-        "routeName": "Ruta Campestre Mision Del Valle",
+        "routeName": "Campestre Misión Del Valle",
         "color": "#66BB6A",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -1928,7 +1929,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/4_CAMPESTRE_MISION_DEL_VALLE/KML_cmv/Campestre_Misión_del_Valle_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-campestre-mision-del-valle",
-        "routeName": "Ruta Campestre Mision Del Valle",
+        "routeName": "Campestre Misión Del Valle",
         "color": "#66BB6A",
         "transportType": "combi",
         "directionMode": "mirrored",

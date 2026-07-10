@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#5C6BC0",
-    "casingColor": "#283593"
+    "casingColor": "#283593",
+    "routeName": "Capula"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/7_CAPULA/KML_capula/Capula_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-capula",
-        "routeName": "Ruta Capula",
+        "routeName": "Capula",
         "color": "#5C6BC0",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -1480,7 +1481,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/7_CAPULA/KML_capula/Capula_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-capula",
-        "routeName": "Ruta Capula",
+        "routeName": "Capula",
         "color": "#5C6BC0",
         "transportType": "combi",
         "directionMode": "mirrored",

@@ -15,27 +15,82 @@ export type PublishedRouteMeta = {
   name: string;
   color: string;
   transportType?: string;
+  geojsonFile?: string;
 };
 
-let cache: { shapes: PublishedShape[]; routes: PublishedRouteMeta[]; at: number } | null =
-  null;
-const CACHE_MS = 5 * 60 * 1000;
-
-/**
- * Carga geometrías publicadas desde /public/routes (index + geojson).
- * Todas las entradas del índice se listan al usuario; las shapes se usan en el planner.
- */
-export async function loadPublishedShapes(force = false): Promise<{
-  shapes: PublishedShape[];
+type CacheState = {
   routes: PublishedRouteMeta[];
-}> {
-  if (!force && cache && Date.now() - cache.at < CACHE_MS) {
-    return { shapes: cache.shapes, routes: cache.routes };
+  shapes: Map<string, PublishedShape[]>; // route_id -> shapes
+  allShapes: PublishedShape[] | null;
+  routesAt: number;
+};
+
+let cache: CacheState | null = null;
+const ROUTES_CACHE_MS = 10 * 60 * 1000;
+const SHAPE_CACHE_MS = 30 * 60 * 1000;
+
+function geojsonUrl(id: string, file?: string) {
+  // Sin query de busting: permite caché HTTP (CDN/browser)
+  if (file?.startsWith('/')) return file;
+  if (file) return `/${file.replace(/^\//, '')}`;
+  return `/routes/${id}.geojson`;
+}
+
+function parseShapesFromGeojson(
+  entry: PublishedRouteMeta,
+  gj: {
+    features?: Array<{
+      properties?: Record<string, unknown> | null;
+      geometry?: { type?: string; coordinates?: number[][] };
+    }>;
+  }
+): PublishedShape[] {
+  const out: PublishedShape[] = [];
+  for (const f of gj.features ?? []) {
+    const dirRaw = String(f.properties?.direction ?? f.properties?.name ?? '').toLowerCase();
+    const dir =
+      dirRaw === 'ida' || dirRaw === 'vuelta'
+        ? dirRaw
+        : dirRaw.includes('ida')
+          ? 'ida'
+          : dirRaw.includes('vuelta')
+            ? 'vuelta'
+            : '';
+    if (dir !== 'ida' && dir !== 'vuelta') continue;
+    if (f.geometry?.type && f.geometry.type !== 'LineString') continue;
+    if (f.properties?.type === 'sense-label' || f.properties?.type === 'walk') continue;
+    const coords = f.geometry?.coordinates;
+    if (!Array.isArray(coords) || coords.length < 2) continue;
+    out.push({
+      id: `${entry.id}-${dir}`,
+      route_id: entry.id,
+      route_name: String(f.properties?.routeName || entry.name),
+      color: String(f.properties?.color || entry.color || '#3b82f6'),
+      direction: dir as 'ida' | 'vuelta',
+      coordinates: coords.map((c) => [Number(c[0]), Number(c[1])] as Coordinate),
+      qa_status: 'approved',
+    });
+  }
+  return out;
+}
+
+/** Solo índice — listado rápido de rutas (sin bajar geometrías). */
+export async function loadPublishedRoutes(force = false): Promise<PublishedRouteMeta[]> {
+  if (
+    !force &&
+    cache?.routes?.length &&
+    Date.now() - cache.routesAt < ROUTES_CACHE_MS
+  ) {
+    return cache.routes;
   }
 
-  const indexRes = await fetch(`/routes/index.json?t=${Date.now()}`, { cache: 'no-store' });
+  const indexRes = await fetch('/routes/index.json', {
+    // revalidate-friendly: next/browser pueden cachear
+    next: { revalidate: 300 },
+  } as RequestInit);
+
   if (!indexRes.ok) {
-    return { shapes: cache?.shapes ?? [], routes: cache?.routes ?? [] };
+    return cache?.routes ?? [];
   }
 
   const index = await indexRes.json();
@@ -51,78 +106,99 @@ export async function loadPublishedShapes(force = false): Promise<{
       name: r.name,
       color: r.color || '#3b82f6',
       transportType: r.transportType,
+      geojsonFile: r.geojsonFile,
     })
   );
 
-  const shapes: PublishedShape[] = [];
-  const geojsonPath = (id: string, file?: string) => {
-    if (file && file.startsWith('/')) return `${file}?t=${Date.now()}`;
-    if (file) return `/${file.replace(/^\//, '')}?t=${Date.now()}`;
-    return `/routes/${id}.geojson?t=${Date.now()}`;
+  cache = {
+    routes,
+    shapes: cache?.shapes ?? new Map(),
+    allShapes: null,
+    routesAt: Date.now(),
   };
+  return routes;
+}
 
-  // Cargar en paralelo con límite (no-store: siempre la versión publicada actual)
-  const batchSize = 10;
-  const indexEntries: Array<{
-    id: string;
-    name: string;
-    color?: string;
-    transportType?: string;
-    geojsonFile?: string;
-  }> = index.routes ?? [];
+/** Carga geometría de una o varias rutas (bajo demanda). */
+export async function loadShapesForRouteIds(
+  routeIds: string[]
+): Promise<PublishedShape[]> {
+  await loadPublishedRoutes();
+  if (!cache) return [];
 
-  for (let i = 0; i < indexEntries.length; i += batchSize) {
-    const batch = indexEntries.slice(i, i + batchSize);
+  const missing = routeIds.filter((id) => !cache!.shapes.has(id));
+  const batchSize = 8;
+  for (let i = 0; i < missing.length; i += batchSize) {
+    const batch = missing.slice(i, i + batchSize);
     await Promise.all(
-      batch.map(async (entry) => {
+      batch.map(async (id) => {
+        const meta = cache!.routes.find((r) => r.id === id);
+        if (!meta) {
+          cache!.shapes.set(id, []);
+          return;
+        }
         try {
-          const res = await fetch(geojsonPath(entry.id, entry.geojsonFile), {
-            cache: 'no-store',
-          });
-          if (!res.ok) return;
-          const gj = await res.json();
-          for (const f of gj.features ?? []) {
-            const dirRaw = String(
-              f.properties?.direction ?? f.properties?.name ?? ''
-            ).toLowerCase();
-            const dir =
-              dirRaw === 'ida' || dirRaw === 'vuelta'
-                ? dirRaw
-                : dirRaw.includes('ida')
-                  ? 'ida'
-                  : dirRaw.includes('vuelta')
-                    ? 'vuelta'
-                    : '';
-            if (dir !== 'ida' && dir !== 'vuelta') continue;
-            const coords = f.geometry?.coordinates;
-            if (!Array.isArray(coords) || coords.length < 2) continue;
-            // Solo LineString de recorrido (no sense-label)
-            if (f.geometry?.type && f.geometry.type !== 'LineString') continue;
-            if (f.properties?.type === 'sense-label' || f.properties?.type === 'walk') {
-              continue;
-            }
-            shapes.push({
-              id: `${entry.id}-${dir}`,
-              route_id: entry.id,
-              route_name: String(f.properties?.routeName || entry.name),
-              color: String(f.properties?.color || entry.color || '#3b82f6'),
-              direction: dir as 'ida' | 'vuelta',
-              coordinates: coords.map((c: number[]) => [c[0], c[1]] as Coordinate),
-              qa_status: 'approved',
-            });
+          const res = await fetch(geojsonUrl(id, meta.geojsonFile), {
+            next: { revalidate: 1800 },
+          } as RequestInit);
+          if (!res.ok) {
+            cache!.shapes.set(id, []);
+            return;
           }
+          const gj = await res.json();
+          cache!.shapes.set(id, parseShapesFromGeojson(meta, gj));
         } catch {
-          /* skip route */
+          cache!.shapes.set(id, []);
         }
       })
     );
   }
 
-  cache = { shapes, routes, at: Date.now() };
+  const out: PublishedShape[] = [];
+  for (const id of routeIds) {
+    out.push(...(cache.shapes.get(id) ?? []));
+  }
+  return out;
+}
+
+/**
+ * Carga todas las shapes (planificador). Usa caché por ruta; una sola pasada en background.
+ */
+export async function loadPublishedShapes(force = false): Promise<{
+  shapes: PublishedShape[];
+  routes: PublishedRouteMeta[];
+}> {
+  const routes = await loadPublishedRoutes(force);
+  if (
+    !force &&
+    cache?.allShapes &&
+    Date.now() - cache.routesAt < SHAPE_CACHE_MS
+  ) {
+    return { shapes: cache.allShapes, routes };
+  }
+
+  const shapes = await loadShapesForRouteIds(routes.map((r) => r.id));
+  if (cache) {
+    cache.allShapes = shapes;
+  }
   return { shapes, routes };
 }
 
-/** Invalida caché (p. ej. tras limpiar mapa o refrescar). */
+/** Prefetch en idle: no bloquea UI. */
+export function prefetchAllShapesInBackground() {
+  if (typeof window === 'undefined') return;
+  const run = () => {
+    void loadPublishedShapes(false).catch(() => undefined);
+  };
+  if ('requestIdleCallback' in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
+      run
+    );
+  } else {
+    setTimeout(run, 2500);
+  }
+}
+
 export function clearPublishedShapesCache() {
   cache = null;
 }

@@ -1431,6 +1431,7 @@
   "properties": {
     "directionMode": "mirrored",
     "color": "#795548",
-    "casingColor": "#3E2723"
+    "casingColor": "#3E2723",
+    "routeName": "Trincheras"
   }
 }

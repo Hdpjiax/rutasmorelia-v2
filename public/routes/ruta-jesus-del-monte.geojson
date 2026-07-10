@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-jesus-del-monte",
-        "routeName": "Ruta Jesus Del Monte",
+        "routeName": "Jesus Del Monte",
         "direction": "ida",
         "name": "Ida",
         "color": "#5C6BC0",
@@ -1266,7 +1266,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-jesus-del-monte",
-        "routeName": "Ruta Jesus Del Monte",
+        "routeName": "Jesus Del Monte",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#5C6BC0",
@@ -2699,6 +2699,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#5C6BC0",
-    "casingColor": "#283593"
+    "casingColor": "#283593",
+    "routeName": "Jesus Del Monte"
   }
 }

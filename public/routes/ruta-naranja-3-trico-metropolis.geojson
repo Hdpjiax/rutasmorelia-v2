@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-trico-metropolis",
-        "routeName": "Ruta Naranja 3 Trico-Metropolis",
+        "routeName": "Naranja 3 Trico-Metrópolis",
         "direction": "ida",
         "name": "Ida",
         "color": "#FF9800",
@@ -1890,7 +1890,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-trico-metropolis",
-        "routeName": "Ruta Naranja 3 Trico-Metropolis",
+        "routeName": "Naranja 3 Trico-Metrópolis",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#FF9800",
@@ -3831,6 +3831,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FF9800",
-    "casingColor": "#E65100"
+    "casingColor": "#E65100",
+    "routeName": "Naranja 3 Trico-Metrópolis"
   }
 }

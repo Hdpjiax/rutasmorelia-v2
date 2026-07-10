@@ -3493,6 +3493,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#546E7A",
-    "casingColor": "#263238"
+    "casingColor": "#263238",
+    "routeName": "Panteon"
   }
 }

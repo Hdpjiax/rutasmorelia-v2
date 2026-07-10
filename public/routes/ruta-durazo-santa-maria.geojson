@@ -1683,6 +1683,7 @@
   "properties": {
     "directionMode": "mirrored",
     "color": "#8D6E63",
-    "casingColor": "#3E2723"
+    "casingColor": "#3E2723",
+    "routeName": "Durazno - Santa Maria"
   }
 }

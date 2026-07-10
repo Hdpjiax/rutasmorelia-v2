@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#FF7043",
-    "casingColor": "#BF360C"
+    "casingColor": "#BF360C",
+    "routeName": "Arroyo Colorado"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/2_ARROYO_COLORADO/KML_ac/Arroyo_Colorado_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-arroyo-colorado",
-        "routeName": "Ruta Arroyo Colorado",
+        "routeName": "Arroyo Colorado",
         "color": "#FF7043",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -1392,7 +1393,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/2_ARROYO_COLORADO/KML_ac/Arroyo_Colorado_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-arroyo-colorado",
-        "routeName": "Ruta Arroyo Colorado",
+        "routeName": "Arroyo Colorado",
         "color": "#FF7043",
         "transportType": "combi",
         "directionMode": "mirrored",

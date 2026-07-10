@@ -2895,6 +2895,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#5C6BC0",
-    "casingColor": "#283593"
+    "casingColor": "#283593",
+    "routeName": "Charo - Ind Atapaneo (ISSTE - Soledad)"
   }
 }

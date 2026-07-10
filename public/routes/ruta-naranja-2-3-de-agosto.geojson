@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-2-3-de-agosto",
-        "routeName": "Ruta Naranja 2-3 De Agosto",
+        "routeName": "Naranja 2-3 De Agosto",
         "direction": "ida",
         "name": "Ida",
         "color": "#FF9800",
@@ -1278,7 +1278,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-2-3-de-agosto",
-        "routeName": "Ruta Naranja 2-3 De Agosto",
+        "routeName": "Naranja 2-3 De Agosto",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#FF9800",
@@ -2723,6 +2723,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FF9800",
-    "casingColor": "#E65100"
+    "casingColor": "#E65100",
+    "routeName": "Naranja 2-3 De Agosto"
   }
 }

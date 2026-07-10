@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#66BB6A",
-    "casingColor": "#2E7D32"
+    "casingColor": "#2E7D32",
+    "routeName": "Campestre Posta Trebol Monarca"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/5_CAMPESTRE_POSTA_TREBOL-MONARCA/KML_campestre_ptm/Campestre_Posta_Trébol-Monarca_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-campestre-posta-trebol-monarca",
-        "routeName": "Ruta Campestre Posta Trebol Monarca",
+        "routeName": "Campestre Posta Trebol Monarca",
         "color": "#66BB6A",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -2040,7 +2041,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/5_CAMPESTRE_POSTA_TREBOL-MONARCA/KML_campestre_ptm/Campestre_Posta_Trébol-Monarca_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-campestre-posta-trebol-monarca",
-        "routeName": "Ruta Campestre Posta Trebol Monarca",
+        "routeName": "Campestre Posta Trebol Monarca",
         "color": "#66BB6A",
         "transportType": "combi",
         "directionMode": "mirrored",

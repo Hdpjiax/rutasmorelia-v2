@@ -2867,6 +2867,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#EC407A",
-    "casingColor": "#880E4F"
+    "casingColor": "#880E4F",
+    "routeName": "Rosa 2"
   }
 }

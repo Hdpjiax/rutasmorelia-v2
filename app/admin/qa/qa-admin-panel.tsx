@@ -1392,7 +1392,7 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-[#6b7280]">
-              Rutas Morelia · Fase 5
+              Rutas Morelia · Admin (protegido)
             </p>
             <h1 className="text-lg font-semibold sm:text-xl">Panel QA de rutas</h1>
           </div>
@@ -1402,6 +1402,17 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
           >
             Volver al mapa
           </Link>
+        </div>
+        {/* Escritura de GeoJSON solo es fiable en local (Vercel FS efímero) */}
+        <div
+          className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] leading-snug text-amber-950"
+          role="status"
+        >
+          <strong className="font-semibold">Flujo oficial:</strong> edita y guarda en{' '}
+          <code className="rounded bg-amber-100 px-1">localhost</code>, luego publica con{' '}
+          <code className="rounded bg-amber-100 px-1">git push</code> + seed a Supabase. En Vercel las
+          APIs de match/save/delete responden 501 (disco efímero). Acceso: sesión con email en{' '}
+          <code className="rounded bg-amber-100 px-1">ADMIN_EMAILS</code>.
         </div>
       </header>
 

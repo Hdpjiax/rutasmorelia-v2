@@ -6,6 +6,11 @@
  */
 
 import { mockSupabaseClient } from '@/lib/supabase/client';
+import { getBrowserSupabase } from '@/lib/auth/browser-client';
+
+function db() {
+  return getBrowserSupabase() ?? mockSupabaseClient;
+}
 
 export type FavoriteLocation = {
   id: string;
@@ -55,7 +60,7 @@ export async function loadFavoriteRoutes(userId?: string | null): Promise<string
   if (!userId) return local;
 
   try {
-    const { data, error } = await mockSupabaseClient
+    const { data, error } = await db()
       .from('favorite_routes')
       .select('*')
       .eq('user_id', userId);
@@ -77,10 +82,9 @@ export async function loadFavoriteLocations(
 
   try {
     // Tabla real o mock: favorite_locations
-    const client = mockSupabaseClient as any;
+    const client = db() as any;
     if (typeof client.from !== 'function') return local;
 
-    // Preferir tabla dedicada si el mock/real la expone
     const { data, error } = await client
       .from('favorite_locations')
       .select('*')
@@ -119,7 +123,7 @@ export async function toggleFavoriteRoute(
   if (isFav) {
     next = current.filter((id) => id !== routeId);
     if (userId) {
-      await mockSupabaseClient
+      await db()
         .from('favorite_routes')
         .delete()
         .eq('user_id', userId)
@@ -128,7 +132,7 @@ export async function toggleFavoriteRoute(
   } else {
     next = [...current, routeId];
     if (userId) {
-      await mockSupabaseClient.from('favorite_routes').insert({
+      await db().from('favorite_routes').insert({
         user_id: userId,
         route_id: routeId,
       });
@@ -164,7 +168,7 @@ export async function addFavoriteLocation(
 
   if (userId) {
     try {
-      const client = mockSupabaseClient as any;
+      const client = db() as any;
       await client.from('favorite_locations').insert({
         id: entry.id,
         user_id: userId,
@@ -190,7 +194,7 @@ export async function removeFavoriteLocation(
   writeJson(LOCS_KEY, next);
   if (userId) {
     try {
-      const client = mockSupabaseClient as any;
+      const client = db() as any;
       await client.from('favorite_locations').delete().eq('id', id).eq('user_id', userId);
     } catch {
       /* ignore */

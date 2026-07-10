@@ -2655,6 +2655,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#9C27B0",
-    "casingColor": "#4A148C"
+    "casingColor": "#4A148C",
+    "routeName": "Morada 2 Lomas de Morelia"
   }
 }

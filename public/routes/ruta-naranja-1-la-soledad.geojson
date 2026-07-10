@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-1-la-soledad",
-        "routeName": "Ruta Naranja 1 La Soledad",
+        "routeName": "Naranja 1 La Soledad",
         "direction": "ida",
         "name": "Ida",
         "color": "#FF9800",
@@ -1178,7 +1178,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-1-la-soledad",
-        "routeName": "Ruta Naranja 1 La Soledad",
+        "routeName": "Naranja 1 La Soledad",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#FF9800",
@@ -2363,6 +2363,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FF9800",
-    "casingColor": "#E65100"
+    "casingColor": "#E65100",
+    "routeName": "Naranja 1 La Soledad"
   }
 }

@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-roja-4-tzindurio",
-        "routeName": "Roja 4 Tzindurio",
+        "routeName": "Roja 4 Tzíndurio",
         "direction": "ida",
         "name": "Ida",
         "color": "#EF4444",
@@ -1514,7 +1514,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-roja-4-tzindurio",
-        "routeName": "Roja 4 Tzindurio",
+        "routeName": "Roja 4 Tzíndurio",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#EF4444",
@@ -2879,6 +2879,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#EF4444",
-    "casingColor": "#222222"
+    "casingColor": "#222222",
+    "routeName": "Roja 4 Tzíndurio"
   }
 }

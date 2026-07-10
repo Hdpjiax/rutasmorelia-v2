@@ -3,7 +3,9 @@
   "properties": {
     "directionMode": "independent",
     "corridor": "single",
-    "validator": "valhalla+osrm"
+    "validator": "valhalla+osrm",
+    "routeName": "Morada 2A",
+    "color": "#3b82f6"
   },
   "features": [
     {
@@ -13,7 +15,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/37_MORADA_ 2A/KML/Morada_2A.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-morada-2a",
-        "routeName": "Ruta Morada 2A",
+        "routeName": "Morada 2A",
         "color": "#3b82f6",
         "transportType": "combi",
         "directionMode": "independent",
@@ -815,7 +817,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/37_MORADA_ 2A/KML/Morada_2A.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-morada-2a",
-        "routeName": "Ruta Morada 2A",
+        "routeName": "Morada 2A",
         "color": "#3b82f6",
         "transportType": "combi",
         "directionMode": "independent",

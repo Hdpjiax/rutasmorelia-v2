@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-santa-maria-erandeni",
-        "routeName": "Ruta Naranja 3 Santa Maria-Erandeni",
+        "routeName": "Naranja 3 Santa Maria-Erandeni",
         "direction": "ida",
         "name": "Ida",
         "color": "#FF9800",
@@ -1882,7 +1882,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-santa-maria-erandeni",
-        "routeName": "Ruta Naranja 3 Santa Maria-Erandeni",
+        "routeName": "Naranja 3 Santa Maria-Erandeni",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#FF9800",
@@ -3727,6 +3727,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FF9800",
-    "casingColor": "#E65100"
+    "casingColor": "#E65100",
+    "routeName": "Naranja 3 Santa Maria-Erandeni"
   }
 }

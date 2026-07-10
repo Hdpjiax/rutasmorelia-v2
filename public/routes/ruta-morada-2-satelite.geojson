@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-morada-2-satelite",
-        "routeName": "Morada 2 Satelite",
+        "routeName": "Morada 2 Satélite",
         "direction": "ida",
         "name": "Ida",
         "color": "#9C27B0",
@@ -1534,7 +1534,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-morada-2-satelite",
-        "routeName": "Morada 2 Satelite",
+        "routeName": "Morada 2 Satélite",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#9C27B0",
@@ -3251,6 +3251,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#9C27B0",
-    "casingColor": "#4A148C"
+    "casingColor": "#4A148C",
+    "routeName": "Morada 2 Satélite"
   }
 }

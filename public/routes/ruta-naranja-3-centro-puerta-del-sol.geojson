@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-centro-puerta-del-sol",
-        "routeName": "Ruta Naranja 3 Centro-Puerta Del Sol",
+        "routeName": "Naranja 3 Centro-Puerta Del Sol",
         "direction": "ida",
         "name": "Ida",
         "color": "#FF9800",
@@ -1706,7 +1706,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-naranja-3-centro-puerta-del-sol",
-        "routeName": "Ruta Naranja 3 Centro-Puerta Del Sol",
+        "routeName": "Naranja 3 Centro-Puerta Del Sol",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#FF9800",
@@ -3443,6 +3443,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FF9800",
-    "casingColor": "#E65100"
+    "casingColor": "#E65100",
+    "routeName": "Naranja 3 Centro-Puerta Del Sol"
   }
 }

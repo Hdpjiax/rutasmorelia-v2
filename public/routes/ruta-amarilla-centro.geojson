@@ -1467,6 +1467,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#FFD000",
-    "casingColor": "#222222"
+    "casingColor": "#222222",
+    "routeName": "Amarilla 1 Centro"
   }
 }

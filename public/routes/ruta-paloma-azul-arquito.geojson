@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#1E88E5",
-    "casingColor": "#0D47A1"
+    "casingColor": "#0D47A1",
+    "routeName": "Paloma Azul Arquito"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/52_PALOMA_AZUL_ARQUITO/KML_paa/Paloma_Azul_Arquito_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-paloma-azul-arquito",
-        "routeName": "Ruta Paloma Azul Arquito",
+        "routeName": "Paloma Azul Arquito",
         "color": "#1E88E5",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -1240,7 +1241,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/52_PALOMA_AZUL_ARQUITO/KML_paa/Paloma_Azul_Arquito_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-paloma-azul-arquito",
-        "routeName": "Ruta Paloma Azul Arquito",
+        "routeName": "Paloma Azul Arquito",
         "color": "#1E88E5",
         "transportType": "combi",
         "directionMode": "mirrored",

@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#EF4444",
-    "casingColor": "#222222"
+    "casingColor": "#222222",
+    "routeName": "Roja 4 Tiníjaro"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/62_ROJA_4_TINIJARO/KML_tinijaro/Roja_4_Tinijaro_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-roja-4-tinijaro",
-        "routeName": "Ruta Roja 4 Tinijaro",
+        "routeName": "Roja 4 Tiníjaro",
         "color": "#EF4444",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -1236,7 +1237,7 @@
         "source": "rutastransporte/01_RUTAS_DE_COMBI/62_ROJA_4_TINIJARO/KML_tinijaro/Roja_4_Tinijaro_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-roja-4-tinijaro",
-        "routeName": "Ruta Roja 4 Tinijaro",
+        "routeName": "Roja 4 Tiníjaro",
         "color": "#EF4444",
         "transportType": "combi",
         "directionMode": "mirrored",

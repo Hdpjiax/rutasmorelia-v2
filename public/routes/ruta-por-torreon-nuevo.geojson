@@ -3,7 +3,9 @@
   "properties": {
     "directionMode": "mirrored",
     "corridor": "single",
-    "validator": "valhalla+osrm"
+    "validator": "valhalla+osrm",
+    "routeName": "Por Torreon Nuevo",
+    "color": "#3b82f6"
   },
   "features": [
     {
@@ -13,7 +15,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/15CHIQUIMITIO_POR_TORREON_NUEVO/KML_chiquimitio_tn/Chiquimitío_por_Torreón_Nuevo_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-por-torreon-nuevo",
-        "routeName": "Ruta Por Torreon Nuevo",
+        "routeName": "Por Torreon Nuevo",
         "color": "#3b82f6",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -2935,7 +2937,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/15CHIQUIMITIO_POR_TORREON_NUEVO/KML_chiquimitio_tn/Chiquimitío_por_Torreón_Nuevo_kml.kml",
         "sourceFeatureIndex": 1,
         "routeId": "ruta-por-torreon-nuevo",
-        "routeName": "Ruta Por Torreon Nuevo",
+        "routeName": "Por Torreon Nuevo",
         "color": "#3b82f6",
         "transportType": "combi",
         "directionMode": "mirrored",

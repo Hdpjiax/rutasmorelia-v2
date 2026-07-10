@@ -2057,6 +2057,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#78909C",
-    "casingColor": "#37474F"
+    "casingColor": "#37474F",
+    "routeName": "El Pedregal"
   }
 }

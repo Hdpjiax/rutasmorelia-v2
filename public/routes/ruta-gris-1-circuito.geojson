@@ -6,7 +6,8 @@
     "routeId": "ruta-gris-1-circuito",
     "display": "draw_both_same_style",
     "color": "#8A8A8A",
-    "casingColor": "#212121"
+    "casingColor": "#212121",
+    "routeName": "Gris 1 Circuito"
   },
   "features": [
     {

@@ -2871,6 +2871,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#1E88E5",
-    "casingColor": "#0D47A1"
+    "casingColor": "#0D47A1",
+    "routeName": "Azul B Michelena"
   }
 }

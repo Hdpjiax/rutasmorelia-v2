@@ -5,7 +5,8 @@
     "corridor": "single",
     "validator": "valhalla+osrm",
     "color": "#5C6BC0",
-    "casingColor": "#283593"
+    "casingColor": "#283593",
+    "routeName": "Coeneo"
   },
   "features": [
     {
@@ -15,7 +16,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/17_COENEO/KML_coeneo/Coeneo_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-coeneo",
-        "routeName": "Ruta Coeneo",
+        "routeName": "Coeneo",
         "color": "#5C6BC0",
         "transportType": "combi",
         "directionMode": "mirrored",
@@ -4444,7 +4445,7 @@
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/17_COENEO/KML_coeneo/Coeneo_kml.kml",
         "sourceFeatureIndex": 0,
         "routeId": "ruta-coeneo",
-        "routeName": "Ruta Coeneo",
+        "routeName": "Coeneo",
         "color": "#5C6BC0",
         "transportType": "combi",
         "directionMode": "mirrored",

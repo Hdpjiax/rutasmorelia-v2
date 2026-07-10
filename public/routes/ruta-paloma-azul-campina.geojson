@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-paloma-azul-campina",
-        "routeName": "Paloma Azul Campina",
+        "routeName": "Paloma Azul Campiña",
         "direction": "ida",
         "name": "Ida",
         "color": "#1E88E5",
@@ -738,7 +738,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-paloma-azul-campina",
-        "routeName": "Paloma Azul Campina",
+        "routeName": "Paloma Azul Campiña",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#1E88E5",
@@ -1775,6 +1775,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#1E88E5",
-    "casingColor": "#0D47A1"
+    "casingColor": "#0D47A1",
+    "routeName": "Paloma Azul Campiña"
   }
 }

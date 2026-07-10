@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-rosa-metropolis-estrella",
-        "routeName": "Rosa Metropolis - Estrella",
+        "routeName": "Rosa Metrópolis - Estrella",
         "direction": "ida",
         "name": "Ida",
         "color": "#EC407A",
@@ -1098,7 +1098,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-rosa-metropolis-estrella",
-        "routeName": "Rosa Metropolis - Estrella",
+        "routeName": "Rosa Metrópolis - Estrella",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#EC407A",
@@ -2975,6 +2975,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#EC407A",
-    "casingColor": "#880E4F"
+    "casingColor": "#880E4F",
+    "routeName": "Rosa Metrópolis - Estrella"
   }
 }

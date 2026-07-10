@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-centros-comerciales-leandro-valle",
-        "routeName": "Centros Comerciales (Lenadro Valle)",
+        "routeName": "Centros Comerciales (Leandro Valle)",
         "direction": "ida",
         "name": "Ida",
         "color": "#5C6BC0",
@@ -2042,7 +2042,7 @@
       "type": "Feature",
       "properties": {
         "routeId": "ruta-centros-comerciales-leandro-valle",
-        "routeName": "Centros Comerciales (Lenadro Valle)",
+        "routeName": "Centros Comerciales (Leandro Valle)",
         "direction": "vuelta",
         "name": "Vuelta",
         "color": "#5C6BC0",
@@ -3819,6 +3819,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#5C6BC0",
-    "casingColor": "#283593"
+    "casingColor": "#283593",
+    "routeName": "Centros Comerciales (Leandro Valle)"
   }
 }

@@ -743,6 +743,7 @@
   "properties": {
     "directionMode": "independent",
     "color": "#F0B429",
-    "casingColor": "#5D4037"
+    "casingColor": "#5D4037",
+    "routeName": "Dorado (Lomas de Morelia)"
   }
 }

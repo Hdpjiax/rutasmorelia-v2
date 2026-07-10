@@ -35,11 +35,41 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '*': heavyIgnores,
   },
-  // No empaquetar maplibre en el servidor (es cliente)
   serverExternalPackages: [],
-  // Evitar que el build falle por tipos en tests o scripts
   typescript: {
     ignoreBuildErrors: false,
+  },
+  async headers() {
+    return [
+      {
+        source: '/routes/index.json',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+          },
+        ],
+      },
+      {
+        source: '/routes/:path*.geojson',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, s-maxage=1800, stale-while-revalidate=3600',
+          },
+          { key: 'Content-Type', value: 'application/geo+json; charset=utf-8' },
+        ],
+      },
+      {
+        source: '/brand/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=604800, immutable',
+          },
+        ],
+      },
+    ];
   },
 };
 
