@@ -23,4 +23,13 @@
   #main-content > .pointer-events-auto.absolute.z-30.flex.justify-center {
     display: none !important;
   }
+
+  /* Ocultar el aviso y el botón de reencuadre de ruta en móvil. */
+  #main-content button[aria-label="Centrar ruta seleccionada"] {
+    display: none !important;
+  }
+
+  #main-content div:has(> button[aria-label="Centrar ruta seleccionada"]) > button:not([aria-label]) {
+    display: none !important;
+  }
 }
