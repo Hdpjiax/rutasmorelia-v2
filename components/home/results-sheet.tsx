@@ -7,13 +7,11 @@ import {
   useDragControls,
   type PanInfo,
 } from 'motion/react';
-import { Heart, Navigation, Route as RouteIcon } from 'lucide-react';
+import { Heart, Navigation, Route as RouteIcon, X } from 'lucide-react';
 import { FocusTrap } from '@/components/ui/focus-trap';
 import { cn } from '@/lib/utils/cn';
 
 export type SheetPanel = 'results' | 'routes' | 'favorites';
-
-/** peek = mapa casi libre · mid = lista usable · full = maximizado */
 export type SheetSnap = 'peek' | 'mid' | 'full';
 
 type Props = {
@@ -32,33 +30,32 @@ const SNAP_VH: Record<SheetSnap, number> = {
 };
 
 function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): SheetSnap | 'close' {
-  // Arrastre hacia abajo (offsetY > 0)
-  if (velocityY > 900 || offsetY > 140) {
-    if (current === 'full') return 'mid';
-    if (current === 'mid') return 'peek';
-    return 'close';
-  }
+  // Un gesto intencional hacia abajo cierra desde cualquier altura.
+  // Así el usuario nunca queda atrapado teniendo que pasar por varios snaps.
+  if (velocityY > 850 || offsetY > 120) return 'close';
+
   if (velocityY < -700 || offsetY < -80) {
     if (current === 'peek') return 'mid';
-    if (current === 'mid') return 'full';
     return 'full';
   }
-  // Pequeño desliz: umbrales por snap actual
-  if (offsetY > 56) {
+
+  if (offsetY > 48) {
     if (current === 'full') return 'mid';
     if (current === 'mid') return 'peek';
     return 'close';
   }
-  if (offsetY < -40) {
+
+  if (offsetY < -36) {
     if (current === 'peek') return 'mid';
     return 'full';
   }
+
   return current;
 }
 
 /**
  * Desktop: modal centrado.
- * Móvil: bottom sheet con manija — deslizar para bajar/subir y ver el mapa.
+ * Móvil: bottom sheet deslizable, con cierre directo hacia abajo.
  */
 export function ResultsSheet({
   open,
@@ -95,25 +92,21 @@ export function ResultsSheet({
     <AnimatePresence>
       {open && (
         <>
-          {/* Overlay: en peek no bloquea el mapa; en mid/full se puede tocar para bajar */}
           {!isDesktop && (
             <motion.button
               type="button"
-              aria-label="Bajar panel y ver mapa"
+              aria-label="Cerrar panel y ver mapa"
               initial={{ opacity: 0 }}
-              animate={{ opacity: mapMostlyVisible ? 0 : snap === 'full' ? 0.35 : 0.18 }}
+              animate={{ opacity: mapMostlyVisible ? 0 : snap === 'full' ? 0.28 : 0.12 }}
               exit={{ opacity: 0 }}
               className={cn(
                 'fixed inset-0 z-40 bg-slate-900',
                 mapMostlyVisible ? 'pointer-events-none' : 'cursor-pointer'
               )}
-              onClick={() => {
-                if (snap === 'full') setSnap('mid');
-                else if (snap === 'mid') setSnap('peek');
-                else onClose();
-              }}
+              onClick={onClose}
             />
           )}
+
           {isDesktop && (
             <motion.button
               type="button"
@@ -128,7 +121,7 @@ export function ResultsSheet({
           )}
 
           <FocusTrap
-            active={open && (isDesktop || snap !== 'peek')}
+            active={open && isDesktop}
             onEscape={onClose}
             aria-label="Panel de viaje y rutas"
             className={
@@ -159,7 +152,7 @@ export function ResultsSheet({
               dragControls={dragControls}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.08, bottom: 0.45 }}
+              dragElastic={{ top: 0.06, bottom: 0.6 }}
               dragMomentum={false}
               onDragEnd={onDragEnd}
               className={
@@ -167,9 +160,8 @@ export function ResultsSheet({
                   ? 'vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
                   : 'vm-panel flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
               }
-              style={!isDesktop ? { maxHeight: '88vh' } : undefined}
+              style={!isDesktop ? { maxHeight: '88dvh' } : undefined}
             >
-              {/* Manija: solo aquí se inicia el desliz (no pelea con el scroll) */}
               {!isDesktop && (
                 <div
                   className="flex shrink-0 cursor-grab touch-none flex-col items-center active:cursor-grabbing select-none"
@@ -178,36 +170,31 @@ export function ResultsSheet({
                   aria-valuetext={
                     snap === 'peek' ? 'Panel reducido' : snap === 'mid' ? 'Panel medio' : 'Panel ampliado'
                   }
-                  aria-label="Deslizar panel de rutas"
+                  aria-label="Deslizar hacia abajo para cerrar el panel"
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'ArrowDown') {
-                      if (snap === 'full') setSnap('mid');
-                      else if (snap === 'mid') setSnap('peek');
-                      else onClose();
-                    }
+                    if (e.key === 'ArrowDown' || e.key === 'Escape') onClose();
                     if (e.key === 'ArrowUp') {
                       if (snap === 'peek') setSnap('mid');
                       else setSnap('full');
                     }
                   }}
                 >
-                  <div className="flex w-full justify-center pt-2.5 pb-1">
-                    <span className="h-1.5 w-12 rounded-full bg-slate-400" />
+                  <div className="flex w-full justify-center pb-1 pt-3">
+                    <span className="h-1.5 w-14 rounded-full bg-slate-400" />
                   </div>
-                  <p className="pb-1 text-[10px] font-semibold text-slate-500">
-                    {snap === 'peek'
-                      ? 'Desliza ↑ para ver opciones · ↓ cierra'
-                      : snap === 'mid'
-                        ? 'Desliza ↓ para ver el mapa'
-                        : 'Desliza ↓ para reducir'}
+                  <p className="pb-1.5 text-[10px] font-semibold text-slate-500">
+                    Desliza hacia abajo para cerrar
                   </p>
                 </div>
               )}
 
               <div
-                className="flex shrink-0 items-center justify-between gap-2 px-3 py-2"
+                className="flex shrink-0 touch-none items-center justify-between gap-2 px-3 py-2"
                 style={{ borderBottom: '1px solid var(--vm-card-border)' }}
+                onPointerDown={(e) => {
+                  if (!isDesktop && e.button === 0) dragControls.start(e);
+                }}
               >
                 <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist">
                   {(
@@ -224,6 +211,7 @@ export function ResultsSheet({
                         type="button"
                         role="tab"
                         aria-selected={panel === t.id}
+                        onPointerDown={(e) => e.stopPropagation()}
                         onClick={() => {
                           onPanelChange(t.id);
                           if (!isDesktop && snap === 'peek') setSnap('mid');
@@ -238,43 +226,25 @@ export function ResultsSheet({
                     );
                   })}
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  {!isDesktop && snap !== 'peek' && (
-                    <button
-                      type="button"
-                      onClick={() => setSnap(snap === 'full' ? 'mid' : 'peek')}
-                      className="rounded-full bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-slate-700 cursor-pointer hover:bg-slate-200"
-                    >
-                      Bajar
-                    </button>
-                  )}
-                  {!isDesktop && snap === 'peek' && (
-                    <button
-                      type="button"
-                      onClick={() => setSnap('mid')}
-                      className="rounded-full bg-emerald-700 px-2.5 py-1.5 text-xs font-bold text-white cursor-pointer"
-                    >
-                      Subir
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="rounded-full bg-slate-200 px-2.5 py-1.5 text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-300"
-                  >
-                    {isDesktop ? 'Ver mapa' : 'Cerrar'}
-                  </button>
-                </div>
+
+                <button
+                  type="button"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={onClose}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
+                  aria-label="Cerrar y ver mapa"
+                  title="Cerrar"
+                >
+                  <X className="h-4 w-4" aria-hidden />
+                </button>
               </div>
 
-              {/* Contenido: en peek se reduce para no tapar el mapa */}
               <div
                 className={cn(
                   'min-h-0 flex-1 overflow-y-auto overscroll-contain',
                   !isDesktop && snap === 'peek' && 'max-h-[12vh]'
                 )}
                 role="tabpanel"
-                // Permitir scroll vertical del listado sin pelear con el drag del sheet
                 style={{ touchAction: 'pan-y' }}
               >
                 {children}
