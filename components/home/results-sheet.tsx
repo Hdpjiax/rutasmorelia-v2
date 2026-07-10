@@ -31,15 +31,15 @@ const SNAP_VH: Record<SheetSnap, number> = {
 
 function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): SheetSnap | 'close' {
   // Un gesto intencional hacia abajo cierra desde cualquier altura.
-  // Así el usuario nunca queda atrapado teniendo que pasar por varios snaps.
-  if (velocityY > 850 || offsetY > 120) return 'close';
+  // Los umbrales bajos hacen que el gesto sea confiable en pantallas táctiles pequeñas.
+  if (velocityY > 650 || offsetY > 90) return 'close';
 
   if (velocityY < -700 || offsetY < -80) {
     if (current === 'peek') return 'mid';
     return 'full';
   }
 
-  if (offsetY > 48) {
+  if (offsetY > 36) {
     if (current === 'full') return 'mid';
     if (current === 'mid') return 'peek';
     return 'close';
@@ -152,7 +152,7 @@ export function ResultsSheet({
               dragControls={dragControls}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.06, bottom: 0.6 }}
+              dragElastic={{ top: 0.06, bottom: 0.68 }}
               dragMomentum={false}
               onDragEnd={onDragEnd}
               className={
@@ -164,7 +164,7 @@ export function ResultsSheet({
             >
               {!isDesktop && (
                 <div
-                  className="flex shrink-0 cursor-grab touch-none flex-col items-center active:cursor-grabbing select-none"
+                  className="flex min-h-14 shrink-0 cursor-grab touch-none flex-col items-center justify-center active:cursor-grabbing select-none"
                   onPointerDown={(e) => dragControls.start(e)}
                   role="slider"
                   aria-valuetext={
@@ -180,10 +180,10 @@ export function ResultsSheet({
                     }
                   }}
                 >
-                  <div className="flex w-full justify-center pb-1 pt-3">
+                  <div className="flex w-full justify-center pb-1 pt-2">
                     <span className="h-1.5 w-14 rounded-full bg-slate-400" />
                   </div>
-                  <p className="pb-1.5 text-[10px] font-semibold text-slate-500">
+                  <p className="pb-2 text-[10px] font-semibold text-slate-500">
                     Desliza hacia abajo para cerrar
                   </p>
                 </div>
