@@ -75,8 +75,9 @@ export async function planTrip(
 ): Promise<TripPlan[]> {
   const maxWalkDist = preferences.maxWalkDistanceMeters ?? 900;
   const allowTransfers = preferences.allowTransfers ?? true;
-  const walkSpeed = preferences.walkSpeedMeterPerSec ?? 1.25;
-  const transitSpeed = preferences.transitSpeedMeterPerSec ?? 7.5;
+  // ~4.3 km/h a pie (incluye cruces); ~22 km/h combi en ciudad
+  const walkSpeed = preferences.walkSpeedMeterPerSec ?? 1.2;
+  const transitSpeed = preferences.transitSpeedMeterPerSec ?? 6.1;
   const transferOnlyIfNecessary = preferences.transferOnlyIfNecessary ?? true;
   const maxDirectWalkTotal = preferences.maxDirectWalkTotalM ?? 1600;
 
@@ -157,7 +158,7 @@ export async function planTrip(
       segments: [
         {
           type: 'walk',
-          instruction: `Caminar ${formatWalk(walk1Dist)} hasta la ruta (punto más cercano)`,
+          instruction: `Caminar ${formatWalk(walk1Dist)} hasta el punto virtual de subida`,
           distance: walk1Dist,
           duration: walk1Dist / walkSpeed,
           walkFrom: origin,
@@ -166,7 +167,7 @@ export async function planTrip(
         },
         {
           type: 'ride',
-          instruction: `Subir a ${shape.route_name} (${dirLabel})`,
+          instruction: `Subir a ${shape.route_name} (${dirLabel}) · ~${Math.max(1, Math.round(rideDuration / 60))} min en ruta`,
           distance: rideDistance,
           duration: rideDuration,
           routeId: shape.route_id,
@@ -178,7 +179,7 @@ export async function planTrip(
         },
         {
           type: 'walk',
-          instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (punto más cercano de la ruta)`,
+          instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (punto virtual)`,
           distance: walk2Dist,
           duration: walk2Dist / walkSpeed,
           walkFrom: alight,
@@ -297,7 +298,7 @@ export async function planTrip(
           segments: [
             {
               type: 'walk',
-              instruction: `Caminar ${formatWalk(walk1Dist)} hasta el punto de subida (camino más corto)`,
+              instruction: `Caminar ${formatWalk(walk1Dist)} hasta el punto virtual de subida`,
               distance: walk1Dist,
               duration: walk1Dist / walkSpeed,
               walkFrom: origin,
@@ -306,7 +307,7 @@ export async function planTrip(
             },
             {
               type: 'ride',
-              instruction: `1ª · Subir a ${a.shape.route_name} (${a.shape.direction === 'ida' ? 'Ida' : 'Vuelta'})`,
+              instruction: `1ª · ${a.shape.route_name} (${a.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride1Dist / transitSpeed / 60))} min`,
               distance: ride1Dist,
               duration: ride1Dist / transitSpeed,
               routeId: a.shape.route_id,
@@ -318,7 +319,7 @@ export async function planTrip(
             },
             {
               type: 'walk',
-              instruction: `Transbordo · caminar ${formatWalk(realTransferWalk)} (más corto)`,
+              instruction: `Transbordo · caminar ${formatWalk(realTransferWalk)} entre puntos virtuales`,
               distance: realTransferWalk,
               duration: realTransferWalk / walkSpeed,
               walkFrom: xferOff,
@@ -327,7 +328,7 @@ export async function planTrip(
             },
             {
               type: 'ride',
-              instruction: `2ª · Subir a ${b.shape.route_name} (${b.shape.direction === 'ida' ? 'Ida' : 'Vuelta'})`,
+              instruction: `2ª · ${b.shape.route_name} (${b.shape.direction === 'ida' ? 'Ida' : 'Vuelta'}) · ~${Math.max(1, Math.round(ride2Dist / transitSpeed / 60))} min`,
               distance: ride2Dist,
               duration: ride2Dist / transitSpeed,
               routeId: b.shape.route_id,
@@ -339,7 +340,7 @@ export async function planTrip(
             },
             {
               type: 'walk',
-              instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (camino más corto)`,
+              instruction: `Bajar y caminar ${formatWalk(walk2Dist)} al destino (punto virtual)`,
               distance: walk2Dist,
               duration: walk2Dist / walkSpeed,
               walkFrom: alight2Pt,

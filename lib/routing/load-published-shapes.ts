@@ -1,4 +1,5 @@
 import type { Coordinate } from './planner';
+import { bboxFromOriginDest, filterShapesByBBox, type BBox } from './bbox';
 
 export type PublishedShape = {
   id: string;
@@ -182,6 +183,57 @@ export async function loadPublishedShapes(force = false): Promise<{
     cache.allShapes = shapes;
   }
   return { shapes, routes };
+}
+
+/**
+ * Carga shapes relevantes al viaje (bbox OD).
+ * Si ya hay allShapes en caché, filtra sin re-fetch.
+ * Si no, carga por lotes todas y filtra (prefetch puede completar en paralelo).
+ */
+export async function loadShapesNearTrip(
+  origin: Coordinate,
+  destination: Coordinate,
+  padKm = 2.4
+): Promise<{
+  shapes: PublishedShape[];
+  routes: PublishedRouteMeta[];
+  bbox: BBox;
+  usedBBoxFilter: boolean;
+}> {
+  const bbox = bboxFromOriginDest(origin, destination, padKm);
+  const routes = await loadPublishedRoutes();
+
+  // Preferir caché completa si existe
+  if (cache?.allShapes?.length) {
+    const near = filterShapesByBBox(cache.allShapes, bbox);
+    // Si el filtro deja muy pocas (OD en borde), ampliar
+    if (near.length >= 4) {
+      return { shapes: near, routes, bbox, usedBBoxFilter: true };
+    }
+    const wider = bboxFromOriginDest(origin, destination, padKm + 3);
+    const near2 = filterShapesByBBox(cache.allShapes, wider);
+    return {
+      shapes: near2.length ? near2 : cache.allShapes,
+      routes,
+      bbox: wider,
+      usedBBoxFilter: near2.length > 0,
+    };
+  }
+
+  // Cargar todo (o lo que falte) y filtrar — el prefetch en idle reduce esto
+  const { shapes: all } = await loadPublishedShapes(false);
+  const near = filterShapesByBBox(all, bbox);
+  if (near.length >= 4) {
+    return { shapes: near, routes, bbox, usedBBoxFilter: true };
+  }
+  const wider = bboxFromOriginDest(origin, destination, padKm + 3);
+  const near2 = filterShapesByBBox(all, wider);
+  return {
+    shapes: near2.length >= 2 ? near2 : all,
+    routes,
+    bbox: wider,
+    usedBBoxFilter: near2.length >= 2,
+  };
 }
 
 /** Prefetch en idle: no bloquea UI. */

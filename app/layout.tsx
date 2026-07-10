@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   description:
     "ViaMorelia: consulta y planifica rutas de transporte público en Morelia por origen y destino. Combis y autobuses con mapa en tiempo real.",
   applicationName: "ViaMorelia",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "ViaMorelia",
+    statusBarStyle: "default",
+  },
   icons: {
     icon: [
       { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
@@ -33,6 +39,10 @@ export const metadata: Metadata = {
     siteName: "ViaMorelia",
     locale: "es_MX",
     type: "website",
+  },
+  other: {
+    "theme-color": "#047857",
+    "mobile-web-app-capable": "yes",
   },
 };
 

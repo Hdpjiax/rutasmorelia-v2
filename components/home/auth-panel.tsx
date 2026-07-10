@@ -13,7 +13,7 @@ type AuthPanelProps = {
   onEmailChange: (value: string) => void;
   onMagicLink: (e: React.FormEvent) => void;
   onGoogle: () => void;
-  onLogout: () => void;
+  onLogout: (everywhere?: boolean) => void;
   onClose: () => void;
 };
 
@@ -35,22 +35,33 @@ export function AuthPanel({
 }: AuthPanelProps) {
   if (user) {
     return (
-      <div className="flex w-80 flex-col gap-2.5 p-3.5">
+      <div className="flex w-80 flex-col gap-2.5 p-3.5" role="dialog" aria-label="Cuenta">
         <p className="text-sm font-semibold text-slate-800" data-testid="user-profile-header">
           {user.email}
         </p>
-        <p className="text-[10px] text-slate-400">
+        <p className="text-[10px] text-slate-500">
           Favoritos sincronizados con tu cuenta
         </p>
         <button
           type="button"
           onClick={() => {
-            void onLogout();
+            void onLogout(false);
             onClose();
           }}
           className="rounded-xl bg-slate-900 py-2 text-xs font-bold text-white cursor-pointer"
         >
           Cerrar sesión
+        </button>
+        <button
+          type="button"
+          data-testid="logout-everywhere"
+          onClick={() => {
+            void onLogout(true);
+            onClose();
+          }}
+          className="rounded-xl border border-slate-300 bg-white py-2 text-[11px] font-bold text-slate-700 cursor-pointer hover:bg-slate-50"
+        >
+          Cerrar en todos los dispositivos
         </button>
       </div>
     );

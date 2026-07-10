@@ -30,8 +30,8 @@ import { mockSupabaseClient, mockDb, type Route } from '@/lib/supabase/client';
 import { planTrip, type Coordinate, type TripPlan } from '@/lib/routing/planner';
 import {
   loadPublishedRoutes,
-  loadPublishedShapes,
   loadShapesForRouteIds,
+  loadShapesNearTrip,
   prefetchAllShapesInBackground,
   type PublishedShape,
 } from '@/lib/routing/load-published-shapes';
@@ -61,18 +61,29 @@ import {
   removeFavoriteLocation,
   toggleFavoriteRoute,
   type FavoriteLocation,
-} from '@/lib/favorites/store';
+} from '@/features/favorites';
 import {
   getSessionUser,
   onAuthChange,
   signInWithGoogle,
   signInWithMagicLink,
   signOut,
+  signOutEverywhere,
   type SessionUser,
-} from '@/lib/auth/session';
+} from '@/features/auth';
+import {
+  buildTripShareUrl,
+  copyTextToClipboard,
+  readTripUrlState,
+  shareOrCopyTripUrl,
+  sortTripPlans,
+} from '@/features/planner';
+import { useTripUiStore } from '@/lib/trip/store';
 import { AuthPanel } from '@/components/home/auth-panel';
 import { AdminGateBanner } from '@/components/home/admin-gate-banner';
+import { TripResultsPanel } from '@/components/home/trip-results-panel';
 import { createOrbElement } from '@/components/home/map-markers';
+import { FocusTrap } from '@/components/ui/focus-trap';
 
 type PanelMode = 'search' | 'results' | 'favorites' | 'routes';
 
@@ -149,6 +160,13 @@ export default function HomeApp() {
   const [planningError, setPlanningError] = useState<string | null>(null);
   /** Filtro de resultados: todos | solo directos | solo transbordos */
   const [planTypeFilter, setPlanTypeFilter] = useState<'all' | 'direct' | 'transfer'>('all');
+  const planSort = useTripUiStore((s) => s.planSort);
+  const setPlanSort = useTripUiStore((s) => s.setPlanSort);
+  const geometriesLoading = useTripUiStore((s) => s.geometriesLoading);
+  const setGeometriesLoading = useTripUiStore((s) => s.setGeometriesLoading);
+  const geocodeDegraded = useTripUiStore((s) => s.geocodeDegraded);
+  const setGeocodeDegraded = useTripUiStore((s) => s.setGeocodeDegraded);
+  const urlHydratedRef = useRef(false);
 
   const activeSearchFieldRef = useRef(activeSearchField);
   useEffect(() => {
@@ -238,22 +256,68 @@ export default function HomeApp() {
         prefetchAllShapesInBackground();
       }
 
-      // Deep link: ?route=ruta-xxx abre explorador con esa ruta
+      // Deep links: ?from=&to= y/o ?route=
       try {
-        const sp = new URLSearchParams(window.location.search);
-        const routeId = sp.get('route');
-        if (routeId) {
-          setSelectedRouteId(routeId);
+        const trip = readTripUrlState();
+        if (trip.origin) {
+          setOriginCoords(trip.origin);
+          setOriginInput(
+            trip.originLabel ||
+              `${trip.origin[1].toFixed(5)}, ${trip.origin[0].toFixed(5)}`
+          );
+        }
+        if (trip.destination) {
+          setDestinationCoords(trip.destination);
+          setDestinationInput(
+            trip.destinationLabel ||
+              `${trip.destination[1].toFixed(5)}, ${trip.destination[0].toFixed(5)}`
+          );
+        }
+        if (trip.origin && trip.destination) {
+          setShowWelcome(false);
+          setPanel('results');
+          setResultsOpen(true);
+          if (trip.planIndex != null) setSelectedPlanIndex(trip.planIndex);
+        }
+        if (trip.routeId) {
+          setSelectedRouteId(trip.routeId);
           setPanel('routes');
           setResultsOpen(true);
           setShowWelcome(false);
         }
+        urlHydratedRef.current = true;
       } catch {
-        /* ignore */
+        urlHydratedRef.current = true;
       }
     };
     void boot();
   }, []);
+
+  // Sincroniza URL del viaje (compartible) sin recargar
+  useEffect(() => {
+    if (!urlHydratedRef.current || typeof window === 'undefined') return;
+    const path = buildTripShareUrl({
+      origin: originCoords,
+      destination: destinationCoords,
+      originLabel:
+        originInput && originInput !== 'Mi ubicación' ? originInput : null,
+      destinationLabel: destinationInput || null,
+      routeId: selectedRouteId,
+      planIndex: tripPlans.length ? selectedPlanIndex : null,
+    });
+    const next = path.startsWith('http') ? path : `${window.location.origin}${path}`;
+    if (next !== window.location.href) {
+      window.history.replaceState({}, '', path);
+    }
+  }, [
+    originCoords,
+    destinationCoords,
+    originInput,
+    destinationInput,
+    selectedRouteId,
+    selectedPlanIndex,
+    tripPlans.length,
+  ]);
 
   // Geolocalización al entrar (alta precisión)
   useEffect(() => {
@@ -276,7 +340,13 @@ export default function HomeApp() {
       (err) => {
         setLocating(false);
         console.warn('Geolocation', err);
-        toast('No se pudo obtener tu ubicación. Elige un origen.', 'warning');
+        toast(
+          err.code === 1
+            ? 'Permiso de ubicación denegado. Elige origen en el buscador o toca el mapa.'
+            : 'Sin GPS disponible. Elige origen manualmente o toca el mapa.',
+          'warning',
+          'Ubicación'
+        );
       },
       {
         enableHighAccuracy: true,
@@ -425,12 +495,43 @@ export default function HomeApp() {
     }
   };
 
-  const handleLogout = async () => {
-    await signOut();
+  const handleLogout = async (everywhere = false) => {
+    if (everywhere) await signOutEverywhere();
+    else await signOut();
     setUser(null);
     setFavorites(loadLocalFavoriteRoutes());
     setFavoriteLocations(loadLocalFavoriteLocations());
-    toast('Sesión cerrada', 'info');
+    toast(everywhere ? 'Sesión cerrada en todos los dispositivos' : 'Sesión cerrada', 'info');
+  };
+
+  const tripSharePath = () =>
+    buildTripShareUrl({
+      origin: originCoords,
+      destination: destinationCoords,
+      originLabel: originInput || null,
+      destinationLabel: destinationInput || null,
+      planIndex: selectedPlanIndex,
+    });
+
+  const handleShareTrip = async () => {
+    if (!originCoords || !destinationCoords) {
+      toast('Elige origen y destino para compartir', 'warning');
+      return;
+    }
+    const result = await shareOrCopyTripUrl(tripSharePath());
+    if (result === 'shared') toast('Listo para compartir', 'success');
+    else if (result === 'copied') toast('Enlace copiado', 'success');
+    else toast('No se pudo compartir', 'error');
+  };
+
+  const handleCopyTripLink = async () => {
+    if (!originCoords || !destinationCoords) {
+      toast('Elige origen y destino para copiar el enlace', 'warning');
+      return;
+    }
+    const absolute = `${window.location.origin}${tripSharePath()}`;
+    const ok = await copyTextToClipboard(absolute);
+    toast(ok ? 'Enlace del viaje copiado' : 'No se pudo copiar', ok ? 'success' : 'error');
   };
 
   // Autocompletado: favoritos primero + catálogo + Nominatim
@@ -456,8 +557,13 @@ export default function HomeApp() {
 
       try {
         const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { cache: 'no-store' });
-        if (res.ok) {
+        if (res.status === 429) {
+          setGeocodeDegraded(true);
+          toast('Demasiadas búsquedas de lugares. Usa catálogo o el mapa.', 'warning');
+        } else if (res.ok) {
           const data = await res.json();
+          if (data.degraded || data.error) setGeocodeDegraded(true);
+          else setGeocodeDegraded(false);
           const remote: PlaceHit[] = data.results ?? [];
           merged = prioritizeFavoriteLocations(
             [...local, ...remote],
@@ -465,8 +571,11 @@ export default function HomeApp() {
             q
           ).slice(0, 16) as PlaceHit[];
           setSuggestions(merged);
+        } else {
+          setGeocodeDegraded(true);
         }
       } catch {
+        setGeocodeDegraded(true);
         /* keep local+favs */
       } finally {
         setSearchLoading(false);
@@ -519,30 +628,35 @@ export default function HomeApp() {
 
     const run = async () => {
       try {
-        // Si el prefetch aún no terminó, carga bajo demanda (con caché por ruta)
-        if (!shapesRef.current.length) {
-          const { shapes } = await loadPublishedShapes();
-          if (cancelled) return;
-          shapesRef.current = shapes;
-        }
+        setGeometriesLoading(true);
+        // Solo geometrías cercanas al OD (bbox) — más rápido y preciso
+        const { shapes } = await loadShapesNearTrip(originCoords, destinationCoords);
+        if (cancelled) return;
+        shapesRef.current = shapes;
+        setGeometriesLoading(false);
         const plans = await planTrip(originCoords, destinationCoords, {
-          shapes: shapesRef.current,
+          shapes,
           transferOnlyIfNecessary: true,
           allowTransfers: true,
           maxWalkDistanceMeters: 950,
           maxDirectWalkTotalM: 1400,
+          walkSpeedMeterPerSec: 1.2,
+          transitSpeedMeterPerSec: 6.1,
         });
         if (cancelled) return;
-        setTripPlans(plans);
+        const sorted = sortTripPlans(plans, useTripUiStore.getState().planSort);
+        setTripPlans(sorted);
         setSelectedPlanIndex(0);
         setPlanTypeFilter('all');
         setPlanning(false);
-        if (plans.length === 0) {
+        if (sorted.length === 0) {
           setPlanningError(
-            'No hay rutas útiles entre estos puntos. Prueba ajustar origen o destino.'
+            'No encontramos combis útiles cerca de esos puntos. Prueba mover origen o destino unos cientos de metros, o toca el mapa.'
           );
           toast('Sin rutas directas ni transbordos cercanos', 'warning');
           setSearchExpanded(true);
+          setResultsOpen(true);
+          setPanel('results');
         } else {
           setPanel('results');
           setResultsOpen(true);
@@ -550,8 +664,8 @@ export default function HomeApp() {
           setActiveSearchField(null);
           setSuggestions([]);
           toast(
-            `${plans.length} opción${plans.length > 1 ? 'es' : ''} · ${
-              plans[0].type === 'direct' ? 'directas' : 'con transbordo'
+            `${sorted.length} opción${sorted.length > 1 ? 'es' : ''} · ${
+              sorted[0].type === 'direct' ? 'directas' : 'con transbordo'
             }`,
             'success',
             'Viaje'
@@ -560,8 +674,9 @@ export default function HomeApp() {
       } catch (err) {
         if (cancelled) return;
         console.error(err);
+        setGeometriesLoading(false);
         setPlanning(false);
-        setPlanningError('Error al calcular el viaje.');
+        setPlanningError('No se pudo calcular el viaje. Revisa la conexión e inténtalo de nuevo.');
         toast('Error al planificar', 'error');
       }
     };
@@ -570,7 +685,7 @@ export default function HomeApp() {
     return () => {
       cancelled = true;
     };
-  }, [originCoords, destinationCoords]);
+  }, [originCoords, destinationCoords, setGeometriesLoading]);
 
   // Mapa: siempre Carto Positron (gris claro). El tema UI oscuro no cambia el basemap.
   useEffect(() => {
@@ -846,31 +961,66 @@ export default function HomeApp() {
     }> = [];
 
     plan.segments.forEach((seg, idx) => {
+      if (seg.type === 'walk' && seg.walkKind === 'transfer') {
+        if (isMapCoord(seg.walkFrom)) {
+          stopFeatures.push({
+            type: 'Feature',
+            properties: {
+              label: '🔄 Baja · punto virtual',
+              kind: 'transbordo',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [seg.walkFrom[0], seg.walkFrom[1]],
+            },
+          });
+        }
+        if (isMapCoord(seg.walkTo)) {
+          stopFeatures.push({
+            type: 'Feature',
+            properties: {
+              label: '🔄 Sube · punto virtual',
+              kind: 'transbordo',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [seg.walkTo[0], seg.walkTo[1]],
+            },
+          });
+        }
+        return;
+      }
       if (seg.type !== 'ride') return;
       if (isMapCoord(seg.boardingPoint)) {
-        stopFeatures.push({
-          type: 'Feature',
-          properties: { label: '⬆ Sube aquí', kind: 'sube' },
-          geometry: {
-            type: 'Point',
-            coordinates: [seg.boardingPoint[0], seg.boardingPoint[1]],
-          },
-        });
+        const prev = plan.segments[idx - 1];
+        const afterTransfer = prev?.type === 'walk' && prev.walkKind === 'transfer';
+        if (!afterTransfer) {
+          stopFeatures.push({
+            type: 'Feature',
+            properties: { label: '⬆ Sube · punto virtual', kind: 'sube' },
+            geometry: {
+              type: 'Point',
+              coordinates: [seg.boardingPoint[0], seg.boardingPoint[1]],
+            },
+          });
+        }
       }
       if (isMapCoord(seg.alightingPoint)) {
         const next = plan.segments[idx + 1];
         const isTransfer = next?.type === 'walk' && next.walkKind === 'transfer';
-        stopFeatures.push({
-          type: 'Feature',
-          properties: {
-            label: isTransfer ? '🔄 Baja · transbordo' : '⬇ Baja aquí',
-            kind: isTransfer ? 'transbordo' : 'baja',
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [seg.alightingPoint[0], seg.alightingPoint[1]],
-          },
-        });
+        if (!isTransfer) {
+          stopFeatures.push({
+            type: 'Feature',
+            properties: {
+              label: '⬇ Baja · punto virtual',
+              kind: 'baja',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [seg.alightingPoint[0], seg.alightingPoint[1]],
+            },
+          });
+        }
       }
     });
     setTripStopsData(map, stopFeatures);
@@ -1072,197 +1222,51 @@ export default function HomeApp() {
       </motion.div>
     ) : null;
 
-  const filteredPlans = tripPlans
-    .map((plan, idx) => ({ plan, idx }))
-    .filter(({ plan }) => {
+  // Ordenar en render (Zustand planSort) sin mutar el array base en effects
+  const filteredPlans = sortTripPlans(tripPlans, planSort)
+    .map((plan) => ({ plan, idx: tripPlans.indexOf(plan) }))
+    .filter(({ plan, idx }) => {
+      if (idx < 0) return false;
       if (planTypeFilter === 'all') return true;
       return plan.type === planTypeFilter;
     });
 
   const directCount = tripPlans.filter((p) => p.type === 'direct').length;
-  const transferCount = tripPlans.filter((p) => p.type === 'transfer').length;
+  const transferCountPlans = tripPlans.filter((p) => p.type === 'transfer').length;
 
   const renderResultsList = () => (
-    <div data-testid="trip-planner-results" className="flex flex-col gap-2.5 p-3">
-      {!planning && tripPlans.length === 0 && !planningError && (
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3.5 text-sm text-slate-700">
-          <p className="font-bold text-emerald-900">¿Cómo llegar?</p>
-          <ol className="mt-2 list-decimal space-y-1.5 pl-4 text-[12px] leading-snug text-slate-600">
-            <li>Elige <strong>origen</strong> y <strong>destino</strong> arriba (o toca el mapa).</li>
-            <li>Te mostramos combis y opciones aquí.</li>
-            <li>Elige un viaje para verlo en el mapa.</li>
-          </ol>
-          <button
-            type="button"
-            onClick={() => {
-              setResultsOpen(false);
-              setSearchExpanded(true);
-              setActiveSearchField(originCoords ? 'destination' : 'origin');
-            }}
-            className="mt-3 w-full rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow cursor-pointer hover:bg-emerald-700"
-          >
-            {originCoords ? 'Elegir destino' : 'Empezar: ¿desde dónde sales?'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setPanel('routes')}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-white py-2 text-xs font-bold text-slate-700 cursor-pointer hover:bg-slate-50"
-          >
-            O ver todas las rutas del mapa
-          </button>
-        </div>
-      )}
-
-      {planning && (
-        <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-4 text-sm text-slate-600">
-          <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
-          Calculando mejores rutas…
-        </div>
-      )}
-      {planningError && (
-        <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600">
-          {planningError}
-        </p>
-      )}
-
-      {!planning && tripPlans.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {(
-            [
-              { id: 'all' as const, label: `Todos (${tripPlans.length})` },
-              { id: 'direct' as const, label: `Directo (${directCount})` },
-              { id: 'transfer' as const, label: `Transbordo (${transferCount})` },
-            ] as const
-          ).map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => {
-                setPlanTypeFilter(f.id);
-                const first = tripPlans.findIndex((p) =>
-                  f.id === 'all' ? true : p.type === f.id
-                );
-                if (first >= 0) setSelectedPlanIndex(first);
-              }}
-              className={`rounded-full border px-2.5 py-1 text-[10px] font-bold cursor-pointer transition ${
-                planTypeFilter === f.id
-                  ? 'border-emerald-600 bg-emerald-600 text-white'
-                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {!planning &&
-        filteredPlans.map(({ plan, idx }, listIdx) => {
-          const walkSegs = plan.segments.filter((s) => s.type === 'walk');
-          const firstWalk = walkSegs[0];
-          const rideSegs = plan.segments.filter((s) => s.type === 'ride');
-          return (
-            <motion.button
-              key={idx}
-              type="button"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: listIdx * 0.05 }}
-              onClick={() => {
-                setSelectedPlanIndex(idx);
-                // Al elegir un plan de viaje, retraer modal para ver el mapa
-                setResultsOpen(false);
-              }}
-              className={`vm-card vm-press w-full rounded-2xl border p-3 text-left cursor-pointer ${
-                selectedPlanIndex === idx
-                  ? 'ring-1 ring-emerald-500/30 shadow-md'
-                  : ''
-              }`}
-              style={
-                selectedPlanIndex === idx
-                  ? {
-                      borderColor: 'var(--vm-selected-border)',
-                      background: 'var(--vm-selected-bg)',
-                    }
-                  : undefined
-              }
-            >
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-emerald-700">
-                  {plan.type === 'direct' ? (
-                    <>
-                      <Bus className="h-3.5 w-3.5" /> Directo
-                    </>
-                  ) : (
-                    <>
-                      <ArrowRightLeft className="h-3.5 w-3.5" /> Transbordo · {rideSegs.length} rutas
-                    </>
-                  )}
-                </span>
-                <span className="text-xs font-bold text-slate-600">
-                  {Math.round(plan.totalDuration / 60)} min · {(plan.totalDistance / 1000).toFixed(1)} km
-                </span>
-              </div>
-
-              {/* Colores de todas las rutas del plan (1 directo o 2+ en transbordo) */}
-              {rideSegs.length > 0 && (
-                <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                  {rideSegs.map((r, ri) => (
-                    <span
-                      key={`${r.routeId}-${ri}`}
-                      className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700"
-                    >
-                      <span
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: r.color || '#3b82f6' }}
-                      />
-                      {ri + 1}. {r.routeName}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {firstWalk && firstWalk.distance > 0 && (
-                <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-sky-700">
-                  <Footprints className="h-3.5 w-3.5" />
-                  Caminar {Math.round(firstWalk.distance)} m para tomar la ruta
-                </p>
-              )}
-              <div className="flex flex-col gap-1.5">
-                {plan.segments.map((seg, sIdx) => (
-                  <div key={sIdx} className="flex gap-2 text-[11px]">
-                    <div
-                      className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${
-                        seg.type === 'walk' ? 'bg-slate-400' : 'bg-emerald-600'
-                      }`}
-                      style={seg.type === 'ride' ? { backgroundColor: seg.color } : undefined}
-                    />
-                    <p className="leading-snug text-slate-700">
-                      <span className="font-semibold">{seg.instruction}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-2 rounded-lg border border-amber-100 bg-amber-50 px-2 py-1.5 text-[9px] font-medium leading-relaxed text-amber-800">
-                Puntos de subida y bajada son sugeridos (no paradas oficiales).
-                {plan.type === 'transfer'
-                  ? ' En el mapa se dibujan todas las rutas del viaje a la vez.'
-                  : ''}
-              </p>
-            </motion.button>
-          );
-        })}
-      {!planning && tripPlans.length === 0 && !planningError && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-400">
-          Elige origen y destino para ver rutas.
-        </div>
-      )}
-      {!planning && tripPlans.length > 0 && filteredPlans.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-400">
-          No hay opciones de este tipo. Prueba “Todos” o “Directo”.
-        </div>
-      )}
-    </div>
+    <TripResultsPanel
+      planning={planning}
+      geometriesLoading={geometriesLoading}
+      planningError={planningError}
+      tripPlans={tripPlans}
+      sortedPlans={filteredPlans}
+      selectedPlanIndex={selectedPlanIndex}
+      planTypeFilter={planTypeFilter}
+      planSort={planSort}
+      directCount={directCount}
+      transferCountPlans={transferCountPlans}
+      originCoords={Boolean(originCoords)}
+      geocodeDegraded={geocodeDegraded}
+      onSelectPlan={(idx) => {
+        setSelectedPlanIndex(idx);
+        setResultsOpen(false);
+      }}
+      onPlanTypeFilter={(f) => {
+        setPlanTypeFilter(f);
+        const first = tripPlans.findIndex((p) => (f === 'all' ? true : p.type === f));
+        if (first >= 0) setSelectedPlanIndex(first);
+      }}
+      onPlanSort={setPlanSort}
+      onStartSearch={() => {
+        setResultsOpen(false);
+        setSearchExpanded(true);
+        setActiveSearchField(originCoords ? 'destination' : 'origin');
+      }}
+      onBrowseRoutes={() => setPanel('routes')}
+      onShare={() => void handleShareTrip()}
+      onCopyLink={() => void handleCopyTripLink()}
+    />
   );
 
   const renderFavorites = () => (
@@ -1273,7 +1277,7 @@ export default function HomeApp() {
         </p>
         {favoriteLocations.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3 text-center text-[11px] text-slate-400">
-            Marca el corazón en una dirección al buscar.
+            Marca el coraz??n en una direcci??n al buscar.
           </p>
         ) : (
           <div className="flex flex-col gap-1.5">
@@ -1294,7 +1298,7 @@ export default function HomeApp() {
                   }}
                 >
                   <p className="truncate text-sm font-semibold text-slate-800">{loc.name}</p>
-                  <p className="text-[10px] text-slate-400">{loc.description || 'Ubicación'}</p>
+                  <p className="text-[10px] text-slate-400">{loc.description || 'Ubicaci??n'}</p>
                 </button>
                 <button
                   type="button"
@@ -1314,7 +1318,7 @@ export default function HomeApp() {
         </p>
         {favRoutes.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3 text-center text-[11px] text-slate-400">
-            Explora rutas y toca el corazón.
+            Explora rutas y toca el coraz??n.
           </p>
         ) : (
           <div className="flex flex-col gap-1.5">
@@ -1357,7 +1361,7 @@ export default function HomeApp() {
       }}
       onMagicLink={handleMagicLink}
       onGoogle={() => void handleGoogleLogin()}
-      onLogout={() => void handleLogout()}
+      onLogout={(everywhere) => void handleLogout(Boolean(everywhere))}
       onClose={() => setAuthOpen(false)}
     />
   );
@@ -1942,75 +1946,88 @@ export default function HomeApp() {
               style={{ background: 'var(--vm-overlay)' }}
               onClick={() => setResultsOpen(false)}
             />
-            <motion.div
-              key="results-modal"
-              initial={
-                isDesktop
-                  ? { opacity: 0, scale: 0.94, y: 12 }
-                  : { opacity: 0, y: '100%' }
-              }
-              animate={
-                isDesktop ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, y: 0 }
-              }
-              exit={
-                isDesktop
-                  ? { opacity: 0, scale: 0.96, y: 8 }
-                  : { opacity: 0, y: '100%' }
-              }
-              transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+            <FocusTrap
+              active={resultsOpen}
+              onEscape={() => setResultsOpen(false)}
+              aria-label="Panel de viaje y rutas"
               className={
                 isDesktop
-                  ? 'vm-panel fixed left-1/2 top-1/2 z-50 flex max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-3xl border'
-                  : 'vm-panel fixed inset-x-0 bottom-0 z-50 flex max-h-[62vh] flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)]'
+                  ? 'fixed left-1/2 top-1/2 z-50 max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2'
+                  : 'fixed inset-x-0 bottom-0 z-50 max-h-[62vh]'
               }
             >
-              {!isDesktop && (
-                <div className="flex justify-center pt-2 pb-1">
-                  <span className="h-1 w-10 rounded-full bg-slate-300" />
-                </div>
-              )}
-              <div
-                className="flex items-center justify-between gap-2 px-3 py-2"
-                style={{ borderBottom: '1px solid var(--vm-card-border)' }}
+              <motion.div
+                key="results-modal"
+                initial={
+                  isDesktop
+                    ? { opacity: 0, scale: 0.94, y: 12 }
+                    : { opacity: 0, y: '100%' }
+                }
+                animate={
+                  isDesktop ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, y: 0 }
+                }
+                exit={
+                  isDesktop
+                    ? { opacity: 0, scale: 0.96, y: 8 }
+                    : { opacity: 0, y: '100%' }
+                }
+                transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                className={
+                  isDesktop
+                    ? 'vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
+                    : 'vm-panel flex max-h-[62vh] w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)]'
+                }
               >
-                <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto">
-                  {(
-                    [
-                      { id: 'results' as const, label: 'Mi viaje', icon: Navigation },
-                      { id: 'routes' as const, label: 'Rutas', icon: RouteIcon },
-                      { id: 'favorites' as const, label: 'Favoritos', icon: Heart },
-                    ] as const
-                  ).map((t) => {
-                    const Icon = t.icon;
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => setPanel(t.id)}
-                        className={`vm-press flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-bold cursor-pointer ${
-                          panel === t.id ? 'vm-chip-active' : 'vm-chip'
-                        }`}
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                        {t.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setResultsOpen(false)}
-                  className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-slate-600 cursor-pointer hover:bg-slate-200"
+                {!isDesktop && (
+                  <div className="flex justify-center pt-2 pb-1">
+                    <span className="h-1 w-10 rounded-full bg-slate-300" />
+                  </div>
+                )}
+                <div
+                  className="flex items-center justify-between gap-2 px-3 py-2"
+                  style={{ borderBottom: '1px solid var(--vm-card-border)' }}
                 >
-                  Ver mapa
-                </button>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto">
-                {panel === 'results' && renderResultsList()}
-                {panel === 'favorites' && renderFavorites()}
-                {panel === 'routes' && renderRouteExplorer()}
-              </div>
-            </motion.div>
+                  <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist">
+                    {(
+                      [
+                        { id: 'results' as const, label: 'Mi viaje', icon: Navigation },
+                        { id: 'routes' as const, label: 'Rutas', icon: RouteIcon },
+                        { id: 'favorites' as const, label: 'Favoritos', icon: Heart },
+                      ] as const
+                    ).map((t) => {
+                      const Icon = t.icon;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={panel === t.id}
+                          onClick={() => setPanel(t.id)}
+                          className={`vm-press flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-bold cursor-pointer ${
+                            panel === t.id ? 'vm-chip-active' : 'vm-chip'
+                          }`}
+                        >
+                          <Icon className="h-3.5 w-3.5" aria-hidden />
+                          {t.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setResultsOpen(false)}
+                    className="shrink-0 rounded-full bg-slate-200 px-2.5 py-1.5 text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-300"
+                  >
+                    Ver mapa
+                  </button>
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto" role="tabpanel">
+                  {panel === 'results' && renderResultsList()}
+                  {panel === 'favorites' && renderFavorites()}
+                  {panel === 'routes' && renderRouteExplorer()}
+                </div>
+              </motion.div>
+            </FocusTrap>
           </>
         )}
       </AnimatePresence>

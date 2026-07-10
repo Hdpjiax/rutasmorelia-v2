@@ -1,17 +1,38 @@
 import { NextResponse } from 'next/server';
 import { MORELIA_BBOX } from '@/lib/search/morelia-places';
+import { clientIpFromHeaders, rateLimit } from '@/lib/server/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * Geocoding OSM Nominatim acotado a Morelia.
- * Combina con catálogo local en el cliente.
+ * Rate-limit por IP para no abusar de Nominatim (política de uso).
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = (searchParams.get('q') || '').trim();
   if (q.length < 2) {
     return NextResponse.json({ results: [] });
+  }
+
+  const ip = clientIpFromHeaders(request.headers);
+  // ~1 req/s sostenido + burst: 30 / minuto por IP
+  const rl = rateLimit(`geocode:${ip}`, { limit: 30, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json(
+      {
+        results: [],
+        error: 'Demasiadas búsquedas. Espera un momento e inténtalo de nuevo.',
+        code: 'RATE_LIMIT',
+      },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(rl.retryAfterSec),
+          'X-RateLimit-Remaining': '0',
+        },
+      }
+    );
   }
 
   const viewbox = `${MORELIA_BBOX.west},${MORELIA_BBOX.north},${MORELIA_BBOX.east},${MORELIA_BBOX.south}`;
@@ -27,7 +48,7 @@ export async function GET(request: Request) {
   try {
     const res = await fetch(url.toString(), {
       headers: {
-        'User-Agent': 'ViaMorelia/1.0 (rutas transporte morelia; dev)',
+        'User-Agent': 'ViaMorelia/1.0 (https://viamorelia.org; rutas transporte morelia)',
         Accept: 'application/json',
         'Accept-Language': 'es-MX,es;q=0.9',
       },
@@ -36,8 +57,16 @@ export async function GET(request: Request) {
 
     if (!res.ok) {
       return NextResponse.json(
-        { results: [], error: `Nominatim ${res.status}` },
-        { status: 200 }
+        {
+          results: [],
+          error: `El mapa de lugares no respondió (${res.status}). Usa el catálogo local o toca el mapa.`,
+          code: 'GEOCODE_UPSTREAM',
+          degraded: true,
+        },
+        {
+          status: 200,
+          headers: { 'X-RateLimit-Remaining': String(rl.remaining) },
+        }
       );
     }
 
@@ -65,12 +94,17 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({ results });
+    return NextResponse.json(
+      { results },
+      { headers: { 'X-RateLimit-Remaining': String(rl.remaining) } }
+    );
   } catch (e) {
     console.error('[geocode]', e);
     return NextResponse.json({
       results: [],
       error: e instanceof Error ? e.message : 'geocode failed',
+      code: 'GEOCODE_FAILED',
+      degraded: true,
     });
   }
 }

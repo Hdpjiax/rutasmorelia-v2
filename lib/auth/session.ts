@@ -71,7 +71,17 @@ export async function signInWithGoogle(redirectTo: string) {
 export async function signOut() {
   const real = getBrowserSupabase();
   if (real) {
-    await real.auth.signOut();
+    await real.auth.signOut({ scope: 'local' });
+    return;
+  }
+  await mockSupabaseClient.auth.signOut();
+}
+
+/** Cierra sesión en este dispositivo y revoca refresh tokens (otros dispositivos). */
+export async function signOutEverywhere() {
+  const real = getBrowserSupabase();
+  if (real) {
+    await real.auth.signOut({ scope: 'global' });
     return;
   }
   await mockSupabaseClient.auth.signOut();
