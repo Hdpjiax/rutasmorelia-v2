@@ -2,6 +2,7 @@ import maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import {
   basemapStyleUrl,
+  getOptionalPmtilesUrl,
   MORELIA_CENTER,
   MORELIA_ZOOM,
   type MapBasemapTheme,
@@ -24,6 +25,15 @@ export function initMoreliaMap({
   onReady,
 }: InitMapOptions): MapLibreMap {
   void _basemapTheme;
+  const pmtiles = getOptionalPmtilesUrl();
+  if (pmtiles && typeof console !== 'undefined') {
+    // PMTiles opcional: requiere protocol registrado (maplibre-gl-pmtiles) en deploys avanzados.
+    // Mientras no esté el protocol, se usa Carto Positron y se deja el hint en consola.
+    console.info(
+      '[ViaMorelia] NEXT_PUBLIC_PMTILES_URL definido; basemap sigue en Positron hasta registrar protocol PMTiles.',
+      pmtiles
+    );
+  }
   const map = new maplibregl.Map({
     container,
     style: basemapStyleUrl('light'),

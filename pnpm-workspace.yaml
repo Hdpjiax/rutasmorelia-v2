@@ -1,3 +1,9 @@
+# Workspace monorepo (este repo es la raíz de la app)
+packages:
+  - '.'
+
+# pnpm 10+/11: aprobar builds nativos que Next y tooling necesitan
 allowBuilds:
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
+  sharp: true
+  unrs-resolver: true
+  esbuild: true

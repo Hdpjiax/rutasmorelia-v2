@@ -9,14 +9,21 @@ export type Coordinate = [number, number]; // [lng, lat]
 
 export interface PlannerPreferences {
   maxWalkDistanceMeters?: number; // default 900m
-  allowTransfers?: boolean; // default true — solo si no hay directos útiles
-  walkSpeedMeterPerSec?: number; // default 1.25 m/s
-  transitSpeedMeterPerSec?: number; // default 7.5 m/s
+  allowTransfers?: boolean; // default true
+  walkSpeedMeterPerSec?: number; // default 1.2 m/s
+  transitSpeedMeterPerSec?: number; // default 6.1 m/s
   /** Shapes publicadas; si no se pasan, no hay red (devuelve []). */
   shapes?: PublishedShape[];
-  /** Preferir solo directos si hay al menos uno con caminata total razonable */
+  /**
+   * Si true: solo calcula transbordos cuando no hay directos útiles.
+   * Default false: el usuario ve directos y transbordos juntos.
+   */
   transferOnlyIfNecessary?: boolean;
   maxDirectWalkTotalM?: number;
+  /** Máx. opciones directas en la lista (default 6) */
+  maxDirectPlans?: number;
+  /** Máx. opciones con transbordo en la lista (default 6) */
+  maxTransferPlans?: number;
 }
 
 export interface TravelSegment {
@@ -78,8 +85,11 @@ export async function planTrip(
   // ~4.3 km/h a pie (incluye cruces); ~22 km/h combi en ciudad
   const walkSpeed = preferences.walkSpeedMeterPerSec ?? 1.2;
   const transitSpeed = preferences.transitSpeedMeterPerSec ?? 6.1;
-  const transferOnlyIfNecessary = preferences.transferOnlyIfNecessary ?? true;
+  // Por defecto SIEMPRE calcular transbordos (el usuario debe ver ambas familias)
+  const transferOnlyIfNecessary = preferences.transferOnlyIfNecessary ?? false;
   const maxDirectWalkTotal = preferences.maxDirectWalkTotalM ?? 1600;
+  const maxDirectPlans = preferences.maxDirectPlans ?? 6;
+  const maxTransferPlans = preferences.maxTransferPlans ?? 6;
 
   let shapes: PublishedShape[] = preferences.shapes ?? [];
   if (shapes.length === 0) {
@@ -203,14 +213,15 @@ export async function planTrip(
       }
       return a.totalDuration - b.totalDuration;
     })
-  ).slice(0, 8);
+  ).slice(0, maxDirectPlans);
 
+  // Solo omitir transbordos si el caller lo pide explícitamente y ya hay directos
   if (goodDirects.length > 0 && transferOnlyIfNecessary) {
     return goodDirects;
   }
 
   const transfers: TripPlan[] = [];
-  if (allowTransfers && (goodDirects.length === 0 || !transferOnlyIfNecessary)) {
+  if (allowTransfers) {
     // Precalcular puntos de acceso cortos a origen/destino por shape
     type ShapeAccess = {
       shape: PublishedShape;
@@ -359,18 +370,18 @@ export async function planTrip(
     }
   }
 
-  const combined = [
-    ...goodDirects,
-    ...dedupePlans(
-      transfers.sort((a, b) => {
-        if (Math.abs(a.walkDistanceTotal - b.walkDistanceTotal) > 40) {
-          return a.walkDistanceTotal - b.walkDistanceTotal;
-        }
-        return a.totalDuration - b.totalDuration;
-      })
-    ).slice(0, 6),
-  ];
-  return combined.slice(0, 10);
+  const goodTransfers = dedupePlans(
+    transfers.sort((a, b) => {
+      if (Math.abs(a.walkDistanceTotal - b.walkDistanceTotal) > 40) {
+        return a.walkDistanceTotal - b.walkDistanceTotal;
+      }
+      return a.totalDuration - b.totalDuration;
+    })
+  ).slice(0, maxTransferPlans);
+
+  // Directos primero (más simples), luego transbordos útiles
+  // El UI puede reordenar por tiempo/caminata/transbordos
+  return [...goodDirects, ...goodTransfers].slice(0, maxDirectPlans + maxTransferPlans);
 }
 
 /**

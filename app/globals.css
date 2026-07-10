@@ -48,6 +48,48 @@ body {
     color var(--vm-transition);
 }
 
+/* Contraste AA: texto secundario y chips más oscuros en UI clara */
+:root {
+  --vm-muted: #475569;
+  --vm-text-secondary: #334155;
+}
+
+/* Focus visible global (teclado) */
+:focus-visible {
+  outline: 2px solid #047857;
+  outline-offset: 2px;
+}
+
+.vm-btn-icon:focus-visible,
+.vm-chip:focus-visible,
+.vm-press:focus-visible {
+  outline: 2px solid #047857;
+  outline-offset: 2px;
+}
+
+/* Utilidad sr-only si Tailwind no la aplica en algún contexto */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.sr-only:focus,
+.focus\:not-sr-only:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
 /* Inputs legibles en ambos temas */
 input,
 textarea,

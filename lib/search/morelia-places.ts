@@ -111,48 +111,48 @@ function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
   const name = normalize(place.name);
   const desc = normalize(place.description || '');
   const cat = normalize(place.category);
+  const nameTokens = name.split(/\s+/).filter(Boolean);
   let score = 0;
 
-  if (name === q) score += 120;
-  else if (name.startsWith(q)) score += 80;
-  else if (name.includes(q)) score += 55;
-  else if (desc.includes(q)) score += 35;
-  else if (cat.includes(q)) score += 20;
+  // Exacto / prefijo primero (el ranking final en mergeAndRankPlaces refuerza esto)
+  if (name === q) score += 500;
+  else if (name.startsWith(q)) score += 320;
+  else if (nameTokens.some((w) => w === q)) score += 280;
+  else if (name.includes(q)) score += 160;
+  else if (desc.includes(q)) score += 90;
+  else if (cat.includes(q)) score += 40;
 
-  // tokens: "centro historico" vs "centro"
   const qTokens = q.split(/\s+/).filter(Boolean);
-  const nameTokens = name.split(/\s+/);
   let tokenHits = 0;
   for (const t of qTokens) {
     if (t.length < 2) continue;
     if (nameTokens.some((n) => n.startsWith(t) || n.includes(t))) tokenHits++;
     else if (desc.includes(t)) tokenHits += 0.5;
   }
-  if (qTokens.length) score += (tokenHits / qTokens.length) * 40;
+  if (qTokens.length) score += (tokenHits / qTokens.length) * 80;
 
-  // fuzzy word distance
   for (const word of nameTokens) {
     if (word.length < 3 || q.length < 3) continue;
     if (word.includes(q) || q.includes(word)) {
-      score += 15;
+      score += 25;
       break;
     }
-    // simple edit: same start 3 chars
-    if (word.slice(0, 3) === q.slice(0, 3)) score += 8;
+    if (word.slice(0, 3) === q.slice(0, 3)) score += 12;
   }
 
   return score;
 }
 
 /** Busca en el catálogo local. */
-export function searchLocalPlaces(query: string, limit = 12): PlaceHit[] {
+export function searchLocalPlaces(query: string, limit = 20): PlaceHit[] {
   const q = query.trim();
   if (!q) {
     return CATALOG.slice(0, limit).map((p) => ({ ...p, source: 'catalog' as const }));
   }
 
+  // Umbral bajo: el merge final recorta; no ocultar coincidencias débiles del catálogo
   return CATALOG.map((p) => ({ place: p, score: scorePlace(q, p) }))
-    .filter((x) => x.score > 12)
+    .filter((x) => x.score > 8)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => ({ ...x.place, source: 'catalog' as const }));

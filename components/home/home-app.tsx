@@ -2,8 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import type { GeoJSONSource, Map as MapLibreMap, Marker } from 'maplibre-gl';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Heart,
@@ -29,13 +28,13 @@ import {
 import { mockSupabaseClient, mockDb, type Route } from '@/lib/supabase/client';
 import { planTrip, type Coordinate, type TripPlan } from '@/lib/routing/planner';
 import {
-  loadPublishedRoutes,
   loadShapesForRouteIds,
   loadShapesNearTrip,
   prefetchAllShapesInBackground,
+  prefetchFrequentRoutes,
+  prefetchShapesNearCoordinate,
   type PublishedShape,
 } from '@/lib/routing/load-published-shapes';
-import { initMoreliaMap, destroyMoreliaMap } from '@/lib/map/init-map';
 import { ROUTES_SOURCE_ID, setTripStopsData } from '@/lib/map/route-layers';
 import { toast } from '@/lib/ui/toast';
 import {
@@ -47,6 +46,7 @@ import {
   searchLocalPlaces,
   type PlaceHit,
 } from '@/lib/search/morelia-places';
+import { mergeAndRankPlaces } from '@/lib/search/rank-places';
 import {
   toSingleCorridorDisplay,
   type RouteFeatureCollection,
@@ -57,7 +57,6 @@ import {
   loadFavoriteRoutes,
   loadLocalFavoriteLocations,
   loadLocalFavoriteRoutes,
-  prioritizeFavoriteLocations,
   removeFavoriteLocation,
   toggleFavoriteRoute,
   type FavoriteLocation,
@@ -79,11 +78,16 @@ import {
   sortTripPlans,
 } from '@/features/planner';
 import { useTripUiStore } from '@/lib/trip/store';
+import { usePublishedRoutes } from '@/features/routes/use-published-routes';
+import { MapCanvas } from '@/features/map/map-canvas';
 import { AuthPanel } from '@/components/home/auth-panel';
 import { AdminGateBanner } from '@/components/home/admin-gate-banner';
 import { TripResultsPanel } from '@/components/home/trip-results-panel';
+import { SearchBar } from '@/components/home/search-bar';
+import { BottomDock } from '@/components/home/bottom-dock';
 import { createOrbElement } from '@/components/home/map-markers';
-import { FocusTrap } from '@/components/ui/focus-trap';
+import { SkipLink } from '@/components/ui/skip-link';
+import { ResultsSheet } from '@/components/home/results-sheet';
 
 type PanelMode = 'search' | 'results' | 'favorites' | 'routes';
 
@@ -108,11 +112,12 @@ function metaToRoute(r: {
 }
 
 export default function HomeApp() {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<Record<string, maplibregl.Marker>>({});
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const markersRef = useRef<Record<string, Marker>>({});
+  const mlRef = useRef<typeof import('maplibre-gl') | null>(null);
   const shapesRef = useRef<PublishedShape[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const publishedQuery = usePublishedRoutes();
 
   const [user, setUser] = useState<SessionUser | null>(null);
   const [email, setEmail] = useState('');
@@ -234,63 +239,62 @@ export default function HomeApp() {
     };
   }, []);
 
-  // Boot ligero: index.json primero; geometrías en idle / al planificar
+  // Rutas vía TanStack Query (index.json)
   useEffect(() => {
-    const boot = async () => {
-      setShapesLoading(true);
-      try {
-        const published = await loadPublishedRoutes();
-        if (published.length > 0) {
-          setRoutes(published.map(metaToRoute));
-        } else {
-          const { data } = await mockSupabaseClient.from('routes').select();
+    if (publishedQuery.data?.length) {
+      setRoutes(publishedQuery.data.map(metaToRoute));
+      setShapesLoading(false);
+      prefetchAllShapesInBackground();
+      prefetchFrequentRoutes(loadLocalFavoriteRoutes());
+    } else if (publishedQuery.isError) {
+      setShapesLoading(false);
+      void mockSupabaseClient
+        .from('routes')
+        .select()
+        .then(({ data }) => {
           if (data) setRoutes(data as Route[]);
-          toast('No se cargó el índice de rutas publicadas', 'warning');
-        }
-      } catch (e) {
-        console.warn(e);
-        const { data } = await mockSupabaseClient.from('routes').select();
-        if (data) setRoutes(data as Route[]);
-      } finally {
-        setShapesLoading(false);
-        prefetchAllShapesInBackground();
-      }
+        });
+      toast('No se cargó el índice de rutas publicadas', 'warning');
+    } else if (publishedQuery.isLoading) {
+      setShapesLoading(true);
+    }
+  }, [publishedQuery.data, publishedQuery.isError, publishedQuery.isLoading]);
 
-      // Deep links: ?from=&to= y/o ?route=
-      try {
-        const trip = readTripUrlState();
-        if (trip.origin) {
-          setOriginCoords(trip.origin);
-          setOriginInput(
-            trip.originLabel ||
-              `${trip.origin[1].toFixed(5)}, ${trip.origin[0].toFixed(5)}`
-          );
-        }
-        if (trip.destination) {
-          setDestinationCoords(trip.destination);
-          setDestinationInput(
-            trip.destinationLabel ||
-              `${trip.destination[1].toFixed(5)}, ${trip.destination[0].toFixed(5)}`
-          );
-        }
-        if (trip.origin && trip.destination) {
-          setShowWelcome(false);
-          setPanel('results');
-          setResultsOpen(true);
-          if (trip.planIndex != null) setSelectedPlanIndex(trip.planIndex);
-        }
-        if (trip.routeId) {
-          setSelectedRouteId(trip.routeId);
-          setPanel('routes');
-          setResultsOpen(true);
-          setShowWelcome(false);
-        }
-        urlHydratedRef.current = true;
-      } catch {
-        urlHydratedRef.current = true;
+  // Deep links: ?from=&to= y/o ?route=
+  useEffect(() => {
+    try {
+      const trip = readTripUrlState();
+      if (trip.origin) {
+        setOriginCoords(trip.origin);
+        setOriginInput(
+          trip.originLabel ||
+            `${trip.origin[1].toFixed(5)}, ${trip.origin[0].toFixed(5)}`
+        );
+        prefetchShapesNearCoordinate(trip.origin);
       }
-    };
-    void boot();
+      if (trip.destination) {
+        setDestinationCoords(trip.destination);
+        setDestinationInput(
+          trip.destinationLabel ||
+            `${trip.destination[1].toFixed(5)}, ${trip.destination[0].toFixed(5)}`
+        );
+      }
+      if (trip.origin && trip.destination) {
+        setShowWelcome(false);
+        setPanel('results');
+        setResultsOpen(true);
+        if (trip.planIndex != null) setSelectedPlanIndex(trip.planIndex);
+      }
+      if (trip.routeId) {
+        setSelectedRouteId(trip.routeId);
+        setPanel('routes');
+        setResultsOpen(true);
+        setShowWelcome(false);
+      }
+      urlHydratedRef.current = true;
+    } catch {
+      urlHydratedRef.current = true;
+    }
   }, []);
 
   // Sincroniza URL del viaje (compartible) sin recargar
@@ -331,6 +335,7 @@ export default function HomeApp() {
         setOriginCoords(coords);
         setOriginInput('Mi ubicación');
         setLocating(false);
+        prefetchShapesNearCoordinate(coords);
         const map = mapRef.current;
         if (map) {
           map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 15), essential: true });
@@ -534,29 +539,49 @@ export default function HomeApp() {
     toast(ok ? 'Enlace del viaje copiado' : 'No se pudo copiar', ok ? 'success' : 'error');
   };
 
-  // Autocompletado: favoritos primero + catálogo + Nominatim
+  // Autocompletado: exactos primero, luego catálogo + Nominatim + favoritos
   const runSearch = useCallback(
     async (val: string) => {
       const q = val.trim();
       if (!q) {
-        // Sin query: mostrar favoritos de ubicación
-        setSuggestions(
-          prioritizeFavoriteLocations([], favoriteLocations, '') as PlaceHit[]
-        );
+        const favs: PlaceHit[] = favoriteLocations.map((f) => ({
+          id: f.id,
+          name: f.name,
+          description: f.description || 'Favorito',
+          category: 'favorite',
+          coordinates: f.coordinates,
+          source: 'favorite' as const,
+          isFavorite: true,
+        }));
+        setSuggestions(favs.slice(0, 8));
         setSearchLoading(false);
         return;
       }
       setSearchLoading(true);
-      const local = searchLocalPlaces(q, 10);
-      let merged: PlaceHit[] = prioritizeFavoriteLocations(
-        local,
-        favoriteLocations,
-        q
-      ) as PlaceHit[];
-      setSuggestions(merged);
+      const local = searchLocalPlaces(q, 24);
+      const favHits: PlaceHit[] = favoriteLocations
+        .filter((f) => {
+          const n = f.name.toLowerCase();
+          const qq = q.toLowerCase();
+          return n.includes(qq) || (f.description || '').toLowerCase().includes(qq);
+        })
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          description: f.description || 'Favorito',
+          category: 'favorite',
+          coordinates: f.coordinates,
+          source: 'favorite' as const,
+          isFavorite: true,
+        }));
+
+      // Respuesta inmediata con catálogo (exactos ya rankeados)
+      setSuggestions(mergeAndRankPlaces([favHits, local], q, 20));
 
       try {
-        const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { cache: 'no-store' });
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+          cache: 'no-store',
+        });
         if (res.status === 429) {
           setGeocodeDegraded(true);
           toast('Demasiadas búsquedas de lugares. Usa catálogo o el mapa.', 'warning');
@@ -564,24 +589,23 @@ export default function HomeApp() {
           const data = await res.json();
           if (data.degraded || data.error) setGeocodeDegraded(true);
           else setGeocodeDegraded(false);
-          const remote: PlaceHit[] = data.results ?? [];
-          merged = prioritizeFavoriteLocations(
-            [...local, ...remote],
-            favoriteLocations,
-            q
-          ).slice(0, 16) as PlaceHit[];
-          setSuggestions(merged);
+          const remote: PlaceHit[] = (data.results ?? []).map(
+            (r: PlaceHit & { source?: string }) => ({
+              ...r,
+              source: 'geocode' as const,
+            })
+          );
+          setSuggestions(mergeAndRankPlaces([favHits, local, remote], q, 24));
         } else {
           setGeocodeDegraded(true);
         }
       } catch {
         setGeocodeDegraded(true);
-        /* keep local+favs */
       } finally {
         setSearchLoading(false);
       }
     },
-    [favoriteLocations]
+    [favoriteLocations, setGeocodeDegraded]
   );
 
   const handleSearchChange = (field: 'origin' | 'destination', val: string) => {
@@ -636,10 +660,13 @@ export default function HomeApp() {
         setGeometriesLoading(false);
         const plans = await planTrip(originCoords, destinationCoords, {
           shapes,
-          transferOnlyIfNecessary: true,
+          // Siempre mostrar directos Y posibles transbordos
+          transferOnlyIfNecessary: false,
           allowTransfers: true,
           maxWalkDistanceMeters: 950,
           maxDirectWalkTotalM: 1400,
+          maxDirectPlans: 6,
+          maxTransferPlans: 6,
           walkSpeedMeterPerSec: 1.2,
           transitSpeedMeterPerSec: 6.1,
         });
@@ -687,46 +714,29 @@ export default function HomeApp() {
     };
   }, [originCoords, destinationCoords, setGeometriesLoading]);
 
-  // Mapa: siempre Carto Positron (gris claro). El tema UI oscuro no cambia el basemap.
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-    let map: maplibregl.Map | null = null;
-    try {
-      map = initMoreliaMap({
-        container: mapContainerRef.current,
-        includeWalkLayers: true,
-        basemapTheme: 'light',
-        onReady: (m) => {
-          setStyleLoaded(true);
-          m.resize();
-        },
-      });
-      mapRef.current = map;
+  const handleMapReady = useCallback((m: MapLibreMap) => {
+    mapRef.current = m;
+    setStyleLoaded(true);
+    m.resize();
+    void import('maplibre-gl').then((mod) => {
+      mlRef.current = mod;
+    });
+  }, []);
 
-      map.on('click', (e) => {
-        const field = activeSearchFieldRef.current;
-        if (!field) return;
-        const coords: Coordinate = [e.lngLat.lng, e.lngLat.lat];
-        if (field === 'origin') {
-          setOriginCoords(coords);
-          setOriginInput(`${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`);
-          toast('Origen en el mapa', 'success');
-        } else {
-          setDestinationCoords(coords);
-          setDestinationInput(`${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`);
-          toast('Destino en el mapa', 'success');
-        }
-        setActiveSearchField(null);
-        setSuggestions([]);
-      });
-    } catch (e) {
-      console.warn(e);
+  const handleMapClick = useCallback((coords: Coordinate) => {
+    const field = activeSearchFieldRef.current;
+    if (!field) return;
+    if (field === 'origin') {
+      setOriginCoords(coords);
+      setOriginInput(`${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`);
+      toast('Origen en el mapa', 'success');
+    } else {
+      setDestinationCoords(coords);
+      setDestinationInput(`${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`);
+      toast('Destino en el mapa', 'success');
     }
-    return () => {
-      destroyMoreliaMap(map);
-      mapRef.current = null;
-      setStyleLoaded(false);
-    };
+    setActiveSearchField(null);
+    setSuggestions([]);
   }, []);
 
   const findClosestCoordinateIndex = (coords: Coordinate[], target: Coordinate) => {
@@ -764,7 +774,7 @@ export default function HomeApp() {
           const res = await fetch(file);
           if (!res.ok) throw new Error('geojson');
           const data = (await res.json()) as RouteFeatureCollection;
-          const source = map.getSource(ROUTES_SOURCE_ID) as maplibregl.GeoJSONSource;
+          const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
           const single = toSingleCorridorDisplay(data, { role: 'full' });
           source?.setData(single as unknown as GeoJSON.FeatureCollection);
           const all: Coordinate[] = [];
@@ -778,11 +788,15 @@ export default function HomeApp() {
             }
           }
           if (all.length) {
-            const b = all.reduce(
-              (acc, c) => acc.extend(c),
-              new maplibregl.LngLatBounds(all[0], all[0])
+            const lngs = all.map((c) => c[0]);
+            const lats = all.map((c) => c[1]);
+            map.fitBounds(
+              [
+                [Math.min(...lngs), Math.min(...lats)],
+                [Math.max(...lngs), Math.max(...lats)],
+              ],
+              { padding: 56, maxZoom: 15 }
             );
-            map.fitBounds(b, { padding: 56, maxZoom: 15 });
           }
           // Deep link estable
           if (meta && typeof window !== 'undefined') {
@@ -793,7 +807,7 @@ export default function HomeApp() {
         })
         .catch(() => toast('No se pudo cargar la ruta', 'error'));
     } else {
-      const source = map.getSource(ROUTES_SOURCE_ID) as maplibregl.GeoJSONSource;
+      const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
       source?.setData({ type: 'FeatureCollection', features: [] });
       setTripStopsData(map, []);
       try {
@@ -934,13 +948,13 @@ export default function HomeApp() {
       }
     });
 
-    const source = map.getSource(ROUTES_SOURCE_ID) as maplibregl.GeoJSONSource;
+    const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
     source?.setData({
       type: 'FeatureCollection',
       features,
     } as unknown as GeoJSON.FeatureCollection);
 
-    // Letreros solo con coordenadas válidas (evita “Baja aquí” en la esquina)
+    // Letreros Sube/Baja (sin “punto virtual”). Si transbordo es el mismo sitio → 1 marcador.
     const isMapCoord = (c?: Coordinate | null): c is Coordinate => {
       if (!c || c.length < 2) return false;
       const [lng, lat] = c;
@@ -954,39 +968,55 @@ export default function HomeApp() {
       );
     };
 
-    const stopFeatures: Array<{
+    /** ~35 m en Morelia (grados) */
+    const sameSpot = (a: Coordinate, b: Coordinate, maxM = 35) => {
+      const dLng = (a[0] - b[0]) * 111320 * Math.cos((a[1] * Math.PI) / 180);
+      const dLat = (a[1] - b[1]) * 110540;
+      return Math.hypot(dLng, dLat) <= maxM;
+    };
+
+    type StopFeat = {
       type: 'Feature';
-      properties: { label: string; kind: 'sube' | 'baja' | 'transbordo' };
+      properties: {
+        label: string;
+        kind: 'sube' | 'baja' | 'transbordo';
+        stack: 'up' | 'down' | 'center';
+      };
       geometry: { type: 'Point'; coordinates: [number, number] };
-    }> = [];
+    };
+    const stopFeatures: StopFeat[] = [];
+
+    const pushStop = (
+      coords: Coordinate,
+      label: string,
+      kind: StopFeat['properties']['kind'],
+      stack: StopFeat['properties']['stack'] = 'center'
+    ) => {
+      // Offset leve en el mapa si hay dos etiquetas cercanas (arriba / abajo)
+      let [lng, lat] = coords;
+      if (stack === 'up') lat += 0.00012;
+      if (stack === 'down') lat -= 0.00012;
+      stopFeatures.push({
+        type: 'Feature',
+        properties: { label, kind, stack },
+        geometry: { type: 'Point', coordinates: [lng, lat] },
+      });
+    };
 
     plan.segments.forEach((seg, idx) => {
       if (seg.type === 'walk' && seg.walkKind === 'transfer') {
-        if (isMapCoord(seg.walkFrom)) {
-          stopFeatures.push({
-            type: 'Feature',
-            properties: {
-              label: '🔄 Baja · punto virtual',
-              kind: 'transbordo',
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [seg.walkFrom[0], seg.walkFrom[1]],
-            },
-          });
-        }
-        if (isMapCoord(seg.walkTo)) {
-          stopFeatures.push({
-            type: 'Feature',
-            properties: {
-              label: '🔄 Sube · punto virtual',
-              kind: 'transbordo',
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [seg.walkTo[0], seg.walkTo[1]],
-            },
-          });
+        const from = isMapCoord(seg.walkFrom) ? seg.walkFrom : null;
+        const to = isMapCoord(seg.walkTo) ? seg.walkTo : null;
+        if (from && to && sameSpot(from, to)) {
+          // Mismo lugar: un solo letrero (no se tapan Baja + Sube)
+          const mid: Coordinate = [
+            (from[0] + to[0]) / 2,
+            (from[1] + to[1]) / 2,
+          ];
+          pushStop(mid, 'Baja y sube aquí', 'transbordo', 'center');
+        } else {
+          if (from) pushStop(from, 'Baja aquí', 'baja', 'up');
+          if (to) pushStop(to, 'Sube aquí', 'sube', 'down');
         }
         return;
       }
@@ -994,36 +1024,69 @@ export default function HomeApp() {
       if (isMapCoord(seg.boardingPoint)) {
         const prev = plan.segments[idx - 1];
         const afterTransfer = prev?.type === 'walk' && prev.walkKind === 'transfer';
+        // Si el transbordo ya marcó Sube en el mismo sitio, no duplicar
         if (!afterTransfer) {
-          stopFeatures.push({
-            type: 'Feature',
-            properties: { label: '⬆ Sube · punto virtual', kind: 'sube' },
-            geometry: {
-              type: 'Point',
-              coordinates: [seg.boardingPoint[0], seg.boardingPoint[1]],
-            },
-          });
+          pushStop(seg.boardingPoint, 'Sube aquí', 'sube', 'center');
         }
       }
       if (isMapCoord(seg.alightingPoint)) {
         const next = plan.segments[idx + 1];
         const isTransfer = next?.type === 'walk' && next.walkKind === 'transfer';
         if (!isTransfer) {
-          stopFeatures.push({
-            type: 'Feature',
-            properties: {
-              label: '⬇ Baja · punto virtual',
-              kind: 'baja',
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [seg.alightingPoint[0], seg.alightingPoint[1]],
-            },
-          });
+          pushStop(seg.alightingPoint, 'Baja aquí', 'baja', 'center');
         }
       }
     });
-    setTripStopsData(map, stopFeatures);
+
+    // Último paso: fusionar cualquier par sube+baja que aún coincida en el mismo sitio
+    const merged: StopFeat[] = [];
+    const used = new Set<number>();
+    for (let i = 0; i < stopFeatures.length; i++) {
+      if (used.has(i)) continue;
+      const a = stopFeatures[i];
+      let fused = false;
+      for (let j = i + 1; j < stopFeatures.length; j++) {
+        if (used.has(j)) continue;
+        const b = stopFeatures[j];
+        if (
+          sameSpot(a.geometry.coordinates as Coordinate, b.geometry.coordinates as Coordinate) &&
+          a.properties.kind !== b.properties.kind
+        ) {
+          const mid: Coordinate = [
+            (a.geometry.coordinates[0] + b.geometry.coordinates[0]) / 2,
+            (a.geometry.coordinates[1] + b.geometry.coordinates[1]) / 2,
+          ];
+          const hasSube =
+            a.properties.kind === 'sube' ||
+            b.properties.kind === 'sube' ||
+            a.properties.label.includes('Sube') ||
+            b.properties.label.includes('Sube');
+          const hasBaja =
+            a.properties.kind === 'baja' ||
+            b.properties.kind === 'baja' ||
+            a.properties.label.includes('Baja') ||
+            b.properties.label.includes('Baja');
+          const label =
+            hasSube && hasBaja
+              ? 'Baja y sube aquí'
+              : hasSube
+                ? 'Sube aquí'
+                : 'Baja aquí';
+          merged.push({
+            type: 'Feature',
+            properties: { label, kind: 'transbordo', stack: 'center' },
+            geometry: { type: 'Point', coordinates: mid },
+          });
+          used.add(i);
+          used.add(j);
+          fused = true;
+          break;
+        }
+      }
+      if (!fused) merged.push(a);
+    }
+
+    setTripStopsData(map, merged);
 
     // Bounds: ruta completa + origen/destino
     const allCoords: Coordinate[] = [];
@@ -1038,11 +1101,15 @@ export default function HomeApp() {
     if (originCoords) allCoords.push(originCoords);
     if (destinationCoords) allCoords.push(destinationCoords);
     if (allCoords.length) {
-      const b = allCoords.reduce(
-        (acc, c) => acc.extend(c),
-        new maplibregl.LngLatBounds(allCoords[0], allCoords[0])
+      const lngs = allCoords.map((c) => c[0]);
+      const lats = allCoords.map((c) => c[1]);
+      map.fitBounds(
+        [
+          [Math.min(...lngs), Math.min(...lats)],
+          [Math.max(...lngs), Math.max(...lats)],
+        ],
+        { padding: 64, maxZoom: 14.5, duration: 800 }
       );
-      map.fitBounds(b, { padding: 64, maxZoom: 14.5, duration: 800 });
     }
   }, [tripPlans, selectedPlanIndex, styleLoaded, originCoords, destinationCoords]);
 
@@ -1050,33 +1117,46 @@ export default function HomeApp() {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !styleLoaded) return;
+    let cancelled = false;
 
-    Object.values(markersRef.current).forEach((m) => m.remove());
-    markersRef.current = {};
+    const run = async () => {
+      if (!mlRef.current) {
+        mlRef.current = await import('maplibre-gl');
+      }
+      if (cancelled || !mapRef.current) return;
+      const { Marker } = mlRef.current;
 
-    const ok = (c: Coordinate | null) =>
-      !!c &&
-      Number.isFinite(c[0]) &&
-      Number.isFinite(c[1]) &&
-      Math.abs(c[0]) > 0.01 &&
-      Math.abs(c[1]) > 0.01;
+      Object.values(markersRef.current).forEach((m) => m.remove());
+      markersRef.current = {};
 
-    if (ok(originCoords)) {
-      markersRef.current.origin = new maplibregl.Marker({
-        element: createOrbElement('origin'),
-        anchor: 'center',
-      })
-        .setLngLat(originCoords!)
-        .addTo(map);
-    }
-    if (ok(destinationCoords)) {
-      markersRef.current.destination = new maplibregl.Marker({
-        element: createOrbElement('dest'),
-        anchor: 'center',
-      })
-        .setLngLat(destinationCoords!)
-        .addTo(map);
-    }
+      const ok = (c: Coordinate | null) =>
+        !!c &&
+        Number.isFinite(c[0]) &&
+        Number.isFinite(c[1]) &&
+        Math.abs(c[0]) > 0.01 &&
+        Math.abs(c[1]) > 0.01;
+
+      if (ok(originCoords)) {
+        markersRef.current.origin = new Marker({
+          element: createOrbElement('origin'),
+          anchor: 'center',
+        })
+          .setLngLat(originCoords!)
+          .addTo(map);
+      }
+      if (ok(destinationCoords)) {
+        markersRef.current.destination = new Marker({
+          element: createOrbElement('dest'),
+          anchor: 'center',
+        })
+          .setLngLat(destinationCoords!)
+          .addTo(map);
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
   }, [originCoords, destinationCoords, styleLoaded]);
 
   const zoomBy = (delta: number) => {
@@ -1102,7 +1182,7 @@ export default function HomeApp() {
 
     const map = mapRef.current;
     if (map) {
-      const source = map.getSource(ROUTES_SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+      const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource | undefined;
       source?.setData({ type: 'FeatureCollection', features: [] });
       setTripStopsData(map, []);
     }
@@ -1500,20 +1580,17 @@ export default function HomeApp() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[var(--background)] font-sans">
-      <div
-        data-testid="map-container"
-        ref={mapContainerRef}
-        className="rm-map-canvas absolute inset-0 z-0 h-full w-full"
-      />
-
+      <SkipLink href="#search-panel" label="Saltar a búsqueda" />
+      <MapCanvas onReady={handleMapReady} onMapClick={handleMapClick} />
+      <main id="main-content" className="contents">
       <AdminGateBanner />
 
-      {/* Branding: icono + nombre juntos, arriba del todo */}
+      {/* Branding: fila superior izquierda; deja hueco a la derecha para favoritos/cuenta */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-        className="pointer-events-none absolute left-0 top-0 z-30 flex flex-row items-center leading-none"
+        className="pointer-events-none absolute left-1 top-1 z-50 flex max-w-[calc(100%-6.5rem)] flex-row items-center leading-none sm:left-2 sm:top-1.5 sm:max-w-[min(55vw,20rem)]"
         style={{ gap: 0, margin: 0, padding: 0, columnGap: 0 }}
       >
         <Image
@@ -1521,7 +1598,7 @@ export default function HomeApp() {
           alt=""
           width={80}
           height={80}
-          className="relative z-10 block h-9 w-9 shrink-0 object-contain object-center drop-shadow-md sm:h-12 sm:w-12 md:h-[4.25rem] md:w-[4.25rem]"
+          className="relative z-10 block h-8 w-8 shrink-0 object-contain object-center drop-shadow-md sm:h-10 sm:w-10 md:h-11 md:w-11"
           style={{ margin: 0, padding: 0 }}
           priority
         />
@@ -1530,214 +1607,67 @@ export default function HomeApp() {
           alt="ViaMorelia"
           width={640}
           height={140}
-          className="relative z-0 ml-0.5 block h-9 w-auto max-w-[min(52vw,9.5rem)] object-contain object-left drop-shadow-md sm:ml-0 sm:h-12 sm:max-w-[14rem] md:h-[4.25rem] md:max-w-[18rem] lg:h-[4.75rem] lg:max-w-[22rem]"
+          className="relative z-0 ml-0.5 block h-8 w-auto max-w-[min(48vw,8.5rem)] object-contain object-left drop-shadow-md sm:h-10 sm:max-w-[12rem] md:h-11 md:max-w-[14rem]"
           style={{ marginTop: 0, marginBottom: 0, padding: 0 }}
           priority
         />
       </motion.div>
 
       {/* Buscador principal — siempre una pastilla clara */}
-      <motion.div
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 28, delay: 0.05 }}
-        className={`absolute z-20 ${
-          isDesktop
-            ? 'left-3 top-[6.5rem] w-[min(100%-1.5rem,22rem)] sm:left-4 sm:top-[7.25rem] md:top-[7.75rem]'
-            : 'left-3 right-3 top-[3.4rem]'
-        }`}
-      >
-        {!searchExpanded && (
-          <button
-            type="button"
-            onClick={() => {
-              setSearchExpanded(true);
-              setActiveSearchField(originCoords ? 'destination' : 'origin');
-              dismissWelcome();
-            }}
-            className="vm-panel vm-press flex w-full items-center gap-2.5 rounded-2xl border px-3.5 py-3 text-left cursor-pointer shadow-xl"
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-              <Search className="h-4 w-4 text-emerald-600" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-slate-900">
-                {originInput || destinationInput
-                  ? `${originInput || 'Origen'} → ${destinationInput || 'Destino'}`
-                  : '¿A dónde vas?'}
-              </p>
-              <p className="text-[11px] font-medium text-slate-500">
-                {originCoords && destinationCoords
-                  ? planning
-                    ? 'Calculando viaje…'
-                    : tripPlans.length
-                      ? `${tripPlans.length} opción(es) · toca para editar`
-                      : 'Toca para editar origen o destino'
-                  : 'Escribe un lugar o toca el mapa'}
-              </p>
-            </div>
-            {(planning || locating) && (
-              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-emerald-600" />
-            )}
-            <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" />
-          </button>
-        )}
+            <SearchBar
+        searchExpanded={searchExpanded}
+        originInput={originInput}
+        destinationInput={destinationInput}
+        originReady={Boolean(originCoords)}
+        destinationReady={Boolean(destinationCoords)}
+        activeSearchField={activeSearchField}
+        planning={planning}
+        locating={locating}
+        shapesLoading={shapesLoading}
+        tripPlanCount={tripPlans.length}
+        suggestions={suggestions}
+        searchLoading={searchLoading}
+        onExpand={() => {
+          setSearchExpanded(true);
+          setActiveSearchField(originCoords ? 'destination' : 'origin');
+          dismissWelcome();
+        }}
+        onCollapse={() => {
+          setSearchExpanded(false);
+          setActiveSearchField(null);
+          setSuggestions([]);
+        }}
+        onOriginChange={(v) => handleSearchChange('origin', v)}
+        onDestinationChange={(v) => handleSearchChange('destination', v)}
+        onOriginFocus={() => {
+          setActiveSearchField('origin');
+          void runSearch(originInput);
+        }}
+        onDestinationFocus={() => {
+          setActiveSearchField('destination');
+          void runSearch(destinationInput);
+        }}
+        onClearOrigin={() => {
+          setOriginInput('');
+          setOriginCoords(null);
+        }}
+        onClearDestination={() => {
+          setDestinationInput('');
+          setDestinationCoords(null);
+        }}
+        onSwap={swapOriginDestination}
+        onRequestLocation={requestLocation}
+        onSeeOptions={() => {
+          setSearchExpanded(false);
+          if (originCoords && destinationCoords) {
+            setPanel('results');
+            setResultsOpen(true);
+          }
+        }}
+        onSelectSuggestion={selectSuggestion}
+      />
 
-        {searchExpanded && (
-          <div className="vm-panel w-full rounded-2xl border p-3 shadow-xl">
-            <div className="mb-2.5 flex items-center justify-between gap-2">
-              <div>
-                <p className="text-sm font-bold text-slate-900">Planear viaje</p>
-                <p className="text-[10px] text-slate-500">
-                  Escribe o toca el mapa para marcar punto
-                </p>
-              </div>
-              <div className="flex items-center gap-1">
-                {(planning || shapesLoading || locating) && (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-600" />
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchExpanded(false);
-                    setActiveSearchField(null);
-                    setSuggestions([]);
-                  }}
-                  className="flex items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-bold text-slate-500 transition hover:bg-slate-100 cursor-pointer"
-                >
-                  Listo
-                  <ChevronUp className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="relative mb-2">
-              <label className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-                1. Origen (sale de)
-              </label>
-              <div className="relative">
-                <MapPin className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-emerald-500" />
-                <input
-                  data-testid="search-origin"
-                  type="text"
-                  placeholder="Ej: Centro, mi ubicación…"
-                  value={originInput}
-                  onChange={(e) => handleSearchChange('origin', e.target.value)}
-                  onFocus={() => {
-                    setActiveSearchField('origin');
-                    void runSearch(originInput);
-                  }}
-                  className={`w-full rounded-xl border bg-white py-2.5 pl-9 pr-8 text-sm text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 focus:ring-emerald-500/30 ${
-                    activeSearchField === 'origin' ? 'border-emerald-400 ring-2 ring-emerald-500/20' : 'border-slate-200'
-                  }`}
-                />
-                {originInput && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOriginInput('');
-                      setOriginCoords(null);
-                    }}
-                    className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              {activeSearchField === 'origin' && renderSuggestions()}
-            </div>
-
-            <div className="mb-2 flex justify-center">
-              <button
-                type="button"
-                onClick={swapOriginDestination}
-                className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-bold text-slate-600 shadow-sm cursor-pointer hover:bg-slate-50"
-                title="Intercambiar origen y destino"
-              >
-                <ArrowUpDown className="h-3.5 w-3.5" />
-                Intercambiar
-              </button>
-            </div>
-
-            <div className="relative mb-3">
-              <label className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-rose-700">
-                <span className="inline-block h-2 w-2 rounded-full bg-rose-500" />
-                2. Destino (vas a)
-              </label>
-              <div className="relative">
-                <Navigation className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-rose-500" />
-                <input
-                  data-testid="search-destination"
-                  type="text"
-                  placeholder="Ej: Metrópolis, Aldea…"
-                  value={destinationInput}
-                  onChange={(e) => handleSearchChange('destination', e.target.value)}
-                  onFocus={() => {
-                    setActiveSearchField('destination');
-                    void runSearch(destinationInput);
-                  }}
-                  className={`w-full rounded-xl border bg-white py-2.5 pl-9 pr-8 text-sm text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 focus:ring-rose-500/30 ${
-                    activeSearchField === 'destination' ? 'border-rose-400 ring-2 ring-rose-500/20' : 'border-slate-200'
-                  }`}
-                />
-                {destinationInput && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDestinationInput('');
-                      setDestinationCoords(null);
-                    }}
-                    className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              {activeSearchField === 'destination' && renderSuggestions()}
-            </div>
-
-            {activeSearchField && (
-              <p className="mb-2 rounded-lg bg-sky-50 px-2.5 py-1.5 text-[11px] font-medium text-sky-800">
-                💡 También puedes <strong>tocar el mapa</strong> para fijar el{' '}
-                {activeSearchField === 'origin' ? 'origen' : 'destino'}.
-              </p>
-            )}
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={requestLocation}
-                disabled={locating}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 py-2.5 text-[11px] font-bold text-emerald-800 cursor-pointer disabled:opacity-60"
-              >
-                {locating ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <LocateFixed className="h-3.5 w-3.5" />
-                )}
-                Usar mi ubicación
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchExpanded(false);
-                  if (originCoords && destinationCoords) {
-                    setPanel('results');
-                    setResultsOpen(true);
-                  }
-                }}
-                disabled={!originCoords || !destinationCoords}
-                className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-slate-900 py-2.5 text-[11px] font-bold text-white cursor-pointer disabled:opacity-40"
-              >
-                {planning ? 'Buscando…' : 'Ver opciones'}
-              </button>
-            </div>
-          </div>
-        )}
-      </motion.div>
-
-      {/* Top-right: favoritos + usuario */}
+{/* Top-right: favoritos + usuario */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1859,7 +1789,7 @@ export default function HomeApp() {
                   const map = mapRef.current;
                   if (map && tripPlans.length === 0) {
                     const source = map.getSource(ROUTES_SOURCE_ID) as
-                      | maplibregl.GeoJSONSource
+                      | GeoJSONSource
                       | undefined;
                     source?.setData({ type: 'FeatureCollection', features: [] });
                   }
@@ -1932,159 +1862,33 @@ export default function HomeApp() {
         )}
       </AnimatePresence>
 
-      {/* Modal resultados: centrado en desktop, bottom sheet en móvil */}
-      <AnimatePresence>
-        {resultsOpen && (
-          <>
-            <motion.button
-              type="button"
-              aria-label="Cerrar panel"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 cursor-pointer backdrop-blur-[1px]"
-              style={{ background: 'var(--vm-overlay)' }}
-              onClick={() => setResultsOpen(false)}
-            />
-            <FocusTrap
-              active={resultsOpen}
-              onEscape={() => setResultsOpen(false)}
-              aria-label="Panel de viaje y rutas"
-              className={
-                isDesktop
-                  ? 'fixed left-1/2 top-1/2 z-50 max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2'
-                  : 'fixed inset-x-0 bottom-0 z-50 max-h-[62vh]'
-              }
-            >
-              <motion.div
-                key="results-modal"
-                initial={
-                  isDesktop
-                    ? { opacity: 0, scale: 0.94, y: 12 }
-                    : { opacity: 0, y: '100%' }
-                }
-                animate={
-                  isDesktop ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, y: 0 }
-                }
-                exit={
-                  isDesktop
-                    ? { opacity: 0, scale: 0.96, y: 8 }
-                    : { opacity: 0, y: '100%' }
-                }
-                transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-                className={
-                  isDesktop
-                    ? 'vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
-                    : 'vm-panel flex max-h-[62vh] w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)]'
-                }
-              >
-                {!isDesktop && (
-                  <div className="flex justify-center pt-2 pb-1">
-                    <span className="h-1 w-10 rounded-full bg-slate-300" />
-                  </div>
-                )}
-                <div
-                  className="flex items-center justify-between gap-2 px-3 py-2"
-                  style={{ borderBottom: '1px solid var(--vm-card-border)' }}
-                >
-                  <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist">
-                    {(
-                      [
-                        { id: 'results' as const, label: 'Mi viaje', icon: Navigation },
-                        { id: 'routes' as const, label: 'Rutas', icon: RouteIcon },
-                        { id: 'favorites' as const, label: 'Favoritos', icon: Heart },
-                      ] as const
-                    ).map((t) => {
-                      const Icon = t.icon;
-                      return (
-                        <button
-                          key={t.id}
-                          type="button"
-                          role="tab"
-                          aria-selected={panel === t.id}
-                          onClick={() => setPanel(t.id)}
-                          className={`vm-press flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-bold cursor-pointer ${
-                            panel === t.id ? 'vm-chip-active' : 'vm-chip'
-                          }`}
-                        >
-                          <Icon className="h-3.5 w-3.5" aria-hidden />
-                          {t.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setResultsOpen(false)}
-                    className="shrink-0 rounded-full bg-slate-200 px-2.5 py-1.5 text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-300"
-                  >
-                    Ver mapa
-                  </button>
-                </div>
-                <div className="min-h-0 flex-1 overflow-y-auto" role="tabpanel">
-                  {panel === 'results' && renderResultsList()}
-                  {panel === 'favorites' && renderFavorites()}
-                  {panel === 'routes' && renderRouteExplorer()}
-                </div>
-              </motion.div>
-            </FocusTrap>
-          </>
-        )}
-      </AnimatePresence>
+      {/* Modal desktop / bottom sheet móvil deslizable */}
+      <ResultsSheet
+        open={resultsOpen}
+        isDesktop={isDesktop}
+        panel={panel === 'search' ? 'results' : panel}
+        onPanelChange={(p) => setPanel(p)}
+        onClose={() => setResultsOpen(false)}
+      >
+        {panel === 'results' && renderResultsList()}
+        {panel === 'favorites' && renderFavorites()}
+        {panel === 'routes' && renderRouteExplorer()}
+      </ResultsSheet>
 
       {/* Dock inferior: acciones con texto (más intuitivo) */}
       {!resultsOpen && (
-        <motion.nav
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-none"
-        >
-          <div className="pointer-events-auto vm-panel flex w-full max-w-md items-stretch gap-1 rounded-2xl border p-1.5 shadow-2xl">
-            <button
-              type="button"
-              onClick={openPlanTrip}
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-slate-700 transition hover:bg-emerald-50 cursor-pointer"
-            >
-              <Navigation className="h-5 w-5 text-emerald-600" />
-              <span className="text-[10px] font-bold">Viaje</span>
-            </button>
-            <button
-              type="button"
-              onClick={openBrowseRoutes}
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-slate-700 transition hover:bg-sky-50 cursor-pointer"
-              data-testid="open-routes"
-            >
-              <List className="h-5 w-5 text-sky-600" />
-              <span className="text-[10px] font-bold">
-                Rutas{routes.length ? ` (${routes.length})` : ''}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={requestLocation}
-              disabled={locating}
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-slate-700 transition hover:bg-slate-50 cursor-pointer disabled:opacity-50"
-            >
-              {locating ? (
-                <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
-              ) : (
-                <LocateFixed className="h-5 w-5 text-emerald-600" />
-              )}
-              <span className="text-[10px] font-bold">Ubicación</span>
-            </button>
-            <button
-              type="button"
-              onClick={clearMap}
-              disabled={!hasMapContent}
-              data-testid="clear-map"
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-slate-700 transition hover:bg-rose-50 cursor-pointer disabled:opacity-40"
-            >
-              <Eraser className="h-5 w-5 text-rose-500" />
-              <span className="text-[10px] font-bold">Limpiar</span>
-            </button>
-          </div>
-        </motion.nav>
+        <BottomDock
+          locating={locating}
+          hasMapContent={hasMapContent}
+          routeCount={routes.length}
+          onPlan={openPlanTrip}
+          onRoutes={openBrowseRoutes}
+          onLocation={requestLocation}
+          onClear={clearMap}
+        />
       )}
+
+      </main>
     </div>
   );
 }

@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run && playwright test",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "report:routes": "node scripts/report_bundle_routes.mjs",
+    "check": "pnpm typecheck && pnpm lint && pnpm test:unit"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

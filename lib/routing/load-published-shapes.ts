@@ -251,6 +251,50 @@ export function prefetchAllShapesInBackground() {
   }
 }
 
+/**
+ * Prefetch inteligente: primero shapes cerca del usuario / OD,
+ * luego el resto en idle. Reduce tiempo al primer plan.
+ */
+export function prefetchShapesNearCoordinate(
+  center: Coordinate,
+  radiusKm = 3.5
+) {
+  if (typeof window === 'undefined') return;
+  const dest: Coordinate = [center[0] + 0.01, center[1] + 0.01];
+  const runNear = () => {
+    void loadShapesNearTrip(center, dest, radiusKm).catch(() => undefined);
+  };
+  const runRest = () => {
+    void loadPublishedShapes(false).catch(() => undefined);
+  };
+  if ('requestIdleCallback' in window) {
+    const w = window as Window & {
+      requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void;
+    };
+    w.requestIdleCallback(runNear, { timeout: 1200 });
+    w.requestIdleCallback(runRest, { timeout: 8000 });
+  } else {
+    setTimeout(runNear, 400);
+    setTimeout(runRest, 3500);
+  }
+}
+
+/** Top rutas por id frecuente en localStorage (favoritos + recientes). */
+export function prefetchFrequentRoutes(routeIds: string[]) {
+  if (!routeIds.length || typeof window === 'undefined') return;
+  const unique = Array.from(new Set(routeIds)).slice(0, 12);
+  const run = () => {
+    void loadShapesForRouteIds(unique).catch(() => undefined);
+  };
+  if ('requestIdleCallback' in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
+      run
+    );
+  } else {
+    setTimeout(run, 1500);
+  }
+}
+
 export function clearPublishedShapesCache() {
   cache = null;
 }

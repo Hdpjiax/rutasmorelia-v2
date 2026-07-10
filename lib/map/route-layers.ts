@@ -43,9 +43,22 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
       source: ROUTES_SOURCE_ID,
       filter: lineFilter,
       paint: {
-        'line-color': ['coalesce', ['get', 'casingColor'], '#222222'],
-        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 14, 3.5, 18, 5],
-        'line-opacity': 0.92,
+        // Casing más grueso en zoom bajo (rutas densas legibles)
+        'line-color': ['coalesce', ['get', 'casingColor'], '#1a1a1a'],
+        'line-width': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          10,
+          ['case', ['==', ['get', 'role'], 'segment'], 4.2, 3.2],
+          12,
+          ['case', ['==', ['get', 'role'], 'segment'], 5, 3.8],
+          14,
+          ['case', ['==', ['get', 'role'], 'segment'], 5.5, 4.2],
+          18,
+          ['case', ['==', ['get', 'role'], 'segment'], 7, 5.5],
+        ],
+        'line-opacity': 0.95,
       },
       layout: { 'line-cap': 'round', 'line-join': 'round' },
     });
@@ -64,16 +77,18 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
           ['linear'],
           ['zoom'],
           10,
-          ['case', ['==', ['get', 'role'], 'segment'], 2.2, 1.6],
+          ['case', ['==', ['get', 'role'], 'segment'], 2.6, 1.9],
+          12,
+          ['case', ['==', ['get', 'role'], 'segment'], 3.2, 2.3],
           14,
-          ['case', ['==', ['get', 'role'], 'segment'], 3.2, 2.4],
+          ['case', ['==', ['get', 'role'], 'segment'], 3.8, 2.8],
           18,
-          ['case', ['==', ['get', 'role'], 'segment'], 4.5, 3.4],
+          ['case', ['==', ['get', 'role'], 'segment'], 5.2, 3.8],
         ],
         'line-opacity': [
           'case',
           ['==', ['get', 'role'], 'full'],
-          0.88,
+          0.9,
           ['==', ['get', 'role'], 'segment'],
           1,
           1,
@@ -83,7 +98,7 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
-  // Flechas: líneas de ruta (ida/vuelta dual o sense-label) + tramo de viaje
+  // Flechas: más densas en zoom bajo, más grandes en móvil/zoom medio
   if (!map.getLayer('route-arrows')) {
     map.addLayer({
       id: 'route-arrows',
@@ -105,11 +120,12 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
       ],
       layout: {
         'symbol-placement': 'line',
-        'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 10, 55, 14, 85, 18, 110],
+        'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 10, 42, 12, 58, 14, 78, 18, 100],
         'icon-image': 'route-arrow-icon',
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.35, 14, 0.5, 18, 0.65],
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.42, 12, 0.5, 14, 0.58, 18, 0.72],
         'icon-allow-overlap': true,
-        'icon-ignore-placement': false,
+        'icon-ignore-placement': true,
+        'icon-padding': 2,
       },
     });
   }
@@ -149,6 +165,23 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
+  // Caminata: casing + dash (legible en móvil)
+  if (includeWalk && !map.getLayer('route-lines-walk-casing')) {
+    map.addLayer({
+      id: 'route-lines-walk-casing',
+      type: 'line',
+      source: ROUTES_SOURCE_ID,
+      filter: ['==', ['get', 'type'], 'walk'],
+      paint: {
+        'line-color': '#0f172a',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 11, 5.5, 14, 7, 18, 9],
+        'line-opacity': 0.35,
+        'line-dasharray': [1, 0.2],
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    });
+  }
+
   if (includeWalk && !map.getLayer('route-lines-walk')) {
     map.addLayer({
       id: 'route-lines-walk',
@@ -160,18 +193,51 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
           'match',
           ['get', 'walkKind'],
           'to_board',
-          '#0ea5e9',
+          '#0284c7',
           'from_alight',
-          '#8b5cf6',
+          '#7c3aed',
           'transfer',
-          '#f59e0b',
-          '#64748b',
+          '#d97706',
+          '#475569',
         ],
-        'line-width': ['interpolate', ['linear'], ['zoom'], 11, 3, 15, 4.5, 18, 6],
-        'line-dasharray': [1.2, 1.6],
-        'line-opacity': 0.95,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 11, 3.5, 14, 5, 18, 7],
+        'line-dasharray': [0.8, 1.4],
+        'line-opacity': 1,
       },
       layout: { 'line-cap': 'round', 'line-join': 'round' },
+    });
+  }
+
+  if (includeWalk && !map.getLayer('route-walk-labels')) {
+    map.addLayer({
+      id: 'route-walk-labels',
+      type: 'symbol',
+      source: ROUTES_SOURCE_ID,
+      minzoom: 12.5,
+      filter: ['==', ['get', 'type'], 'walk'],
+      layout: {
+        'symbol-placement': 'line-center',
+        'text-field': [
+          'match',
+          ['get', 'walkKind'],
+          'to_board',
+          'A pie → subir',
+          'from_alight',
+          'A pie → destino',
+          'transfer',
+          'A pie · transbordo',
+          'A pie',
+        ],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 15, 12],
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+        'text-allow-overlap': false,
+        'text-padding': 4,
+      },
+      paint: {
+        'text-color': '#0f172a',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 2,
+      },
     });
   }
 
@@ -238,13 +304,29 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
       source: STOPS_SOURCE_ID,
       layout: {
         'text-field': ['get', 'label'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 11, 11, 15, 13, 18, 15],
-        'text-offset': [0, -1.6],
-        'text-anchor': 'bottom',
-        'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 11, 11, 15, 12.5, 18, 14],
+        // stack up/down evita que Baja y Sube se tapen si están cerca
+        'text-offset': [
+          'match',
+          ['get', 'stack'],
+          'up',
+          ['literal', [0, -1.9]],
+          'down',
+          ['literal', [0, 1.9]],
+          ['literal', [0, -1.55]],
+        ],
+        'text-anchor': [
+          'match',
+          ['get', 'stack'],
+          'down',
+          'top',
+          'bottom',
+        ],
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
         'text-allow-overlap': true,
         'text-ignore-placement': true,
         'text-optional': false,
+        'text-max-width': 10,
       },
       paint: {
         'text-color': '#ffffff',
@@ -259,7 +341,7 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
           '#b45309',
           '#0f172a',
         ],
-        'text-halo-width': 2.2,
+        'text-halo-width': 2.4,
       },
     });
   }
@@ -269,7 +351,11 @@ export function setTripStopsData(
   map: MapLibreMap,
   features: Array<{
     type: 'Feature';
-    properties: { label: string; kind: 'sube' | 'baja' | 'transbordo' };
+    properties: {
+      label: string;
+      kind: 'sube' | 'baja' | 'transbordo';
+      stack?: 'up' | 'down' | 'center';
+    };
     geometry: { type: 'Point'; coordinates: [number, number] };
   }>
 ) {
