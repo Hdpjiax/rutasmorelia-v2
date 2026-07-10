@@ -30,20 +30,14 @@ const SNAP_VH: Record<SheetSnap, number> = {
 };
 
 function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): SheetSnap | 'close' {
-  // Un gesto intencional hacia abajo cierra desde cualquier altura.
-  // Los umbrales bajos hacen que el gesto sea confiable en pantallas táctiles pequeñas.
-  if (velocityY > 650 || offsetY > 90) return 'close';
+  if (velocityY > 650 || offsetY > 80) return 'close';
 
   if (velocityY < -700 || offsetY < -80) {
     if (current === 'peek') return 'mid';
     return 'full';
   }
 
-  if (offsetY > 36) {
-    if (current === 'full') return 'mid';
-    if (current === 'mid') return 'peek';
-    return 'close';
-  }
+  if (offsetY > 36) return 'close';
 
   if (offsetY < -36) {
     if (current === 'peek') return 'mid';
@@ -53,10 +47,6 @@ function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): S
   return current;
 }
 
-/**
- * Desktop: modal centrado.
- * Móvil: bottom sheet deslizable, con cierre directo hacia abajo.
- */
 export function ResultsSheet({
   open,
   isDesktop,
@@ -100,7 +90,7 @@ export function ResultsSheet({
               animate={{ opacity: mapMostlyVisible ? 0 : snap === 'full' ? 0.28 : 0.12 }}
               exit={{ opacity: 0 }}
               className={cn(
-                'fixed inset-0 z-40 bg-slate-900',
+                'pointer-events-auto fixed inset-0 z-40 bg-slate-900',
                 mapMostlyVisible ? 'pointer-events-none' : 'cursor-pointer'
               )}
               onClick={onClose}
@@ -114,7 +104,7 @@ export function ResultsSheet({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 cursor-pointer backdrop-blur-[1px]"
+              className="pointer-events-auto fixed inset-0 z-40 cursor-pointer backdrop-blur-[1px]"
               style={{ background: 'var(--vm-overlay)' }}
               onClick={onClose}
             />
@@ -126,8 +116,8 @@ export function ResultsSheet({
             aria-label="Panel de viaje y rutas"
             className={
               isDesktop
-                ? 'fixed left-1/2 top-1/2 z-50 max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2'
-                : 'fixed inset-x-0 bottom-0 z-50'
+                ? 'pointer-events-auto fixed left-1/2 top-1/2 z-50 max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2'
+                : 'pointer-events-auto fixed inset-x-0 bottom-0 z-50'
             }
           >
             <motion.div
@@ -152,13 +142,13 @@ export function ResultsSheet({
               dragControls={dragControls}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.06, bottom: 0.68 }}
+              dragElastic={{ top: 0.06, bottom: 0.7 }}
               dragMomentum={false}
               onDragEnd={onDragEnd}
               className={
                 isDesktop
-                  ? 'vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
-                  : 'vm-panel flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
+                  ? 'pointer-events-auto vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
+                  : 'pointer-events-auto vm-panel flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
               }
               style={!isDesktop ? { maxHeight: '88dvh' } : undefined}
             >
@@ -230,12 +220,16 @@ export function ResultsSheet({
                 <button
                   type="button"
                   onPointerDown={(e) => e.stopPropagation()}
-                  onClick={onClose}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClose();
+                  }}
+                  className="pointer-events-auto relative z-10 flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
                   aria-label="Cerrar y ver mapa"
                   title="Cerrar"
                 >
-                  <X className="h-4 w-4" aria-hidden />
+                  <X className="h-5 w-5" aria-hidden />
                 </button>
               </div>
 
