@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   motion,
   AnimatePresence,
@@ -30,20 +30,16 @@ const SNAP_VH: Record<SheetSnap, number> = {
 };
 
 function snapFromDrag(offsetY: number, velocityY: number, current: SheetSnap): SheetSnap | 'close' {
-  if (velocityY > 650 || offsetY > 80) return 'close';
-
-  if (velocityY < -700 || offsetY < -80) {
+  if (velocityY > 450 || offsetY > 64) return 'close';
+  if (velocityY < -650 || offsetY < -70) {
     if (current === 'peek') return 'mid';
     return 'full';
   }
-
-  if (offsetY > 36) return 'close';
-
-  if (offsetY < -36) {
+  if (offsetY > 28) return 'close';
+  if (offsetY < -28) {
     if (current === 'peek') return 'mid';
     return 'full';
   }
-
   return current;
 }
 
@@ -57,22 +53,28 @@ export function ResultsSheet({
 }: Props) {
   const [snap, setSnap] = useState<SheetSnap>('mid');
   const dragControls = useDragControls();
+  const touchStartYRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (open) setSnap('mid');
   }, [open]);
+
+  const closeSheet = useCallback(() => {
+    touchStartYRef.current = null;
+    onClose();
+  }, [onClose]);
 
   const onDragEnd = useCallback(
     (_: unknown, info: PanInfo) => {
       if (isDesktop) return;
       const next = snapFromDrag(info.offset.y, info.velocity.y, snap);
       if (next === 'close') {
-        onClose();
+        closeSheet();
         return;
       }
       setSnap(next);
     },
-    [isDesktop, onClose, snap]
+    [closeSheet, isDesktop, snap]
   );
 
   const heightVh = SNAP_VH[snap];
@@ -93,7 +95,7 @@ export function ResultsSheet({
                 'pointer-events-auto fixed inset-0 z-40 bg-slate-900',
                 mapMostlyVisible ? 'pointer-events-none' : 'cursor-pointer'
               )}
-              onClick={onClose}
+              onPointerUp={closeSheet}
             />
           )}
 
@@ -106,13 +108,13 @@ export function ResultsSheet({
               exit={{ opacity: 0 }}
               className="pointer-events-auto fixed inset-0 z-40 cursor-pointer backdrop-blur-[1px]"
               style={{ background: 'var(--vm-overlay)' }}
-              onClick={onClose}
+              onClick={closeSheet}
             />
           )}
 
           <FocusTrap
             active={open && isDesktop}
-            onEscape={onClose}
+            onEscape={closeSheet}
             aria-label="Panel de viaje y rutas"
             className={
               isDesktop
@@ -142,95 +144,122 @@ export function ResultsSheet({
               dragControls={dragControls}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.06, bottom: 0.7 }}
+              dragElastic={{ top: 0.04, bottom: 0.9 }}
               dragMomentum={false}
               onDragEnd={onDragEnd}
               className={
                 isDesktop
                   ? 'pointer-events-auto vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
-                  : 'pointer-events-auto vm-panel flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
+                  : 'pointer-events-auto vm-panel relative flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
               }
               style={!isDesktop ? { maxHeight: '88dvh' } : undefined}
             >
               {!isDesktop && (
-                <div
-                  className="flex min-h-14 shrink-0 cursor-grab touch-none flex-col items-center justify-center active:cursor-grabbing select-none"
-                  onPointerDown={(e) => dragControls.start(e)}
-                  role="slider"
-                  aria-valuetext={
-                    snap === 'peek' ? 'Panel reducido' : snap === 'mid' ? 'Panel medio' : 'Panel ampliado'
-                  }
-                  aria-label="Deslizar hacia abajo para cerrar el panel"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'ArrowDown' || e.key === 'Escape') onClose();
-                    if (e.key === 'ArrowUp') {
-                      if (snap === 'peek') setSnap('mid');
-                      else setSnap('full');
+                <>
+                  <button
+                    type="button"
+                    aria-label="Cerrar panel y ver mapa"
+                    title="Cerrar"
+                    className="pointer-events-auto absolute right-3 top-3 z-[70] flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-slate-200 text-slate-900 shadow-sm active:scale-95"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onPointerUp={(event) => {
+                      event.stopPropagation();
+                      event.preventDefault();
+                      closeSheet();
+                    }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      closeSheet();
+                    }}
+                  >
+                    <X className="h-5 w-5" aria-hidden />
+                  </button>
+
+                  <div
+                    className="flex min-h-16 shrink-0 cursor-grab flex-col items-center justify-center select-none active:cursor-grabbing"
+                    style={{ touchAction: 'none' }}
+                    onPointerDown={(event) => {
+                      if (!event.isPrimary) return;
+                      touchStartYRef.current = event.clientY;
+                      dragControls.start(event);
+                    }}
+                    onPointerUp={(event) => {
+                      const startY = touchStartYRef.current;
+                      touchStartYRef.current = null;
+                      if (startY !== null && event.clientY - startY > 42) closeSheet();
+                    }}
+                    onPointerCancel={() => {
+                      touchStartYRef.current = null;
+                    }}
+                    role="slider"
+                    aria-valuetext={
+                      snap === 'peek' ? 'Panel reducido' : snap === 'mid' ? 'Panel medio' : 'Panel ampliado'
                     }
-                  }}
-                >
-                  <div className="flex w-full justify-center pb-1 pt-2">
-                    <span className="h-1.5 w-14 rounded-full bg-slate-400" />
+                    aria-label="Deslizar hacia abajo para cerrar el panel"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === 'ArrowDown' || event.key === 'Escape') closeSheet();
+                      if (event.key === 'ArrowUp') {
+                        if (snap === 'peek') setSnap('mid');
+                        else setSnap('full');
+                      }
+                    }}
+                  >
+                    <div className="flex w-full justify-center pb-1 pt-2">
+                      <span className="h-1.5 w-14 rounded-full bg-slate-400" />
+                    </div>
+                    <p className="pb-2 text-[10px] font-semibold text-slate-500">
+                      Desliza hacia abajo para cerrar
+                    </p>
                   </div>
-                  <p className="pb-2 text-[10px] font-semibold text-slate-500">
-                    Desliza hacia abajo para cerrar
-                  </p>
-                </div>
+                </>
               )}
 
               <div
-                className="flex shrink-0 touch-none items-center justify-between gap-2 px-3 py-2"
+                className="flex shrink-0 items-center justify-between gap-2 px-3 py-2"
                 style={{ borderBottom: '1px solid var(--vm-card-border)' }}
-                onPointerDown={(e) => {
-                  if (!isDesktop && e.button === 0) dragControls.start(e);
-                }}
               >
-                <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist">
+                <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto pr-12" role="tablist">
                   {(
                     [
                       { id: 'results' as const, label: 'Mi viaje', icon: Navigation },
                       { id: 'routes' as const, label: 'Rutas', icon: RouteIcon },
                       { id: 'favorites' as const, label: 'Favoritos', icon: Heart },
                     ] as const
-                  ).map((t) => {
-                    const Icon = t.icon;
+                  ).map((tab) => {
+                    const Icon = tab.icon;
                     return (
                       <button
-                        key={t.id}
+                        key={tab.id}
                         type="button"
                         role="tab"
-                        aria-selected={panel === t.id}
-                        onPointerDown={(e) => e.stopPropagation()}
+                        aria-selected={panel === tab.id}
                         onClick={() => {
-                          onPanelChange(t.id);
+                          onPanelChange(tab.id);
                           if (!isDesktop && snap === 'peek') setSnap('mid');
                         }}
                         className={`vm-press flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-bold cursor-pointer ${
-                          panel === t.id ? 'vm-chip-active' : 'vm-chip'
+                          panel === tab.id ? 'vm-chip-active' : 'vm-chip'
                         }`}
                       >
                         <Icon className="h-3.5 w-3.5" aria-hidden />
-                        {t.label}
+                        {tab.label}
                       </button>
                     );
                   })}
                 </div>
 
-                <button
-                  type="button"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onClose();
-                  }}
-                  className="pointer-events-auto relative z-10 flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
-                  aria-label="Cerrar y ver mapa"
-                  title="Cerrar"
-                >
-                  <X className="h-5 w-5" aria-hidden />
-                </button>
+                {isDesktop && (
+                  <button
+                    type="button"
+                    onClick={closeSheet}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
+                    aria-label="Cerrar y ver mapa"
+                    title="Cerrar"
+                  >
+                    <X className="h-4 w-4" aria-hidden />
+                  </button>
+                )}
               </div>
 
               <div
