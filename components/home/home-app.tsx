@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -30,7 +30,8 @@ import {
   Clock,
 } from 'lucide-react';
 import { mockSupabaseClient, mockDb, type Route } from '@/lib/supabase/client';
-import { planTrip, type Coordinate, type TripPlan } from '@/lib/routing/planner';
+import { type Coordinate, type TripPlan } from '@/lib/routing/planner';
+import { planTripAsync, cancelPendingPlanJobs } from '@/lib/routing/plan-trip-client';
 import {
   loadShapesForRouteIds,
   loadShapesNearTrip,
@@ -39,6 +40,8 @@ import {
   prefetchShapesNearCoordinate,
   type PublishedShape,
 } from '@/lib/routing/load-published-shapes';
+import { uiTelemetry } from '@/lib/telemetry/ui-events';
+import { cacheRouteMetaList, loadLastTripSearch } from '@/lib/offline/store';
 import { ROUTES_SOURCE_ID, setTripStopsData } from '@/lib/map/route-layers';
 import { toast } from '@/lib/ui/toast';
 import {
@@ -110,6 +113,10 @@ import { BottomDock } from '@/components/home/bottom-dock';
 import { createOrbElement } from '@/components/home/map-markers';
 import { SkipLink } from '@/components/ui/skip-link';
 import { ResultsSheet } from '@/components/home/results-sheet';
+import { SelectedRouteCard } from '@/components/home/selected-route-card';
+import { ReportRouteDialog } from '@/components/home/report-route-dialog';
+import { OfflineBanner } from '@/components/home/offline-banner';
+import { RouteExplorerList } from '@/components/home/route-explorer-list';
 
 type PanelMode = 'search' | 'results' | 'favorites' | 'routes';
 
@@ -169,6 +176,8 @@ export default function HomeApp() {
   const [recentRoutes, setRecentRoutes] = useState<RecentRoute[]>([]);
   const [homePlace, setHomePlace] = useState<SavedPlaceSlot>(null);
   const [workPlace, setWorkPlace] = useState<SavedPlaceSlot>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
   const [styleLoaded, setStyleLoaded] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -278,7 +287,16 @@ export default function HomeApp() {
   // Rutas vía TanStack Query (index.json)
   useEffect(() => {
     if (publishedQuery.data?.length) {
-      setRoutes(publishedQuery.data.map(metaToRoute));
+      const mapped = publishedQuery.data.map(metaToRoute);
+      setRoutes(mapped);
+      cacheRouteMetaList(
+        mapped.map((r) => ({
+          id: r.id,
+          name: r.name,
+          color: r.color,
+          transportType: r.transport_type,
+        }))
+      );
       setShapesLoading(false);
       prefetchAllShapesInBackground();
       prefetchFrequentRoutes(loadLocalFavoriteRoutes());
@@ -375,6 +393,7 @@ export default function HomeApp() {
         setLocating(false);
         if (sharedTripOpenRef.current) return;
         console.warn('Geolocation', err);
+        if (err.code === 1) uiTelemetry.geolocationDenied();
         toast(
           err.code === 1
             ? 'Permiso de ubicación denegado. Elige origen en el buscador o toca el mapa.'
@@ -722,7 +741,7 @@ export default function HomeApp() {
     []
   );
 
-  // Planificador: asegura shapes (caché / lazy) antes de calcular
+  // Planificador: shapes cercanas + Web Worker (fallback main thread)
   useEffect(() => {
     if (!originCoords || !destinationCoords) {
       setTripPlans([]);
@@ -735,27 +754,30 @@ export default function HomeApp() {
     setPlanning(true);
     setPlanningError(null);
     setSelectedRouteId(null);
+    cancelPendingPlanJobs();
 
     const run = async () => {
       try {
         setGeometriesLoading(true);
-        // Solo geometrías cercanas al OD (bbox) — más rápido y preciso
         const { shapes } = await loadShapesNearTrip(originCoords, destinationCoords);
         if (cancelled) return;
         shapesRef.current = shapes;
         setGeometriesLoading(false);
-        const plans = await planTrip(originCoords, destinationCoords, {
+        const { plans, durationMs } = await planTripAsync(
+          originCoords,
+          destinationCoords,
           shapes,
-          // Siempre mostrar directos Y posibles transbordos
-          transferOnlyIfNecessary: false,
-          allowTransfers: true,
-          maxWalkDistanceMeters: 950,
-          maxDirectWalkTotalM: 1400,
-          maxDirectPlans: 6,
-          maxTransferPlans: 6,
-          walkSpeedMeterPerSec: 1.2,
-          transitSpeedMeterPerSec: 6.1,
-        });
+          {
+            transferOnlyIfNecessary: false,
+            allowTransfers: true,
+            maxWalkDistanceMeters: 950,
+            maxDirectWalkTotalM: 1400,
+            maxDirectPlans: 6,
+            maxTransferPlans: 6,
+            walkSpeedMeterPerSec: 1.2,
+            transitSpeedMeterPerSec: 6.1,
+          }
+        );
         if (cancelled) return;
         const sorted = sortTripPlans(plans, useTripUiStore.getState().planSort);
         setTripPlans(sorted);
@@ -772,12 +794,13 @@ export default function HomeApp() {
           setPlanningError(
             'No encontramos combis útiles cerca de esos puntos. Prueba mover origen o destino unos cientos de metros, o toca el mapa.'
           );
+          uiTelemetry.planEmpty();
           toast('Sin rutas directas ni transbordos cercanos', 'warning');
-          // En viaje compartido no forzar el buscador: el receptor solo ve el resultado
           if (!sharedTripOpenRef.current) setSearchExpanded(true);
           setResultsOpen(true);
           setPanel('results');
         } else {
+          uiTelemetry.planOk(sorted.length, durationMs);
           setPanel('results');
           setResultsOpen(true);
           setSearchExpanded(false);
@@ -795,6 +818,7 @@ export default function HomeApp() {
         }
       } catch (err) {
         if (cancelled) return;
+        if (err instanceof Error && err.message === 'cancelled') return;
         console.error(err);
         setGeometriesLoading(false);
         setPlanning(false);
@@ -806,6 +830,7 @@ export default function HomeApp() {
 
     return () => {
       cancelled = true;
+      cancelPendingPlanJobs();
     };
   }, [originCoords, destinationCoords, setGeometriesLoading]);
 
@@ -884,7 +909,10 @@ export default function HomeApp() {
           const meta = routes.find((r) => r.id === selectedRouteId);
           const file = `/routes/${selectedRouteId}.geojson`;
           const res = await fetch(file);
-          if (!res.ok) throw new Error('Error al cargar rutas');
+          if (!res.ok) {
+            uiTelemetry.routeGeojsonMissing(selectedRouteId);
+            throw new Error('Error al cargar rutas');
+          }
           const data = (await res.json()) as RouteFeatureCollection;
           const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
           const prefer =
@@ -1382,21 +1410,6 @@ export default function HomeApp() {
     }
   }, []);
 
-  const openPlanTrip = useCallback(() => {
-    setPanel('results');
-    setResultsOpen(true);
-    setAuthOpen(false);
-    setSearchExpanded(true);
-    dismissWelcome();
-  }, [dismissWelcome]);
-
-  const openBrowseRoutes = useCallback(() => {
-    setPanel('routes');
-    setResultsOpen(true);
-    setAuthOpen(false);
-    dismissWelcome();
-  }, [dismissWelcome]);
-
   const hasMapContent = Boolean(
     selectedRouteId || tripPlans.length > 0 || originCoords || destinationCoords
   );
@@ -1420,6 +1433,7 @@ export default function HomeApp() {
       setRecentRoutes(
         pushRecentRoute({ id: route.id, name: route.name, color: route.color })
       );
+      uiTelemetry.routeSelect(route.id);
       dismissKeyboard();
       setRouteQuery('');
       setResultsOpen(false);
@@ -1428,6 +1442,77 @@ export default function HomeApp() {
     },
     [dismissKeyboard]
   );
+
+  const closeResultsPanel = useCallback(() => {
+    uiTelemetry.panelClose(panel);
+    setResultsOpen(false);
+    setSearchExpanded(false);
+    requestAnimationFrame(() => {
+      const el = restoreFocusRef.current;
+      if (el && typeof el.focus === 'function') {
+        try {
+          el.focus({ preventScroll: true });
+        } catch {
+          /* ignore */
+        }
+      }
+      restoreFocusRef.current = null;
+    });
+  }, [panel]);
+
+  const openResultsPanel = useCallback(
+    (p?: PanelMode) => {
+      if (typeof document !== 'undefined') {
+        const ae = document.activeElement;
+        if (ae instanceof HTMLElement) restoreFocusRef.current = ae;
+      }
+      if (p) setPanel(p);
+      setResultsOpen(true);
+      uiTelemetry.panelOpen(p ?? panel);
+    },
+    [panel]
+  );
+
+  const openPlanTrip = useCallback(() => {
+    setAuthOpen(false);
+    setSearchExpanded(true);
+    openResultsPanel('results');
+    dismissWelcome();
+  }, [dismissWelcome, openResultsPanel]);
+
+  const openBrowseRoutes = useCallback(() => {
+    setAuthOpen(false);
+    openResultsPanel('routes');
+    dismissWelcome();
+  }, [dismissWelcome, openResultsPanel]);
+
+  // Escape cierra panel / búsqueda
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (reportOpen) {
+        setReportOpen(false);
+        e.preventDefault();
+        return;
+      }
+      if (authOpen) {
+        setAuthOpen(false);
+        e.preventDefault();
+        return;
+      }
+      if (resultsOpen) {
+        closeResultsPanel();
+        e.preventDefault();
+        return;
+      }
+      if (searchExpanded) {
+        setSearchExpanded(false);
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [authOpen, resultsOpen, searchExpanded, reportOpen, closeResultsPanel]);
 
   const renderSuggestions = () =>
     activeSearchField && (suggestions.length > 0 || searchLoading) ? (
@@ -1652,255 +1737,52 @@ export default function HomeApp() {
   );
 
   const renderRouteExplorer = () => (
-    <div className="flex flex-col gap-2 p-3">
-      <p className="text-[11px] leading-snug text-slate-500">
-        Busca por color, colonia o número. Usa <strong>Ver ruta</strong> para dibujarla en el mapa.
-        {shapesLoading ? ' Cargando listado…' : ` ${routes.length} rutas.`}
-      </p>
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-        <input
-          type="search"
-          data-testid="search-routes"
-          inputMode="search"
-          enterKeyHint="search"
-          placeholder="Morada, cam, centro, naranja 2…"
-          value={routeQuery}
-          onChange={(e) => setRouteQuery(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-8 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-        />
-        {routeQuery && (
-          <button
-            type="button"
-            onClick={() => setRouteQuery('')}
-            className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-            aria-label="Limpiar búsqueda"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-      <div className="mb-1 flex flex-wrap items-center gap-1.5">
-        {(
-          [
-            { id: 'all' as const, label: 'Todos' },
-            { id: 'combi' as const, label: 'Combis' },
-            { id: 'autobus' as const, label: 'Autobuses' },
-          ] as const
-        ).map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            data-testid={`filter-transport-${t.id}`}
-            onClick={() => {
-              setTransportFilter(t.id);
-            }}
-            className={`min-h-9 rounded-full border px-2.5 py-1 text-[11px] font-bold cursor-pointer touch-manipulation ${
-              transportFilter === t.id
-                ? 'border-slate-900 bg-slate-900 text-white'
-                : 'border-slate-200 bg-white text-slate-600'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-        <span className="ml-auto text-[10px] font-semibold text-slate-400">
-          {filteredRoutes.length}/{routes.length}
-        </span>
-      </div>
-
-      {/* Sin query: recientes + favoritos (menos escritura en móvil) */}
-      {!routeQuery.trim() && (
-        <div className="flex flex-col gap-2 rounded-xl border border-slate-100 bg-slate-50/80 p-2.5">
-          {(homePlace || workPlace) && (
-            <div className="flex flex-wrap gap-1.5">
-              {homePlace && (
-                <button
-                  type="button"
-                  className="inline-flex min-h-9 items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-800 touch-manipulation"
-                  onClick={() => {
-                    setDestinationInput(homePlace.name);
-                    setDestinationCoords(homePlace.coordinates);
-                    setPanel('results');
-                    dismissKeyboard();
-                  }}
-                >
-                  <Home className="h-3.5 w-3.5 text-emerald-700" /> Casa
-                </button>
-              )}
-              {workPlace && (
-                <button
-                  type="button"
-                  className="inline-flex min-h-9 items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-800 touch-manipulation"
-                  onClick={() => {
-                    setDestinationInput(workPlace.name);
-                    setDestinationCoords(workPlace.coordinates);
-                    setPanel('results');
-                    dismissKeyboard();
-                  }}
-                >
-                  <Briefcase className="h-3.5 w-3.5 text-sky-700" /> Trabajo
-                </button>
-              )}
-            </div>
-          )}
-          {recentRoutes.length > 0 && (
-            <div>
-              <p className="mb-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                <Clock className="h-3 w-3" /> Rutas recientes
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {recentRoutes.slice(0, 5).map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    className="inline-flex min-h-9 max-w-full items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 touch-manipulation"
-                    onClick={() => {
-                      const full = routes.find((x) => x.id === r.id);
-                      if (full) viewRouteOnMap(full);
-                      else {
-                        setSelectedRouteId(r.id);
-                        setResultsOpen(false);
-                      }
-                    }}
-                  >
-                    <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: r.color || '#94a3b8' }}
-                    />
-                    <span className="truncate">{r.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          {favRoutes.length > 0 && (
-            <div>
-              <p className="mb-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                <Heart className="h-3 w-3" /> Favoritas
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {favRoutes.slice(0, 5).map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    className="inline-flex min-h-9 max-w-full items-center gap-1.5 rounded-full border border-rose-100 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 touch-manipulation"
-                    onClick={() => viewRouteOnMap(r)}
-                  >
-                    <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: r.color }}
-                    />
-                    <span className="truncate">{r.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {shapesLoading && (
-        <div className="flex items-center gap-2 py-2 text-xs text-slate-500">
-          <span className="vm-spinner" /> Cargando red de rutas…
-        </div>
-      )}
-      {!shapesLoading && filteredRoutes.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-400">
-          {routes.length === 0
-            ? 'No hay rutas publicadas disponibles.'
-            : 'Ninguna ruta coincide. Prueba sin acentos o con el color (ej. morada, cam).'}
-        </div>
-      )}
-      {filteredRoutes.map((route) => {
-        const isFav = favorites.includes(route.id);
-        const isSelected = selectedRouteId === route.id;
-        const kind = normalizeTransportType(route.transport_type, route.id, route.name);
-        const info = parseRouteDisplay(route);
-        const avail = availabilityLabel(route.status);
-        return (
-          <article
-            key={route.id}
-            data-testid={`route-item-${route.id}`}
-            className={`vm-card rounded-2xl border p-3 ${
-              isSelected ? 'ring-1 ring-emerald-500/30' : ''
-            }`}
-            style={
-              isSelected
-                ? {
-                    borderColor: 'var(--vm-selected-border)',
-                    background: 'var(--vm-selected-bg)',
-                  }
-                : undefined
-            }
-          >
-            <div className="flex items-start gap-2.5">
-              <span
-                className="mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 border-white shadow"
-                style={{ backgroundColor: route.color }}
-                aria-hidden
-              />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold leading-snug text-slate-900">{route.name}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-1">
-                  <span
-                    className={`rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase ${transportBadgeClass(kind)}`}
-                  >
-                    {kind === 'combi' ? 'Combi' : 'Autobús'}
-                  </span>
-                  <span
-                    className={`rounded-full border px-1.5 py-0.5 text-[9px] font-bold ${
-                      avail.tone === 'ok'
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-                        : avail.tone === 'warn'
-                          ? 'border-amber-200 bg-amber-50 text-amber-900'
-                          : 'border-rose-200 bg-rose-50 text-rose-800'
-                    }`}
-                  >
-                    {avail.label}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-[11px] leading-snug text-slate-600">
-                  <span className="font-semibold text-slate-700">Corredor: </span>
-                  {info.corridorLabel}
-                </p>
-                <p className="mt-0.5 text-[10px] text-slate-500">
-                  Ida ≈ {info.terminalIda} · Vuelta ≈ {info.terminalVuelta}
-                </p>
-              </div>
-              <button
-                type="button"
-                data-testid={`favorite-button-${route.id}`}
-                aria-label={isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-                onClick={() => void toggleFavorite(route.id)}
-                className="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-xl hover:bg-slate-100 cursor-pointer"
-              >
-                <Heart
-                  className={`h-5 w-5 ${isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`}
-                />
-              </button>
-            </div>
-            <button
-              type="button"
-              data-testid={`view-route-${route.id}`}
-              onClick={() => viewRouteOnMap(route)}
-              className="mt-2.5 flex min-h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-bold text-white cursor-pointer hover:bg-emerald-700 active:scale-[0.99]"
-            >
-              <Navigation className="h-4 w-4" aria-hidden />
-              Ver ruta
-            </button>
-          </article>
-        );
-      })}
-    </div>
+    <RouteExplorerList
+      routes={routes}
+      filteredRoutes={filteredRoutes}
+      shapesLoading={shapesLoading}
+      routeQuery={routeQuery}
+      onRouteQueryChange={setRouteQuery}
+      transportFilter={transportFilter}
+      onTransportFilter={setTransportFilter}
+      selectedRouteId={selectedRouteId}
+      favorites={favorites}
+      recentRoutes={recentRoutes}
+      favRoutes={favRoutes}
+      homePlace={homePlace}
+      workPlace={workPlace}
+      onToggleFavorite={(id) => void toggleFavorite(id)}
+      onViewRoute={viewRouteOnMap}
+      onPickHome={() => {
+        if (!homePlace) return;
+        setDestinationInput(homePlace.name);
+        setDestinationCoords(homePlace.coordinates);
+        setPanel('results');
+        dismissKeyboard();
+      }}
+      onPickWork={() => {
+        if (!workPlace) return;
+        setDestinationInput(workPlace.name);
+        setDestinationCoords(workPlace.coordinates);
+        setPanel('results');
+        dismissKeyboard();
+      }}
+    />
   );
 
   return (
     <div className="vm-app-shell bg-[var(--background)] font-sans">
       <SkipLink href="#search-panel" label="Saltar a búsqueda" />
-      <MapCanvas onReady={handleMapReady} onMapClick={handleMapClick} />
+      <MapCanvas
+        onReady={handleMapReady}
+        onMapClick={handleMapClick}
+        onLoadState={(s) => {
+          if (s.error) uiTelemetry.mapLoadFail(s.error);
+        }}
+      />
       <main id="main-content" className="pointer-events-none absolute inset-0 z-10">
       <AdminGateBanner />
+      <OfflineBanner />
 
       {/* Top bar: logo + nombre (izq) — no se solapa con favoritos/cuenta */}
       <motion.div
@@ -2105,104 +1987,41 @@ export default function HomeApp() {
           >
             {(() => {
               const r = routes.find((x) => x.id === selectedRouteId);
-              const kind = r
-                ? normalizeTransportType(r.transport_type, r.id, r.name)
-                : 'combi';
-              const info = r ? parseRouteDisplay(r) : null;
+              if (!r) return null;
               return (
-                <div className="vm-panel w-full max-w-md rounded-2xl border px-3 py-2.5 shadow-xl">
-                  <div className="flex items-start gap-2">
-                    <span
-                      className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border border-white shadow"
-                      style={{ backgroundColor: r?.color || '#10b981' }}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-slate-900">
-                        {r?.name || 'Ruta'}
-                      </p>
-                      <p className="text-[11px] text-slate-600">
-                        {kind === 'combi' ? 'Combi' : 'Autobús'} · Ruta completa
-                        {info?.corridorLabel ? ` · ${info.corridorLabel}` : ''}
-                      </p>
-                    </div>
-                  </div>
-                  {/* Selector de sentido */}
-                  <div className="mt-2 flex gap-1">
-                    {(
-                      [
-                        { id: 'both' as const, label: 'Ambos' },
-                        { id: 'ida' as const, label: 'Ida' },
-                        { id: 'vuelta' as const, label: 'Vuelta' },
-                      ] as const
-                    ).map((d) => (
-                      <button
-                        key={d.id}
-                        type="button"
-                        onClick={() => setRouteDirection(d.id)}
-                        className={`min-h-9 flex-1 touch-manipulation rounded-lg border px-2 py-1.5 text-[10px] font-bold cursor-pointer ${
-                          routeDirection === d.id
-                            ? 'border-slate-900 bg-slate-900 text-white'
-                            : 'border-slate-200 bg-white text-slate-600'
-                        }`}
-                      >
-                        {d.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-2 flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedRouteId(null);
-                        setRouteDirection('both');
-                        const map = mapRef.current;
-                        if (map) {
-                          const source = map.getSource(ROUTES_SOURCE_ID) as
-                            | GeoJSONSource
-                            | undefined;
-                          source?.setData({ type: 'FeatureCollection', features: [] });
-                          setTripStopsData(map, []);
-                        }
-                      }}
-                      className="min-h-10 flex-1 touch-manipulation rounded-xl bg-slate-100 px-2 py-2 text-[11px] font-bold text-slate-700 cursor-pointer hover:bg-slate-200"
-                    >
-                      Quitar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void (async () => {
-                          const title = `ViaMorelia — ${r?.name || 'ruta'}`;
-                          if (originCoords && destinationCoords) {
-                            await handleShareTrip();
-                            return;
-                          }
-                          // Solo ruta: enlace limpio al explorar (sin ensuciar la barra actual)
-                          const path = buildTripShareUrl({ routeId: selectedRouteId });
-                          const result = await shareOrCopyTripUrl(path, title);
-                          if (result === 'shared') toast('Listo para compartir', 'success');
-                          else if (result === 'copied') toast('Enlace copiado', 'success');
-                          else toast('No se pudo compartir', 'error');
-                        })();
-                      }}
-                      className="min-h-10 flex-1 touch-manipulation rounded-xl border border-slate-200 bg-white px-2 py-2 text-[11px] font-bold text-slate-800 cursor-pointer hover:bg-slate-50"
-                    >
-                      <span className="inline-flex items-center justify-center gap-1">
-                        <Share2 className="h-3.5 w-3.5" /> Compartir
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPanel('routes');
-                        setResultsOpen(true);
-                      }}
-                      className="min-h-10 flex-1 touch-manipulation rounded-xl bg-emerald-600 px-2 py-2 text-[11px] font-bold text-white cursor-pointer hover:bg-emerald-700"
-                    >
-                      Detalles
-                    </button>
-                  </div>
-                </div>
+                <SelectedRouteCard
+                  route={r}
+                  routeDirection={routeDirection}
+                  onDirectionChange={setRouteDirection}
+                  onRemove={() => {
+                    setSelectedRouteId(null);
+                    setRouteDirection('both');
+                    const map = mapRef.current;
+                    if (map) {
+                      const source = map.getSource(ROUTES_SOURCE_ID) as
+                        | GeoJSONSource
+                        | undefined;
+                      source?.setData({ type: 'FeatureCollection', features: [] });
+                      setTripStopsData(map, []);
+                    }
+                  }}
+                  onShare={() => {
+                    void (async () => {
+                      const title = `ViaMorelia — ${r.name}`;
+                      if (originCoords && destinationCoords) {
+                        await handleShareTrip();
+                        return;
+                      }
+                      const path = buildTripShareUrl({ routeId: selectedRouteId });
+                      const result = await shareOrCopyTripUrl(path, title);
+                      if (result === 'shared') toast('Listo para compartir', 'success');
+                      else if (result === 'copied') toast('Enlace copiado', 'success');
+                      else toast('No se pudo compartir', 'error');
+                    })();
+                  }}
+                  onDetails={() => openResultsPanel('routes')}
+                  onReport={() => setReportOpen(true)}
+                />
               );
             })()}
           </motion.div>
@@ -2284,8 +2103,7 @@ export default function HomeApp() {
         }}
         onClose={() => {
           dismissKeyboard();
-          setResultsOpen(false);
-          setSearchExpanded(false);
+          closeResultsPanel();
         }}
         footerAction={
           panel === 'routes'
@@ -2311,6 +2129,13 @@ export default function HomeApp() {
         {panel === 'favorites' && renderFavorites()}
         {panel === 'routes' && renderRouteExplorer()}
       </ResultsSheet>
+
+      <ReportRouteDialog
+        open={reportOpen && Boolean(selectedRouteId)}
+        routeId={selectedRouteId || ''}
+        routeName={routes.find((r) => r.id === selectedRouteId)?.name || 'Ruta'}
+        onClose={() => setReportOpen(false)}
+      />
 
       {/* Dock inferior: acciones con texto (más intuitivo) */}
       {!resultsOpen && (

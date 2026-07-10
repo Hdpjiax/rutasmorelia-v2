@@ -236,18 +236,30 @@ export async function loadShapesNearTrip(
   };
 }
 
-/** Prefetch en idle: no bloquea UI. */
+/**
+ * Prefetch en idle — conservador en móvil / save-data.
+ * Metadatos ya están; no descarga TODAS las geometrías de golpe en redes limitadas.
+ */
 export function prefetchAllShapesInBackground() {
   if (typeof window === 'undefined') return;
+  // No saturar datos móviles: solo si el usuario no pidió ahorro de datos
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } })
+    .connection;
+  if (conn?.saveData) return;
+  if (conn?.effectiveType === 'slow-2g' || conn?.effectiveType === '2g') return;
+
   const run = () => {
+    // En móvil, el prefetch total es agresivo: se omite salvo desktop amplio
+    const isNarrow = window.matchMedia('(max-width: 767px)').matches;
+    if (isNarrow) return;
     void loadPublishedShapes(false).catch(() => undefined);
   };
   if ('requestIdleCallback' in window) {
-    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
-      run
-    );
+    (window as Window & {
+      requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void;
+    }).requestIdleCallback(run, { timeout: 12000 });
   } else {
-    setTimeout(run, 2500);
+    setTimeout(run, 5000);
   }
 }
 
@@ -261,10 +273,13 @@ export function prefetchShapesNearCoordinate(
 ) {
   if (typeof window === 'undefined') return;
   const dest: Coordinate = [center[0] + 0.01, center[1] + 0.01];
+  // Carga progresiva: primero geometrías cerca del viewport/usuario; el resto solo en desktop
   const runNear = () => {
     void loadShapesNearTrip(center, dest, radiusKm).catch(() => undefined);
   };
   const runRest = () => {
+    const isNarrow = window.matchMedia('(max-width: 767px)').matches;
+    if (isNarrow) return;
     void loadPublishedShapes(false).catch(() => undefined);
   };
   if ('requestIdleCallback' in window) {
@@ -272,10 +287,10 @@ export function prefetchShapesNearCoordinate(
       requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void;
     };
     w.requestIdleCallback(runNear, { timeout: 1200 });
-    w.requestIdleCallback(runRest, { timeout: 8000 });
+    w.requestIdleCallback(runRest, { timeout: 10000 });
   } else {
     setTimeout(runNear, 400);
-    setTimeout(runRest, 3500);
+    setTimeout(runRest, 4500);
   }
 }
 
