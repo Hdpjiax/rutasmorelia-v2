@@ -18,7 +18,7 @@ type Props = {
 export function MapCanvas({
   onReady,
   onMapClick,
-  className = 'rm-map-canvas absolute inset-0 z-0 h-full w-full',
+  className = 'rm-map-canvas absolute inset-0 z-0 h-full w-full touch-none',
   'data-testid': testId = 'map-container',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +74,15 @@ export function MapCanvas({
 
   return (
     <>
-      <div ref={containerRef} data-testid={testId} className={className} role="application" aria-label="Mapa de Morelia" />
+      <div
+        ref={containerRef}
+        data-testid={testId}
+        className={className}
+        role="application"
+        aria-label="Mapa de Morelia"
+        /* Pinch/pan solo aquí; la página no hace zoom */
+        style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
+      />
       {error && (
         <div
           className="absolute inset-x-4 top-1/2 z-10 -translate-y-1/2 rounded-2xl border border-rose-200 bg-white p-4 text-center text-sm text-rose-800 shadow-lg"

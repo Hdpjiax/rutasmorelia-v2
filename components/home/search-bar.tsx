@@ -78,9 +78,13 @@ export function SearchBar({
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 360, damping: 28 }}
-      // Debajo del branding (logo + nombre); no solapar
-      className="absolute left-3 right-3 top-[3.35rem] z-40 sm:left-4 sm:right-auto sm:top-[4.35rem] sm:w-[min(92vw,380px)] md:top-[5.1rem] lg:top-[5.5rem]"
       id="search-panel"
+      className="pointer-events-auto absolute z-40 w-auto sm:max-w-[min(92vw,22rem)]"
+      style={{
+        top: 'var(--vm-search-top)',
+        left: 'max(0.75rem, var(--vm-safe-left))',
+        right: 'max(0.75rem, var(--vm-safe-right))',
+      }}
     >
       {!searchExpanded && (
         <button

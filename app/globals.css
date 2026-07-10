@@ -25,6 +25,14 @@
   --vm-selected-bg: rgba(16, 185, 129, 0.08);
   --vm-selected-border: #10b981;
   --vm-transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Layout móvil (safe areas + chrome fijo) */
+  --vm-safe-top: env(safe-area-inset-top, 0px);
+  --vm-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vm-safe-left: env(safe-area-inset-left, 0px);
+  --vm-safe-right: env(safe-area-inset-right, 0px);
+  --vm-top-bar-h: 2.75rem;
+  --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.4rem);
+  --vm-side: 0.75rem;
   color-scheme: light;
 }
 
@@ -37,15 +45,65 @@
 
 html {
   transition: color-scheme var(--vm-transition);
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  width: 100%;
   transition:
     background-color var(--vm-transition),
     color var(--vm-transition);
+}
+
+/* Shell de la app mapa: viewport real móvil (no h-screen roto) */
+.vm-app-shell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Solo el mapa recibe pellizco / pan multi-touch */
+.rm-map-canvas,
+.maplibregl-map,
+.maplibregl-canvas-container,
+.maplibregl-canvas {
+  touch-action: pan-x pan-y pinch-zoom !important;
+}
+
+/* UI (botones, paneles): sin zoom accidental */
+button,
+input,
+textarea,
+select,
+a,
+.vm-panel,
+.vm-btn-icon {
+  touch-action: manipulation;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --vm-top-bar-h: 3rem;
+    --vm-side: 1rem;
+  }
 }
 
 /* Contraste AA: texto secundario y chips más oscuros en UI clara */
@@ -138,15 +196,16 @@ textarea::placeholder {
 }
 
 .vm-btn-icon {
-  display: flex;
-  height: 2.75rem;
-  width: 2.75rem;
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 1rem;
+  border-radius: 9999px;
   border: 1px solid var(--vm-btn-icon-border);
   background: var(--vm-btn-icon-bg);
-  box-shadow: var(--vm-shadow);
+  box-shadow: 0 8px 18px -10px rgba(15, 23, 42, 0.28);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   color: var(--vm-text);
@@ -156,6 +215,14 @@ textarea::placeholder {
     background-color var(--vm-transition),
     border-color var(--vm-transition),
     box-shadow var(--vm-transition);
+}
+
+@media (min-width: 640px) {
+  .vm-btn-icon {
+    height: 2.75rem;
+    width: 2.75rem;
+    border-radius: 1rem;
+  }
 }
 
 .vm-btn-icon:hover {

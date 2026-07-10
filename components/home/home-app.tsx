@@ -1579,36 +1579,39 @@ export default function HomeApp() {
   );
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-[var(--background)] font-sans">
+    <div className="vm-app-shell bg-[var(--background)] font-sans">
       <SkipLink href="#search-panel" label="Saltar a búsqueda" />
       <MapCanvas onReady={handleMapReady} onMapClick={handleMapClick} />
-      <main id="main-content" className="contents">
+      <main id="main-content" className="pointer-events-none absolute inset-0 z-10">
       <AdminGateBanner />
 
-      {/* Branding: fila superior izquierda; deja hueco a la derecha para favoritos/cuenta */}
+      {/* Top bar: logo + nombre (izq) — no se solapa con favoritos/cuenta */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-        className="pointer-events-none absolute left-1 top-1 z-50 flex max-w-[calc(100%-6.5rem)] flex-row items-center leading-none sm:left-2 sm:top-1.5 sm:max-w-[min(55vw,20rem)]"
-        style={{ gap: 0, margin: 0, padding: 0, columnGap: 0 }}
+        className="pointer-events-none absolute z-50 flex items-center"
+        style={{
+          top: 'var(--vm-safe-top)',
+          left: 'max(0.5rem, var(--vm-safe-left))',
+          height: 'var(--vm-top-bar-h)',
+          maxWidth: 'calc(100% - 6.75rem - var(--vm-safe-right))',
+        }}
       >
         <Image
           src="/brand/icono.png"
           alt=""
-          width={80}
-          height={80}
-          className="relative z-10 block h-8 w-8 shrink-0 object-contain object-center drop-shadow-md sm:h-10 sm:w-10 md:h-11 md:w-11"
-          style={{ margin: 0, padding: 0 }}
+          width={64}
+          height={64}
+          className="relative z-10 block h-9 w-9 shrink-0 object-contain drop-shadow-md sm:h-10 sm:w-10"
           priority
         />
         <Image
           src="/brand/nombre.png"
           alt="ViaMorelia"
-          width={640}
-          height={140}
-          className="relative z-0 ml-0.5 block h-8 w-auto max-w-[min(48vw,8.5rem)] object-contain object-left drop-shadow-md sm:h-10 sm:max-w-[12rem] md:h-11 md:max-w-[14rem]"
-          style={{ marginTop: 0, marginBottom: 0, padding: 0 }}
+          width={480}
+          height={100}
+          className="relative z-0 ml-0.5 block h-8 w-auto max-w-[min(42vw,9rem)] object-contain object-left drop-shadow-md sm:h-9 sm:max-w-[12rem]"
           priority
         />
       </motion.div>
@@ -1667,77 +1670,83 @@ export default function HomeApp() {
         onSelectSuggestion={selectSuggestion}
       />
 
-{/* Top-right: favoritos + usuario */}
+{/* Top-right: favoritos + usuario (dentro del safe area) */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 360, damping: 28 }}
-        className="absolute right-3 top-3 z-40 flex flex-col items-end gap-2 sm:right-4 sm:top-4"
+        className="pointer-events-auto absolute z-50 flex items-center gap-1.5"
+        style={{
+          top: 'calc(var(--vm-safe-top) + 0.35rem)',
+          right: 'max(0.5rem, var(--vm-safe-right))',
+        }}
       >
-        <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setPanel('favorites');
+            setResultsOpen(true);
+            setAuthOpen(false);
+          }}
+          className="vm-btn-icon"
+          title="Favoritos"
+          aria-label={
+            hasMounted && (favorites.length || favoriteLocations.length)
+              ? `Favoritos (${favorites.length + favoriteLocations.length})`
+              : 'Favoritos'
+          }
+        >
+          <Heart
+            className={`h-5 w-5 ${
+              hasMounted && (favorites.length || favoriteLocations.length)
+                ? 'fill-rose-500 text-rose-500'
+                : 'text-[var(--vm-text-secondary)]'
+            }`}
+          />
+        </button>
+        <div className="relative">
           <button
             type="button"
             onClick={() => {
-              setPanel('favorites');
-              setResultsOpen(true);
-              setAuthOpen(false);
+              setAuthOpen((v) => !v);
+              setResultsOpen(false);
             }}
             className="vm-btn-icon"
-            title="Favoritos"
-            aria-label={
-              hasMounted && (favorites.length || favoriteLocations.length)
-                ? `Favoritos (${favorites.length + favoriteLocations.length})`
-                : 'Favoritos'
-            }
+            title={user ? `Cuenta: ${user.email}` : 'Entrar o registrarte'}
+            aria-label={user ? `Cuenta: ${user.email}` : 'Entrar o registrarte'}
+            aria-expanded={authOpen}
+            aria-haspopup="dialog"
           >
-            <Heart
-              className={`h-5 w-5 ${
-                hasMounted && (favorites.length || favoriteLocations.length)
-                  ? 'fill-rose-500 text-rose-500'
-                  : 'text-[var(--vm-text-secondary)]'
-              }`}
+            <User
+              className={`h-5 w-5 ${user ? 'text-emerald-500' : 'text-[var(--vm-text-secondary)]'}`}
             />
           </button>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setAuthOpen((v) => !v);
-                setResultsOpen(false);
-              }}
-              className="vm-btn-icon"
-              title={user ? `Cuenta: ${user.email}` : 'Entrar o registrarte'}
-              aria-label={user ? `Cuenta: ${user.email}` : 'Entrar o registrarte'}
-              aria-expanded={authOpen}
-              aria-haspopup="dialog"
-            >
-              <User
-                className={`h-5 w-5 ${user ? 'text-emerald-500' : 'text-[var(--vm-text-secondary)]'}`}
-              />
-            </button>
-            <AnimatePresence>
-              {authOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 30 }}
-                  className="vm-panel absolute right-0 top-[3.1rem] z-50 overflow-hidden rounded-2xl border"
-                >
-                  {renderAuthForm()}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <AnimatePresence>
+            {authOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+                className="vm-panel absolute right-0 top-[2.85rem] z-50 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border"
+              >
+                {renderAuthForm()}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
 
-      {/* Left: zoom compacto */}
+      {/* Left: zoom — a media altura, sin invadir dock */}
       <motion.div
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: 'spring', stiffness: 340, damping: 28, delay: 0.08 }}
-        className="absolute left-3 top-[min(48vh,26rem)] z-20 flex flex-col gap-1.5 sm:left-4"
+        className="pointer-events-auto absolute z-20 flex flex-col gap-1.5"
+        style={{
+          left: 'max(0.5rem, var(--vm-safe-left))',
+          top: 'min(42vh, 22rem)',
+        }}
       >
         <button
           type="button"
@@ -1766,7 +1775,12 @@ export default function HomeApp() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="absolute bottom-[5.5rem] left-3 right-3 z-30 flex justify-center sm:bottom-24 sm:left-auto sm:right-4 sm:justify-end"
+            className="pointer-events-auto absolute z-30 flex justify-center sm:left-auto sm:justify-end"
+            style={{
+              left: 'max(0.75rem, var(--vm-safe-left))',
+              right: 'max(0.75rem, var(--vm-safe-right))',
+              bottom: 'calc(4.75rem + var(--vm-safe-bottom))',
+            }}
           >
             <div className="vm-panel flex max-w-full items-center gap-2 rounded-2xl border px-3 py-2 shadow-xl">
               <span
@@ -1810,7 +1824,12 @@ export default function HomeApp() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
-            className="absolute bottom-[5.75rem] left-3 right-3 z-30 sm:bottom-24 sm:left-1/2 sm:right-auto sm:w-[min(92vw,380px)] sm:-translate-x-1/2"
+            className="pointer-events-auto absolute z-30 sm:left-1/2 sm:right-auto sm:w-[min(92vw,380px)] sm:-translate-x-1/2"
+            style={{
+              left: 'max(0.75rem, var(--vm-safe-left))',
+              right: 'max(0.75rem, var(--vm-safe-right))',
+              bottom: 'calc(4.75rem + var(--vm-safe-bottom))',
+            }}
           >
             <div className="vm-panel rounded-2xl border p-3.5 shadow-2xl">
               <div className="mb-2 flex items-start justify-between gap-2">

@@ -15,6 +15,7 @@ type Props = {
   onClear: () => void;
 };
 
+/** Dock inferior pegado al borde real del viewport (safe-area iPhone). */
 export function BottomDock({
   locating,
   hasMapContent,
@@ -26,24 +27,30 @@ export function BottomDock({
 }: Props) {
   return (
     <motion.nav
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 340, damping: 28, delay: 0.05 }}
-      className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-none"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-40"
+      style={{
+        paddingLeft: 'max(0.75rem, var(--vm-safe-left))',
+        paddingRight: 'max(0.75rem, var(--vm-safe-right))',
+        paddingBottom: 'max(0.5rem, var(--vm-safe-bottom))',
+        paddingTop: '0.35rem',
+      }}
       aria-label="Acciones principales"
     >
-      <div className="pointer-events-auto vm-panel flex w-full max-w-md items-stretch gap-1 rounded-2xl border p-1.5 shadow-2xl">
+      <div className="pointer-events-auto mx-auto flex w-full max-w-md items-stretch gap-0.5 rounded-2xl border border-slate-200/80 bg-white/95 p-1 shadow-2xl backdrop-blur-md">
         <DockBtn onClick={onPlan} label="Viaje" icon={Navigation} tone="emerald" />
         <DockBtn
           onClick={onRoutes}
-          label={routeCount ? `Rutas (${routeCount})` : 'Rutas'}
+          label={routeCount && routeCount > 0 ? `Rutas` : 'Rutas'}
           icon={List}
           tone="sky"
           testId="open-routes"
         />
         <DockBtn
           onClick={onLocation}
-          label="Ubicación"
+          label="GPS"
           icon={locating ? Loader2 : LocateFixed}
           tone="emerald"
           spinning={locating}
@@ -94,13 +101,13 @@ function DockBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-slate-800 transition cursor-pointer disabled:opacity-40',
+        'flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-slate-800 transition cursor-pointer disabled:opacity-40',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700',
         hover
       )}
     >
-      <Icon className={cn('h-5 w-5', color, spinning && 'animate-spin')} aria-hidden />
-      <span className="text-[10px] font-bold">{label}</span>
+      <Icon className={cn('h-5 w-5 shrink-0', color, spinning && 'animate-spin')} aria-hidden />
+      <span className="max-w-full truncate text-[10px] font-bold leading-none">{label}</span>
     </button>
   );
 }
