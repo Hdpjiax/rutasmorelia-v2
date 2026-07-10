@@ -1,26 +1,14 @@
 [
   {
-    "feature": 0,
     "status": "approved",
     "metrics": {
-      "avg_snap_m": 4.45,
-      "max_snap_m": 150.35,
-      "confidence": 0.98,
-      "matched_coverage": 1.5,
-      "orig_len_m": 26399.5,
-      "matched_len_m": 123652.3
-    }
-  },
-  {
-    "feature": 1,
-    "status": "approved",
-    "metrics": {
-      "avg_snap_m": 4.39,
-      "max_snap_m": 56.87,
-      "confidence": 0.98,
-      "matched_coverage": 1.5,
-      "orig_len_m": 26572.9,
-      "matched_len_m": 160470.7
-    }
+      "avg_snap_m": 11.02,
+      "max_snap_m": 53.4,
+      "confidence": 0.951,
+      "matched_coverage": 1.184,
+      "orig_len_m": 52756.0,
+      "matched_len_m": 62440.7
+    },
+    "corridor": "unified_both_kml"
   }
 ]

@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-09T07:33:43.359Z",
+  "generated_at": "2026-07-10T03:19:22.080Z",
   "totals": {
-    "routes": 103,
-    "approved": 88,
+    "routes": 101,
+    "approved": 101,
     "needs_review": 0,
-    "rejected": 15
+    "rejected": 0
   },
   "routes": [
     {
@@ -53,10 +53,10 @@
     },
     {
       "route_id": "ruta-arroyo-colorado",
-      "route_name": "Arroyo Colorado",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 37,
+      "route_name": "Ruta Arroyo Colorado",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -152,10 +152,10 @@
     },
     {
       "route_id": "ruta-campestre-mision-del-valle",
-      "route_name": "Campestre (Misión del Valle)",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 46,
+      "route_name": "Ruta Campestre Mision Del Valle",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -163,21 +163,10 @@
     },
     {
       "route_id": "ruta-campestre-posta-trebol-monarca",
-      "route_name": "Campestre (Posta Trebol - Monarca)",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 42,
-      "directions": [
-        "ida",
-        "vuelta"
-      ]
-    },
-    {
-      "route_id": "ruta-canteras-bachilleres",
-      "route_name": "Canteras Bachilleres (Alamos - San Bernabe)",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 50,
+      "route_name": "Ruta Campestre Posta Trebol Monarca",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -185,10 +174,10 @@
     },
     {
       "route_id": "ruta-capula",
-      "route_name": "Capula",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 22,
+      "route_name": "Ruta Capula",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -251,10 +240,10 @@
     },
     {
       "route_id": "ruta-chihuerio",
-      "route_name": "Chihuerio",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 131,
+      "route_name": "Ruta Chihuerio",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -284,10 +273,10 @@
     },
     {
       "route_id": "ruta-ciudad-de-hidalgo",
-      "route_name": "CD Hidalgo",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 27,
+      "route_name": "Ruta Ciudad De Hidalgo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -295,10 +284,10 @@
     },
     {
       "route_id": "ruta-coeneo",
-      "route_name": "Coeneo",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 68,
+      "route_name": "Ruta Coeneo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -306,10 +295,10 @@
     },
     {
       "route_id": "ruta-cointzio",
-      "route_name": "Cointzio",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 24,
+      "route_name": "Ruta Cointzio",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -505,9 +494,9 @@
     {
       "route_id": "ruta-gris-1-circuito",
       "route_name": "Gris 1 Circuito",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 51,
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -538,9 +527,9 @@
     {
       "route_id": "ruta-gris-4",
       "route_name": "Gris 4",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 30,
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -647,10 +636,10 @@
     },
     {
       "route_id": "ruta-morada-2a",
-      "route_name": "Morada 2A",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 20,
+      "route_name": "Ruta Morada 2A",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -801,10 +790,10 @@
     },
     {
       "route_id": "ruta-paloma-azul-arquito",
-      "route_name": "Paloma Azul Arquito",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 12,
+      "route_name": "Ruta Paloma Azul Arquito",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -845,10 +834,10 @@
     },
     {
       "route_id": "ruta-por-torreon-nuevo",
-      "route_name": "Chiquimitio (Por Torreon Nuevo)",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 26,
+      "route_name": "Ruta Por Torreon Nuevo",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -955,10 +944,10 @@
     },
     {
       "route_id": "ruta-roja-4-tinijaro",
-      "route_name": "Roja 4 Tinijaro",
-      "status": "rejected",
-      "publishable": false,
-      "issue_count": 40,
+      "route_name": "Ruta Roja 4 Tinijaro",
+      "status": "approved",
+      "publishable": true,
+      "issue_count": 0,
       "directions": [
         "ida",
         "vuelta"
@@ -1044,17 +1033,6 @@
     {
       "route_id": "ruta-rosa-puerta-del-sol-galaxia",
       "route_name": "Rosa Puerta del Sol - Galaxia",
-      "status": "approved",
-      "publishable": true,
-      "issue_count": 0,
-      "directions": [
-        "ida",
-        "vuelta"
-      ]
-    },
-    {
-      "route_id": "ruta-ruta-2",
-      "route_name": "Ruta 2 (Contra Reloj)",
       "status": "approved",
       "publishable": true,
       "issue_count": 0,

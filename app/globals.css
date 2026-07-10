@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
+/* ViaMorelia: solo tema claro (sin modo oscuro) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f5f7;
+  --foreground: #0f172a;
+  --vm-panel: rgba(255, 255, 255, 0.94);
+  --vm-panel-solid: #ffffff;
+  --vm-panel-border: rgba(255, 255, 255, 0.72);
+  --vm-card: #ffffff;
+  --vm-card-border: #e2e8f0;
+  --vm-muted: #64748b;
+  --vm-text: #0f172a;
+  --vm-text-secondary: #475569;
+  --vm-input-bg: #ffffff;
+  --vm-input-border: #e2e8f0;
+  --vm-overlay: rgba(15, 23, 42, 0.28);
+  --vm-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.18);
+  --vm-btn-icon-bg: rgba(255, 255, 255, 0.92);
+  --vm-btn-icon-border: rgba(255, 255, 255, 0.72);
+  --vm-fab: #0f172a;
+  --vm-fab-text: #ffffff;
+  --vm-chip: #f1f5f9;
+  --vm-chip-active: #059669;
+  --vm-selected-bg: rgba(16, 185, 129, 0.08);
+  --vm-selected-border: #10b981;
+  --vm-transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,20 +35,151 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  transition: color-scheme var(--vm-transition);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition:
+    background-color var(--vm-transition),
+    color var(--vm-transition);
 }
 
-/* Mapas Rutas Morelia: canvas nítido, sin escalado borroso */
+/* Inputs legibles en ambos temas */
+input,
+textarea,
+select {
+  color: var(--vm-text) !important;
+  background-color: var(--vm-input-bg) !important;
+  caret-color: var(--vm-text);
+  border-color: var(--vm-input-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--vm-muted) !important;
+  opacity: 0.85;
+}
+
+/* ——— Superficies premium ——— */
+.vm-panel {
+  background: var(--vm-panel);
+  border-color: var(--vm-panel-border);
+  box-shadow: var(--vm-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--vm-text);
+  transition:
+    background-color var(--vm-transition),
+    border-color var(--vm-transition),
+    box-shadow var(--vm-transition),
+    color var(--vm-transition);
+}
+
+.vm-card {
+  background: var(--vm-card);
+  border-color: var(--vm-card-border);
+  color: var(--vm-text);
+  transition:
+    background-color var(--vm-transition),
+    border-color var(--vm-transition),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vm-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+}
+
+.vm-btn-icon {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  border: 1px solid var(--vm-btn-icon-border);
+  background: var(--vm-btn-icon-bg);
+  box-shadow: var(--vm-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--vm-text);
+  cursor: pointer;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color var(--vm-transition),
+    border-color var(--vm-transition),
+    box-shadow var(--vm-transition);
+}
+
+.vm-btn-icon:hover {
+  transform: scale(1.06);
+}
+
+.vm-btn-icon:active {
+  transform: scale(0.96);
+}
+
+.vm-press {
+  transition:
+    transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 140ms ease;
+}
+
+.vm-press:active {
+  transform: scale(0.98);
+  opacity: 0.92;
+}
+
+.vm-fab {
+  background: var(--vm-fab);
+  color: var(--vm-fab-text);
+  box-shadow: var(--vm-shadow);
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color var(--vm-transition),
+    box-shadow var(--vm-transition);
+}
+
+.vm-fab:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.vm-fab:active {
+  transform: scale(0.97);
+}
+
+.vm-chip {
+  background: var(--vm-chip);
+  color: var(--vm-text-secondary);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 140ms ease;
+}
+
+.vm-chip:hover {
+  transform: scale(1.03);
+}
+
+.vm-chip-active {
+  background: var(--vm-chip-active);
+  color: #fff;
+}
+
+.vm-muted {
+  color: var(--vm-muted);
+}
+
+.vm-text {
+  color: var(--vm-text);
+}
+
+/* Mapas: canvas nítido */
 .qa-map-canvas .maplibregl-canvas,
 .rm-map-canvas .maplibregl-canvas {
   width: 100% !important;
@@ -39,8 +193,132 @@ body {
   height: 100%;
 }
 
+
 @media (prefers-reduced-motion: reduce) {
-  .rm-mobile-sheet {
+  .rm-mobile-sheet,
+  .vm-btn-icon,
+  .vm-card,
+  .vm-fab,
+  .vm-press,
+  .vm-chip {
     transition: none !important;
   }
+  .vm-orb-pulse,
+  .vm-orb-ring,
+  .vm-btn-icon:hover,
+  .vm-card:hover,
+  .vm-fab:hover {
+    animation: none !important;
+    transform: none !important;
+  }
 }
+
+/* ViaMorelia — orbes pulsantes origen/destino */
+.vm-orb-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.vm-orb-core {
+  position: absolute;
+  inset: 6px;
+  border-radius: 9999px;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.vm-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  opacity: 0.55;
+  animation: vm-orb-ring 1.8s ease-out infinite;
+  z-index: 1;
+}
+
+.vm-orb-ring.delay {
+  animation-delay: 0.6s;
+}
+
+@keyframes vm-orb-ring {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.vm-orb-origin {
+  color: #10b981;
+}
+.vm-orb-origin .vm-orb-core {
+  background: #10b981;
+}
+
+.vm-orb-dest {
+  color: #f43f5e;
+}
+.vm-orb-dest .vm-orb-core {
+  background: #f43f5e;
+}
+
+/* Letreros Sube / Baja / Transbordo */
+.vm-sign {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  white-space: nowrap;
+  color: #fff;
+  pointer-events: none;
+  transform: translateY(-4px);
+  animation: vm-sign-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.vm-sign-sube {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+.vm-sign-baja {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+.vm-sign-transbordo {
+  background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+@keyframes vm-sign-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+  }
+}
+
+.vm-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid color-mix(in srgb, var(--vm-text) 12%, transparent);
+  border-top-color: var(--vm-text);
+  border-radius: 9999px;
+  animation: vm-spin 0.7s linear infinite;
+}
+
+@keyframes vm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

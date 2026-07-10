@@ -8,18 +8,28 @@
         "routeId": "test-route-1",
         "routeName": "Ruta de Prueba 1",
         "direction": "ida",
-        "color": "#FFC800",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "longKm": 2.5,
         "transportType": "combi",
-        "name": "Ida"
+        "name": "Ida",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [-101.210, 19.7020],
-          [-101.194, 19.7020],
-          [-101.180, 19.7020]
+          [
+            -101.21,
+            19.702
+          ],
+          [
+            -101.194,
+            19.702
+          ],
+          [
+            -101.18,
+            19.702
+          ]
         ]
       }
     },
@@ -30,20 +40,35 @@
         "routeId": "test-route-1",
         "routeName": "Ruta de Prueba 1",
         "direction": "vuelta",
-        "color": "#FFD700",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "longKm": 2.5,
         "transportType": "combi",
-        "name": "Vuelta"
+        "name": "Vuelta",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [-101.180, 19.7015],
-          [-101.194, 19.7015],
-          [-101.210, 19.7015]
+          [
+            -101.18,
+            19.7015
+          ],
+          [
+            -101.194,
+            19.7015
+          ],
+          [
+            -101.21,
+            19.7015
+          ]
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#607D8B",
+    "casingColor": "#37474F"
+  }
 }

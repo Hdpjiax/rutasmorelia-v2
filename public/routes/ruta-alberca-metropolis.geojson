@@ -8,8 +8,8 @@
         "routeName": "Alberca (Metropolis)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#00897B",
+        "casingColor": "#004D40",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/78_ALBERCA_METROPOLIS/KML_alberca_m/Alberca_Metropolis_kml.kml",
         "sourceFeatureIndex": 0,
@@ -26,7 +26,8 @@
           "snap": 11.71,
           "conf": 0.948,
           "ok": true
-        }
+        },
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2025,8 +2026,8 @@
         "routeName": "Alberca (Metropolis)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#00897B",
+        "casingColor": "#004D40",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/78_ALBERCA_METROPOLIS/KML_alberca_m/Alberca_Metropolis_kml.kml",
         "sourceFeatureIndex": 1,
@@ -2043,7 +2044,8 @@
           "snap": 9.66,
           "conf": 0.957,
           "ok": true
-        }
+        },
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3995,5 +3997,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#00897B",
+    "casingColor": "#004D40"
+  }
 }

@@ -264,117 +264,128 @@ def assess_feature(props: dict, geom_dict: dict, feature_idx: int) -> list[dict]
     return issues
 
 
-summary_routes: list[dict] = []
+def main() -> None:
+    summary_routes: list[dict] = []
 
-for path in sorted(IN_DIR.glob("*.geojson")):
-    if ONLY_ROUTES and path.stem not in ONLY_ROUTES:
-        continue
-    data = json.loads(path.read_text(encoding="utf-8"))
-    issues: list[dict] = []
-    directions: list[str] = []
+    for path in sorted(IN_DIR.glob("*.geojson")):
+        if ONLY_ROUTES and path.stem not in ONLY_ROUTES:
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        issues: list[dict] = []
+        directions: list[str] = []
 
-    route_id = path.stem
-    route_name = route_id.replace("-", " ").title()
-    color = "#3b82f6"
-    transport_type = "combi"
+        route_id = path.stem
+        route_name = route_id.replace("-", " ").title()
+        color = "#3b82f6"
+        transport_type = "combi"
 
-    features = data.get("features", [])
-    if features:
-        props0 = features[0].get("properties", {})
-        route_id = props0.get("routeId", route_id)
-        route_name = props0.get("routeName", route_name)
-        color = props0.get("color", color)
-        transport_type = props0.get("transportType", transport_type)
+        features = data.get("features", [])
+        if features:
+            props0 = features[0].get("properties", {})
+            route_id = props0.get("routeId", route_id)
+            route_name = props0.get("routeName", route_name)
+            color = props0.get("color", color)
+            transport_type = props0.get("transportType", transport_type)
 
-    directions_detail: list[dict] = []
-    for i, f in enumerate(features):
-        props = f.get("properties", {})
-        direction = props.get("direction") or props.get("name")
-        if direction:
-            directions.append(str(direction).lower())
-        feature_issues = assess_feature(props, f.get("geometry"), i)
-        issues.extend(feature_issues)
-        directions_detail.append(
-            {
-                "direction": (direction or f"feature-{i}").lower(),
-                "qa_status": props.get("qa_status"),
-                "validator": props.get("validator"),
-                "avg_snap_m": props.get("avg_snap_m"),
-                "max_snap_m": props.get("max_snap_m"),
-                "confidence": props.get("confidence"),
-                "issues": [x for x in feature_issues],
-            }
+        directions_detail: list[dict] = []
+        for i, f in enumerate(features):
+            props = f.get("properties", {})
+            direction = props.get("direction") or props.get("name")
+            if direction:
+                directions.append(str(direction).lower())
+            feature_issues = assess_feature(props, f.get("geometry"), i)
+            issues.extend(feature_issues)
+            directions_detail.append(
+                {
+                    "direction": (direction or f"feature-{i}").lower(),
+                    "qa_status": props.get("qa_status"),
+                    "validator": props.get("validator"),
+                    "avg_snap_m": props.get("avg_snap_m"),
+                    "max_snap_m": props.get("max_snap_m"),
+                    "confidence": props.get("confidence"),
+                    "issues": [x for x in feature_issues],
+                }
+            )
+
+        if REQUIRE_TWO:
+            dset = set(directions)
+            if not {"ida", "vuelta"}.issubset(dset):
+                issues.append(
+                    {
+                        "severity": "critical",
+                        "issue": f"faltan sentidos ida/vuelta. Encontrado={sorted(dset)}",
+                    }
+                )
+            extra = dset - ONLY
+            if extra:
+                issues.append(
+                    {
+                        "severity": "critical",
+                        "issue": f"sentidos extra no permitidos: {sorted(extra)}",
+                    }
+                )
+
+        has_critical = any(x.get("severity") == "critical" for x in issues)
+        has_review = any(x.get("severity") == "review" for x in issues)
+        is_passed = not has_critical and not has_review
+
+        route_status = (
+            "approved" if is_passed else "needs_review" if not has_critical else "rejected"
         )
+        publishable = is_passed
 
-    if REQUIRE_TWO:
-        dset = set(directions)
-        if not {"ida", "vuelta"}.issubset(dset):
-            issues.append(
-                {
-                    "severity": "critical",
-                    "issue": f"faltan sentidos ida/vuelta. Encontrado={sorted(dset)}",
-                }
-            )
-        extra = dset - ONLY
-        if extra:
-            issues.append(
-                {
-                    "severity": "critical",
-                    "issue": f"sentidos extra no permitidos: {sorted(extra)}",
-                }
-            )
-
-    has_critical = any(x.get("severity") == "critical" for x in issues)
-    has_review = any(x.get("severity") == "review" for x in issues)
-    is_passed = not has_critical and not has_review
-
-    route_status = "approved" if is_passed else "needs_review" if not has_critical else "rejected"
-    publishable = is_passed
-
-    out = {
-        "file": str(path),
-        "route_id": route_id,
-        "route_name": route_name,
-        "status": route_status,
-        "publishable": publishable,
-        "issues": issues,
-        "directions": directions_detail,
-        "pass": is_passed,
-        "validated_at": datetime.now(timezone.utc).isoformat(),
-    }
-    (QA_DIR / f"{path.stem}.final_qa.json").write_text(
-        json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    print(path.name, "PASS" if is_passed else route_status.upper(), f"issues={len(issues)}")
-
-    summary_routes.append(
-        {
+        out = {
+            "file": str(path),
             "route_id": route_id,
             "route_name": route_name,
             "status": route_status,
             "publishable": publishable,
-            "issue_count": len(issues),
-            "directions": [d["direction"] for d in directions_detail],
+            "issues": issues,
+            "directions": directions_detail,
+            "pass": is_passed,
+            "validated_at": datetime.now(timezone.utc).isoformat(),
         }
+        (QA_DIR / f"{path.stem}.final_qa.json").write_text(
+            json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print(path.name, "PASS" if is_passed else route_status.upper(), f"issues={len(issues)}")
+
+        summary_routes.append(
+            {
+                "route_id": route_id,
+                "route_name": route_name,
+                "status": route_status,
+                "publishable": publishable,
+                "issue_count": len(issues),
+                "directions": [d["direction"] for d in directions_detail],
+            }
+        )
+
+        if publishable:
+            dest_geojson = PUBLIC_ROUTES_DIR / f"{route_id}.geojson"
+            dest_geojson.write_text(
+                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            print(f" -> Exportado GeoJSON aprobado a: {dest_geojson}")
+            update_routes_index(route_id, route_name, color, transport_type)
+        else:
+            print(f" -> NO publicado ({route_status}): {route_id}")
+
+    summary = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "totals": {
+            "routes": len(summary_routes),
+            "approved": sum(1 for r in summary_routes if r["status"] == "approved"),
+            "needs_review": sum(1 for r in summary_routes if r["status"] == "needs_review"),
+            "rejected": sum(1 for r in summary_routes if r["status"] == "rejected"),
+        },
+        "routes": summary_routes,
+    }
+    (QA_DIR / "qa-summary.json").write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    print(f"Resumen QA: {QA_DIR / 'qa-summary.json'}")
 
-    if publishable:
-        dest_geojson = PUBLIC_ROUTES_DIR / f"{route_id}.geojson"
-        dest_geojson.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f" -> Exportado GeoJSON aprobado a: {dest_geojson}")
-        update_routes_index(route_id, route_name, color, transport_type)
-    else:
-        print(f" -> NO publicado ({route_status}): {route_id}")
 
-summary = {
-    "generated_at": datetime.now(timezone.utc).isoformat(),
-    "totals": {
-        "routes": len(summary_routes),
-        "approved": sum(1 for r in summary_routes if r["status"] == "approved"),
-        "needs_review": sum(1 for r in summary_routes if r["status"] == "needs_review"),
-        "rejected": sum(1 for r in summary_routes if r["status"] == "rejected"),
-    },
-    "routes": summary_routes,
-}
-(QA_DIR / "qa-summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-print(f"Resumen QA: {QA_DIR / 'qa-summary.json'}")
+if __name__ == "__main__":
+    main()

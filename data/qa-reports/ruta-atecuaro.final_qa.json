@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-atecuaro.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-atecuaro.geojson",
   "route_id": "ruta-atecuaro",
   "route_name": "Atécuaro",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:09.977078+00:00"
+  "validated_at": "2026-07-09T11:25:46.370908+00:00"
 }

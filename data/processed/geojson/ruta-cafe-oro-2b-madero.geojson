@@ -8,11 +8,12 @@
         "routeName": "Café Oro 2B Madero",
         "direction": "ida",
         "name": "Ida",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/16_CAFE_ORO_2B_MADERO/KML/Café_Oro_2B_Madero.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1419,11 +1420,12 @@
         "routeName": "Café Oro 2B Madero",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/16_CAFE_ORO_2B_MADERO/KML/Café_Oro_2B_Madero.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2715,5 +2717,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#8D6E63",
+    "casingColor": "#3E2723"
+  }
 }

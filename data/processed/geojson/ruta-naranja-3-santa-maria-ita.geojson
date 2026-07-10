@@ -8,11 +8,12 @@
         "routeName": "Ruta Naranja 3 Santa Maria-Ita",
         "direction": "ida",
         "name": "Ida",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/45_NARANJA_3_SANTA_MARIA-ITA/KML_naraja3_smita/Naranja_3_SantaMaría_ITA_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1451,11 +1452,12 @@
         "routeName": "Ruta Naranja 3 Santa Maria-Ita",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/45_NARANJA_3_SANTA_MARIA-ITA/KML_naraja3_smita/Naranja_3_SantaMaría_ITA_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3027,5 +3029,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF9800",
+    "casingColor": "#E65100"
+  }
 }

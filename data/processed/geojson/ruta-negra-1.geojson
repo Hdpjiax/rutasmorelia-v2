@@ -8,11 +8,12 @@
         "routeName": "Negra 1",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#1A1A1A",
+        "casingColor": "#F5F5F5",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/47_NEGRA_1/KML_negra1/Negra_1_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1611,11 +1612,12 @@
         "routeName": "Negra 1",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#1A1A1A",
+        "casingColor": "#F5F5F5",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/47_NEGRA_1/KML_negra1/Negra_1_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3431,5 +3433,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1A1A1A",
+    "casingColor": "#F5F5F5"
+  }
 }

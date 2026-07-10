@@ -8,11 +8,12 @@
         "routeName": "Rosa 2B",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/67_ROSA_2B/KML_rosa2B/Rosa_2B_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1239,11 +1240,12 @@
         "routeName": "Rosa 2B",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/67_ROSA_2B/KML_rosa2B/Rosa_2B_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2799,5 +2801,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EC407A",
+    "casingColor": "#880E4F"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-1-buenos-aires.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-morada-1-buenos-aires.geojson",
   "route_id": "ruta-morada-1-buenos-aires",
   "route_name": "Morada 1 Buenos Aires",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.393390+00:00"
+  "validated_at": "2026-07-09T11:25:47.148177+00:00"
 }

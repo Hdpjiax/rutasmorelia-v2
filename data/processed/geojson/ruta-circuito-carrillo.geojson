@@ -8,11 +8,12 @@
         "routeName": "Circuito Carrillo",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/81_CIRCUITO_CARRILLO/KML_circuito_carrillo/Circuito_Carrillo_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3935,11 +3936,12 @@
         "routeName": "Circuito Carrillo",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/81_CIRCUITO_CARRILLO/KML_circuito_carrillo/Circuito_Carrillo_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -8023,5 +8025,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

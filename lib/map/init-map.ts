@@ -1,23 +1,32 @@
 import maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import { CARTO_POSITRON_STYLE, MORELIA_CENTER, MORELIA_ZOOM } from './constants';
+import {
+  basemapStyleUrl,
+  MORELIA_CENTER,
+  MORELIA_ZOOM,
+  type MapBasemapTheme,
+} from './constants';
 import { enhanceBasemap, mapPixelRatio } from './enhance-basemap';
 import { addRouteLayers, ensureRouteArrowIcon } from './route-layers';
 
 export type InitMapOptions = {
   container: HTMLElement;
   includeWalkLayers?: boolean;
+  /** Ignorado: el mapa siempre usa Positron claro */
+  basemapTheme?: MapBasemapTheme;
   onReady?: (map: MapLibreMap) => void;
 };
 
 export function initMoreliaMap({
   container,
   includeWalkLayers = true,
+  basemapTheme: _basemapTheme = 'light',
   onReady,
 }: InitMapOptions): MapLibreMap {
+  void _basemapTheme;
   const map = new maplibregl.Map({
     container,
-    style: CARTO_POSITRON_STYLE,
+    style: basemapStyleUrl('light'),
     center: MORELIA_CENTER,
     zoom: MORELIA_ZOOM,
     minZoom: 10,
@@ -27,7 +36,6 @@ export function initMoreliaMap({
   });
 
   map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
 
   const resize = () => requestAnimationFrame(() => map.resize());
   const observer = new ResizeObserver(() => resize());
@@ -36,7 +44,7 @@ export function initMoreliaMap({
 
   map.once('load', async () => {
     try {
-      await enhanceBasemap(map);
+      await enhanceBasemap(map, 'light');
       await ensureRouteArrowIcon(map);
       addRouteLayers(map, { includeWalk: includeWalkLayers });
       onReady?.(map);

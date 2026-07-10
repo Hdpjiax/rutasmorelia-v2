@@ -8,11 +8,12 @@
         "routeName": "Amarilla 1 Centro",
         "direction": "ida",
         "name": "Ida",
-        "color": "#FFC800",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/3_COMBI_AMARILLA_1_CENTRO/KML/Amarilla_1_centro.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -935,11 +936,12 @@
         "routeName": "Amarilla 1 Centro",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#FFC800",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/3_COMBI_AMARILLA_1_CENTRO/KML/Amarilla_1_centro.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1759,5 +1761,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FFD000",
+    "casingColor": "#222222"
+  }
 }

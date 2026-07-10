@@ -8,11 +8,12 @@
         "routeName": "Charo - Ind Atapaneo (ISSTE - Soledad)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/12_CHARO_INDAPARAPEO_ATAPANEO_ISSSTE_SOLEDAD/KML_ciais/Charo_Indapa_Atapa_Issste_Soledad_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2079,11 +2080,12 @@
         "routeName": "Charo - Ind Atapaneo (ISSTE - Soledad)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/12_CHARO_INDAPARAPEO_ATAPANEO_ISSSTE_SOLEDAD/KML_ciais/Charo_Indapa_Atapa_Issste_Soledad_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4235,5 +4237,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "Ruta Naranja 2 Santa Fe",
         "direction": "ida",
         "name": "Ida",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/41_NARANJA_2_SANTA_FE/KML_naranja2_sf/Naranja2_SantaFe_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.983,
         "matched_coverage": 1.025,
         "orig_len_m": 13802.6,
-        "matched_len_m": 14142.1
+        "matched_len_m": 14142.1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1372,8 +1373,8 @@
         "routeName": "Ruta Naranja 2 Santa Fe",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/41_NARANJA_2_SANTA_FE/KML_naranja2_sf/Naranja2_SantaFe_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1385,7 +1386,8 @@
         "confidence": 0.984,
         "matched_coverage": 1.0,
         "orig_len_m": 13537.4,
-        "matched_len_m": 13542.8
+        "matched_len_m": 13542.8,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2765,5 +2767,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF9800",
+    "casingColor": "#E65100"
+  }
 }

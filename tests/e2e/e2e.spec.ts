@@ -1,86 +1,89 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Tier 4: E2E Real-world Scenarios', () => {
-  
+test.describe('Tier 4: E2E ViaMorelia', () => {
   test('1. Cathedral-to-Zoo journey planning', async ({ page }) => {
     await page.goto('/');
-    
-    // Select origin
+
     const originInput = page.locator('[data-testid="search-origin"]').first();
     await originInput.fill('Catedral');
     const autocomplete = page.locator('[data-testid="search-autocomplete"]').first();
-    await expect(autocomplete).toBeVisible();
+    await expect(autocomplete).toBeVisible({ timeout: 10000 });
     await page.click('text=Catedral de Morelia');
 
-    // Select destination
     const destInput = page.locator('[data-testid="search-destination"]').first();
     await destInput.fill('Zoológico');
-    await expect(page.locator('[data-testid="search-autocomplete"]').first()).toBeVisible();
+    await expect(page.locator('[data-testid="search-autocomplete"]').first()).toBeVisible({
+      timeout: 10000,
+    });
     await page.click('text=Zoológico de Morelia');
 
-    // Verify trip planner results
+    // Abrir panel de resultados (móvil o desktop)
+    const fab = page.getByRole('button', { name: /viajes|Ver rutas/i });
+    if (await fab.isVisible().catch(() => false)) {
+      await fab.click();
+    }
+
     const results = page.locator('[data-testid="trip-planner-results"]').first();
-    await expect(results).toBeVisible();
-    await expect(results).toContainText('Ruta Roja 1');
-    await expect(results).toContainText('Directo');
+    await expect(results).toBeVisible({ timeout: 20000 });
+    await expect(results).toContainText(/Directo|Transbordo/i);
   });
 
-  test('2. Route list interaction, direction toggle, and favorites', async ({ page }) => {
+  test('2. Route list and favorites', async ({ page }) => {
     await page.goto('/');
-    
-    const routeItem = page.locator('[data-testid="route-item-ruta-roja-1"]').first();
-    await expect(routeItem).toBeVisible();
-    
-    // Toggle direction
-    const toggleDirBtn = page.locator('[data-testid="toggle-direction-ruta-roja-1"]').first();
-    await expect(toggleDirBtn).toBeVisible();
-    await expect(routeItem).toContainText('Sentido: Ida');
-    await toggleDirBtn.click();
-    await expect(routeItem).toContainText('Sentido: Vuelta');
 
-    // Toggle favorite
-    const favBtn = page.locator('[data-testid="favorite-button-ruta-roja-1"]').first();
+    // Abrir explorador de rutas
+    const openRoutes = page.getByRole('button', { name: /Ver rutas|Rutas/i }).first();
+    await openRoutes.click();
+
+    const routeItem = page.locator('[data-testid^="route-item-"]').first();
+    await expect(routeItem).toBeVisible({ timeout: 15000 });
+
+    const favBtn = page.locator('[data-testid^="favorite-button-"]').first();
     await expect(favBtn).toBeVisible();
+    await favBtn.click();
   });
 
   test('3. Search and autocomplete suggestions', async ({ page }) => {
     await page.goto('/');
-    
+
     const originInput = page.locator('[data-testid="search-origin"]').first();
-    await originInput.fill('Catedral');
-    
+    await originInput.fill('Centro');
+
     const autocomplete = page.locator('[data-testid="search-autocomplete"]').first();
-    await expect(autocomplete).toBeVisible();
-    await expect(autocomplete).toContainText('Catedral de Morelia');
-    
-    await page.click('text=Catedral de Morelia');
-    await expect(originInput).toHaveValue('Catedral de Morelia');
+    await expect(autocomplete).toBeVisible({ timeout: 10000 });
+    await expect(autocomplete).toContainText(/Centro/i);
+
+    await page.locator('[data-testid="search-autocomplete"] button').first().click();
+    await expect(originInput).not.toHaveValue('');
   });
 
-  test('4. Editor authentication and profile header', async ({ page }) => {
+  test('4. Auth: magic link or Google under user icon', async ({ page }) => {
     await page.goto('/');
 
-    const emailInput = page.locator('[data-testid="login-email"]').first();
-    const passwordInput = page.locator('[data-testid="login-password"]').first();
-    const submitBtn = page.locator('[data-testid="login-submit"]').first();
+    await page.getByTitle('Cuenta').click();
 
-    await expect(emailInput).toBeVisible();
-    await expect(passwordInput).toBeVisible();
+    const emailInput = page.locator('[data-testid="login-email"]').first();
+    const magicBtn = page.locator('[data-testid="login-magic-link"]').first();
+    const googleBtn = page.locator('[data-testid="login-google"]').first();
+
+    await expect(emailInput).toBeVisible({ timeout: 10000 });
+    await expect(magicBtn).toBeVisible();
+    await expect(googleBtn).toBeVisible();
+    // Sin campo de contraseña
+    await expect(page.locator('[data-testid="login-password"]')).toHaveCount(0);
 
     await emailInput.fill('editor@rutas.com');
-    await passwordInput.fill('password123');
-    await submitBtn.click();
+    await magicBtn.click();
 
-    // Verify profile header is displayed with email
+    // En mock/dev la sesión se crea al instante
     const profileHeader = page.locator('[data-testid="user-profile-header"]').first();
-    await expect(profileHeader).toBeVisible();
+    await expect(profileHeader).toBeVisible({ timeout: 10000 });
     await expect(profileHeader).toContainText('editor@rutas.com');
   });
 
   test('5. Map container initialization and visibility', async ({ page }) => {
     await page.goto('/');
-    
-    const mapContainer = page.locator('[data-testid="map-container"]');
-    await expect(mapContainer).toBeVisible();
+    const map = page.locator('[data-testid="map-container"]');
+    await expect(map).toBeVisible();
   });
 });

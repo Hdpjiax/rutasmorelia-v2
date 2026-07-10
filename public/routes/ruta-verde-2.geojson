@@ -8,8 +8,8 @@
         "routeName": "Verde 2",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/72_VERDE_2/KML_verde2/Verde_2_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.001,
         "orig_len_m": 16754.3,
-        "matched_len_m": 16777.7
+        "matched_len_m": 16777.7,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1892,8 +1893,8 @@
         "routeName": "Verde 2",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/72_VERDE_2/KML_verde2/Verde_2_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1905,7 +1906,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.047,
         "orig_len_m": 16648.8,
-        "matched_len_m": 17431.2
+        "matched_len_m": 17431.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3629,5 +3631,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

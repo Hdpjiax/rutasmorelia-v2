@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-coral-2.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-coral-2.geojson",
   "route_id": "ruta-coral-2",
   "route_name": "Coral 2",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.954139+00:00"
+  "validated_at": "2026-07-09T11:25:46.887115+00:00"
 }

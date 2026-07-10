@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-combi-amarilla-tenencia-morelos.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-combi-amarilla-tenencia-morelos.geojson",
   "route_id": "ruta-combi-amarilla-tenencia-morelos",
   "route_name": "Amarilla Tenencia Morelos",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.724117+00:00"
+  "validated_at": "2026-07-09T11:25:46.797160+00:00"
 }

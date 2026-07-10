@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-combi-azul-c.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-combi-azul-c.geojson",
   "route_id": "ruta-combi-azul-c",
   "route_name": "Azul C",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.839941+00:00"
+  "validated_at": "2026-07-09T11:25:46.863829+00:00"
 }

@@ -17,24 +17,27 @@ SCAN_DIRS = (
 )
 SKIP_KEYWORDS = ("cobertura", "coberturas")
 
+# Paleta resaltada (un poco más viva). Negra con casing claro en fix_route_colors.
 COLOR_RULES: list[tuple[str, str]] = [
-    ("amarilla", "#FFC800"),
-    ("amarillo", "#FFC800"),
-    ("roja", "#E53935"),
-    ("rojo", "#E53935"),
-    ("azul", "#1565C0"),
-    ("verde", "#2E7D32"),
-    ("cafe", "#6F4E37"),
-    ("café", "#6F4E37"),
-    ("coral", "#FF6F61"),
-    ("crema", "#C4A574"),
-    ("gris", "#757575"),
-    ("guinda", "#880E4F"),
-    ("rosa", "#E91E63"),
-    ("dorado", "#D4A017"),
-    ("naranja", "#F57C00"),
-    ("morada", "#7B1FA2"),
-    ("morado", "#7B1FA2"),
+    ("negra", "#1A1A1A"),
+    ("negro", "#1A1A1A"),
+    ("amarilla", "#FFD000"),
+    ("amarillo", "#FFD000"),
+    ("roja", "#EF4444"),
+    ("rojo", "#EF4444"),
+    ("azul", "#1E88E5"),
+    ("verde", "#43A047"),
+    ("cafe", "#8D6E63"),
+    ("café", "#8D6E63"),
+    ("coral", "#FF7043"),
+    ("crema", "#D4B483"),
+    ("gris", "#8A8A8A"),
+    ("guinda", "#C2185B"),
+    ("rosa", "#EC407A"),
+    ("dorado", "#F0B429"),
+    ("naranja", "#FF9800"),
+    ("morada", "#9C27B0"),
+    ("morado", "#9C27B0"),
 ]
 
 

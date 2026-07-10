@@ -8,11 +8,12 @@
         "routeName": "Verde 1",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/71_VERDE_1/KML_verde1/Verde_1_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1991,11 +1992,12 @@
         "routeName": "Verde 1",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/71_VERDE_1/KML_verde1/Verde_1_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4407,5 +4409,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

@@ -8,7 +8,7 @@
         "routeName": "Roja 4 Tzindurio",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/63_ROJA_4_TZINDURIO/KML_tzindurio/Roja_4_Tzindurio_kml.kml",
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 0.999,
         "orig_len_m": 15563.8,
-        "matched_len_m": 15544.9
+        "matched_len_m": 15544.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1516,7 +1517,7 @@
         "routeName": "Roja 4 Tzindurio",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/63_ROJA_4_TZINDURIO/KML_tzindurio/Roja_4_Tzindurio_kml.kml",
@@ -1529,7 +1530,8 @@
         "confidence": 0.99,
         "matched_coverage": 0.998,
         "orig_len_m": 14907.6,
-        "matched_len_m": 14874.5
+        "matched_len_m": 14874.5,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2873,5 +2875,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EF4444",
+    "casingColor": "#222222"
+  }
 }

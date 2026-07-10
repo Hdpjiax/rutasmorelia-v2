@@ -8,11 +8,12 @@
         "routeName": "Azul A Soriana-Vergel",
         "direction": "ida",
         "name": "Ida",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/6_COMBI_AZUL_A_SORIANA-VERGEL/KML/Azul_A_Soriana-Vergel.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1379,11 +1380,12 @@
         "routeName": "Azul A Soriana-Vergel",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/6_COMBI_AZUL_A_SORIANA-VERGEL/KML/Azul_A_Soriana-Vergel.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2315,5 +2317,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1E88E5",
+    "casingColor": "#0D47A1"
+  }
 }

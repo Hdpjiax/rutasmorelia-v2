@@ -1,5 +1,5 @@
 {
-  "file": "data/processed/matched/ruta-combi-azul-b-xangari.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-combi-azul-b-xangari.geojson",
   "route_id": "ruta-combi-azul-b-xangari",
   "route_name": "Azul B Xangari",
   "status": "approved",
@@ -26,6 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T05:06:19.134Z",
-  "transport_type": "combi"
+  "validated_at": "2026-07-09T11:25:46.849972+00:00"
 }

@@ -8,11 +8,12 @@
         "routeName": "Morada 1 Buenos Aires",
         "direction": "ida",
         "name": "Ida",
-        "color": "#7B1FA2",
-        "casingColor": "#222222",
+        "color": "#9C27B0",
+        "casingColor": "#4A148C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/33_MORADA_1_BUENOS_AIRES/KML/Morada_1_Buenos_Aires.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2859,11 +2860,12 @@
         "routeName": "Morada 1 Buenos Aires",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#7B1FA2",
-        "casingColor": "#222222",
+        "color": "#9C27B0",
+        "casingColor": "#4A148C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/33_MORADA_1_BUENOS_AIRES/KML/Morada_1_Buenos_Aires.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -6047,5 +6049,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#9C27B0",
+    "casingColor": "#4A148C"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "Oro Verde Soledad",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/50_ORO_VERDE_SOLEDAD/KML_ovs/Oro Verde Soledad_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.987,
         "matched_coverage": 1.004,
         "orig_len_m": 19290.1,
-        "matched_len_m": 19362.7
+        "matched_len_m": 19362.7,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1896,8 +1897,8 @@
         "routeName": "Oro Verde Soledad",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/50_ORO_VERDE_SOLEDAD/KML_ovs/Oro Verde Soledad_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1909,7 +1910,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.088,
         "orig_len_m": 19643.9,
-        "matched_len_m": 21377.1
+        "matched_len_m": 21377.1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3893,5 +3895,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

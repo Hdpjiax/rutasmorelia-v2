@@ -47,28 +47,69 @@ async function seed() {
     process.exit(1);
   }
   
-  const files = fs.readdirSync(routesDir).filter(f => f.endsWith('.geojson') && f !== 'test-route-1.geojson');
-  
-  for (const file of files) {
+  // Preferir index.json (fuente de verdad de rutas publicadas al usuario)
+  const indexPath = path.join(routesDir, 'index.json');
+  let indexRoutes: Array<{ id: string; name?: string; color?: string; transportType?: string; casingColor?: string }> = [];
+  if (fs.existsSync(indexPath)) {
+    try {
+      const idx = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+      indexRoutes = idx.routes || [];
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const files = fs
+    .readdirSync(routesDir)
+    .filter((f) => f.endsWith('.geojson') && f !== 'test-route-1.geojson');
+
+  // Si hay índice, solo esas rutas (orden del índice)
+  const fileList =
+    indexRoutes.length > 0
+      ? indexRoutes.map((r) => `${r.id}.geojson`).filter((f) => files.includes(f))
+      : files;
+
+  const indexById = new Map(indexRoutes.map((r) => [r.id, r]));
+
+  let okRoutes = 0;
+  let okShapes = 0;
+  let failRoutes = 0;
+
+  for (const file of fileList) {
     console.log(`Processing file: ${file}`);
     const filePath = path.join(routesDir, file);
     const geojsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    
-    const features = geojsonData.features || [];
-    if (features.length === 0) continue;
-    
-    // Extract route metadata from first feature
+
+    const features = (geojsonData.features || []).filter(
+      (f: { geometry?: { type?: string; coordinates?: unknown[] }; properties?: Record<string, unknown> }) => {
+        const t = f.properties?.type;
+        if (t === 'sense-label' || t === 'walk') return false;
+        return f.geometry?.type === 'LineString' && Array.isArray(f.geometry?.coordinates) && f.geometry.coordinates.length >= 2;
+      }
+    );
+    if (features.length === 0) {
+      console.warn(`⚠️ Sin LineString ida/vuelta en ${file}`);
+      continue;
+    }
+
     const firstFeatureProps = features[0].properties || {};
-    const routeId = firstFeatureProps.routeId;
-    const routeName = firstFeatureProps.routeName || routeId.replace('-', ' ').toUpperCase();
-    const color = firstFeatureProps.color || '#3b82f6';
-    const casingColor = firstFeatureProps.casingColor || '#222222';
-    const transportType = firstFeatureProps.transportType || 'combi';
-    const status = firstFeatureProps.qa_status === 'approved' ? 'approved' : 'needs_review';
-    
+    const routeId =
+      String(firstFeatureProps.routeId || path.basename(file, '.geojson')).trim();
+    const meta = indexById.get(routeId);
+    const routeName =
+      meta?.name ||
+      firstFeatureProps.routeName ||
+      routeId.replace(/^ruta-/, '').replace(/-/g, ' ');
+    const color = meta?.color || firstFeatureProps.color || '#3b82f6';
+    const casingColor =
+      meta?.casingColor || firstFeatureProps.casingColor || '#222222';
+    const transportType =
+      meta?.transportType || firstFeatureProps.transportType || 'combi';
+    // Todo lo publicado en /public/routes es visible → approved
+    const status = 'approved';
+
     console.log(` -> Seeding route: ${routeId} (${routeName})`);
-    
-    // Upsert Route metadata
+
     const { error: routeError } = await supabase.from('routes').upsert({
       id: routeId,
       name: routeName,
@@ -76,53 +117,63 @@ async function seed() {
       casing_color: casingColor,
       transport_type: transportType,
       status: status,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     });
-    
+
     if (routeError) {
       console.error(`❌ Error inserting route ${routeId}:`, routeError.message);
+      failRoutes++;
       continue;
     }
-    
-    // Process shapes
+    okRoutes++;
+
     for (const feature of features) {
       const props = feature.properties || {};
-      const direction = props.direction;
-      const geom = feature.geometry;
-      const matchedToOsm = props.matched_to_osm || false;
-      const qaStatus = props.qa_status || 'needs_review';
-      
-      if (!direction || !geom || geom.type !== 'LineString') {
-        console.warn(`⚠️ Invalid feature in ${file}, skipping shape.`);
-        continue;
+      let direction = String(props.direction || props.name || '').toLowerCase();
+      if (direction !== 'ida' && direction !== 'vuelta') {
+        if (direction.includes('ida')) direction = 'ida';
+        else if (direction.includes('vuelta')) direction = 'vuelta';
+        else {
+          console.warn(`⚠️ Dirección inválida en ${file}, skip`);
+          continue;
+        }
       }
-      
+      const geom = feature.geometry;
+      const matchedToOsm = Boolean(props.matched_to_osm);
+      const qaStatus = 'approved';
+
       console.log(`   -> Upserting shape for direction: ${direction}`);
-      
-      // Delete existing shape for same route & direction to avoid duplicates
-      await supabase.from('route_shapes')
+
+      await supabase
+        .from('route_shapes')
         .delete()
         .eq('route_id', routeId)
         .eq('direction', direction);
-        
-      // Insert new shape
+
+      // PostGIS via Supabase: GeoJSON geometry object
       const { error: shapeError } = await supabase.from('route_shapes').insert({
         route_id: routeId,
         direction: direction,
         geom: geom,
         matched_to_osm: matchedToOsm,
-        qa_status: qaStatus
+        qa_status: qaStatus,
       });
-      
+
       if (shapeError) {
-        console.error(`❌ Error inserting shape for route ${routeId} ${direction}:`, shapeError.message);
+        console.error(
+          `❌ Error inserting shape for route ${routeId} ${direction}:`,
+          shapeError.message
+        );
       } else {
+        okShapes++;
         console.log(`   ✅ Successfully inserted shape.`);
       }
     }
   }
-  
-  console.log('--- Seeding Finished ---');
+
+  console.log(
+    `--- Seeding Finished --- routes_ok=${okRoutes} routes_fail=${failRoutes} shapes_ok=${okShapes}`
+  );
 }
 
 seed().catch(err => {

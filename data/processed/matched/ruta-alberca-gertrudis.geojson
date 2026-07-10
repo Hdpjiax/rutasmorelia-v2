@@ -8,8 +8,8 @@
         "routeName": "Alberca (Gertrudis)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#00897B",
+        "casingColor": "#004D40",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/79_ALBERCA_GERTRUDIS/KML_alberga_g/Alberca_Gertrudis_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.037,
         "orig_len_m": 17520.1,
-        "matched_len_m": 18168.3
+        "matched_len_m": 18168.3,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1896,8 +1897,8 @@
         "routeName": "Alberca (Gertrudis)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#00897B",
+        "casingColor": "#004D40",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/79_ALBERCA_GERTRUDIS/KML_alberga_g/Alberca_Gertrudis_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1909,7 +1910,8 @@
         "confidence": 0.989,
         "matched_coverage": 0.999,
         "orig_len_m": 12298.0,
-        "matched_len_m": 12289.7
+        "matched_len_m": 12289.7,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2965,5 +2967,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#00897B",
+    "casingColor": "#004D40"
+  }
 }

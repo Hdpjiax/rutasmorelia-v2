@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-chucandiro.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-chucandiro.geojson",
   "route_id": "ruta-chucandiro",
   "route_name": "Chucandiro",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.612711+00:00"
+  "validated_at": "2026-07-09T11:25:46.626755+00:00"
 }

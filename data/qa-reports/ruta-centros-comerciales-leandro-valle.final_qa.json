@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-centros-comerciales-leandro-valle.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-centros-comerciales-leandro-valle.geojson",
   "route_id": "ruta-centros-comerciales-leandro-valle",
   "route_name": "Centros Comerciales (Lenadro Valle)",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.395568+00:00"
+  "validated_at": "2026-07-09T11:25:46.523317+00:00"
 }

@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-amarilla-centro.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-amarilla-centro.geojson",
   "route_id": "ruta-amarilla-centro",
   "route_name": "Amarilla 1 Centro",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:09.874796+00:00"
+  "validated_at": "2026-07-09T11:25:46.329887+00:00"
 }

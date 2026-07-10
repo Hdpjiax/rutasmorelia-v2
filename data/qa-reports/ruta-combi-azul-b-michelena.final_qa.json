@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-combi-azul-b-michelena.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-combi-azul-b-michelena.geojson",
   "route_id": "ruta-combi-azul-b-michelena",
   "route_name": "Azul B Michelena",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.787633+00:00"
+  "validated_at": "2026-07-09T11:25:46.839370+00:00"
 }

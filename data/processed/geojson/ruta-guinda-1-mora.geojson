@@ -8,11 +8,12 @@
         "routeName": "Guinda 1 Mora",
         "direction": "ida",
         "name": "Ida",
-        "color": "#880E4F",
-        "casingColor": "#222222",
+        "color": "#C2185B",
+        "casingColor": "#4A0026",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/29_GUINDA_1_MORA/KML/Guinda_1_Mora.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1831,11 +1832,12 @@
         "routeName": "Guinda 1 Mora",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#880E4F",
-        "casingColor": "#222222",
+        "color": "#C2185B",
+        "casingColor": "#4A0026",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/29_GUINDA_1_MORA/KML/Guinda_1_Mora.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3859,5 +3861,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#C2185B",
+    "casingColor": "#4A0026"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "Centros Comerciales (Lucio Cabañas)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/10_CENTROS_COMERCIALES-LUCIO_CABAÑAS/KML_cclc/Centros_Comerciales_Lucio_Cabañas_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 1.001,
         "orig_len_m": 20147.0,
-        "matched_len_m": 20170.2
+        "matched_len_m": 20170.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2440,8 +2441,8 @@
         "routeName": "Centros Comerciales (Lucio Cabañas)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/10_CENTROS_COMERCIALES-LUCIO_CABAÑAS/KML_cclc/Centros_Comerciales_Lucio_Cabañas_kml.kml",
         "sourceFeatureIndex": 1,
@@ -2453,7 +2454,8 @@
         "confidence": 0.992,
         "matched_coverage": 0.999,
         "orig_len_m": 18421.3,
-        "matched_len_m": 18397.9
+        "matched_len_m": 18397.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4341,5 +4343,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

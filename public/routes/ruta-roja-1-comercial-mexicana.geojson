@@ -8,7 +8,7 @@
         "routeName": "Roja 1 Comercial Mexicana",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/55_ROJA_1_COMERCIAL_MEXICANA/KML_rcm/Roja_1_Comercial_Mexicana_kml.kml",
@@ -21,7 +21,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.003,
         "orig_len_m": 14806.1,
-        "matched_len_m": 14846.9
+        "matched_len_m": 14846.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1512,7 +1513,7 @@
         "routeName": "Roja 1 Comercial Mexicana",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/55_ROJA_1_COMERCIAL_MEXICANA/KML_rcm/Roja_1_Comercial_Mexicana_kml.kml",
@@ -1525,7 +1526,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.004,
         "orig_len_m": 13020.4,
-        "matched_len_m": 13071.9
+        "matched_len_m": 13071.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2877,5 +2879,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EF4444",
+    "casingColor": "#222222"
+  }
 }

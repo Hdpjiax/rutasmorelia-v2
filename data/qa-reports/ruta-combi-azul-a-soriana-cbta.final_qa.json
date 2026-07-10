@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-combi-azul-a-soriana-cbta.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-combi-azul-a-soriana-cbta.geojson",
   "route_id": "ruta-combi-azul-a-soriana-cbta",
   "route_name": "Azul A Soriana-CBTA",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.745741+00:00"
+  "validated_at": "2026-07-09T11:25:46.809316+00:00"
 }

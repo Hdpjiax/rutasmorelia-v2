@@ -8,11 +8,12 @@
         "routeName": "Roja 1 Punhuato",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/56_ROJA_1_PUNHUATO/KML_rp/Roja_1_Punhuato_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1847,11 +1848,12 @@
         "routeName": "Roja 1 Punhuato",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/56_ROJA_1_PUNHUATO/KML_rp/Roja_1_Punhuato_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3439,5 +3441,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EF4444",
+    "casingColor": "#222222"
+  }
 }

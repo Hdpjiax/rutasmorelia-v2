@@ -1,273 +1,30 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-paloma-azul-arquito.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-paloma-azul-arquito.geojson",
   "route_id": "ruta-paloma-azul-arquito",
-  "route_name": "Paloma Azul Arquito",
-  "status": "rejected",
-  "publishable": false,
-  "issues": [
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 783.74m en vértice 54 (>500.0m)",
-      "gap": {
-        "index": 54,
-        "distance_m": 783.74
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 637.88m en vértice 64 (>500.0m)",
-      "gap": {
-        "index": 64,
-        "distance_m": 637.88
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 1014.14m en vértice 94 (>500.0m)",
-      "gap": {
-        "index": 94,
-        "distance_m": 1014.14
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 542.16m en vértice 117 (>500.0m)",
-      "gap": {
-        "index": 117,
-        "distance_m": 542.16
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 757.45m en vértice 305 (>500.0m)",
-      "gap": {
-        "index": 305,
-        "distance_m": 757.45
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 675.16m en vértice 310 (>500.0m)",
-      "gap": {
-        "index": 310,
-        "distance_m": 675.16
-      }
-    },
-    {
-      "feature": 0,
-      "direction": "ida",
-      "severity": "critical",
-      "issue": "salto de 532.92m en vértice 316 (>500.0m)",
-      "gap": {
-        "index": 316,
-        "distance_m": 532.92
-      }
-    },
-    {
-      "feature": 1,
-      "direction": "vuelta",
-      "severity": "critical",
-      "issue": "salto de 792.96m en vértice 4 (>500.0m)",
-      "gap": {
-        "index": 4,
-        "distance_m": 792.96
-      }
-    },
-    {
-      "feature": 1,
-      "direction": "vuelta",
-      "severity": "critical",
-      "issue": "salto de 542.16m en vértice 26 (>500.0m)",
-      "gap": {
-        "index": 26,
-        "distance_m": 542.16
-      }
-    },
-    {
-      "feature": 1,
-      "direction": "vuelta",
-      "severity": "critical",
-      "issue": "salto de 642.62m en vértice 107 (>500.0m)",
-      "gap": {
-        "index": 107,
-        "distance_m": 642.62
-      }
-    },
-    {
-      "feature": 1,
-      "direction": "vuelta",
-      "severity": "critical",
-      "issue": "salto de 679.53m en vértice 109 (>500.0m)",
-      "gap": {
-        "index": 109,
-        "distance_m": 679.53
-      }
-    },
-    {
-      "feature": 1,
-      "direction": "vuelta",
-      "severity": "critical",
-      "issue": "salto de 502.07m en vértice 226 (>500.0m)",
-      "gap": {
-        "index": 226,
-        "distance_m": 502.07
-      }
-    }
-  ],
+  "route_name": "Ruta Paloma Azul Arquito",
+  "status": "approved",
+  "publishable": true,
+  "issues": [],
   "directions": [
     {
       "direction": "ida",
       "qa_status": "approved",
       "validator": "valhalla+osrm",
-      "avg_snap_m": 6.49,
-      "max_snap_m": 104.42,
-      "confidence": 0.971,
-      "issues": [
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 783.74m en vértice 54 (>500.0m)",
-          "gap": {
-            "index": 54,
-            "distance_m": 783.74
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 637.88m en vértice 64 (>500.0m)",
-          "gap": {
-            "index": 64,
-            "distance_m": 637.88
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 1014.14m en vértice 94 (>500.0m)",
-          "gap": {
-            "index": 94,
-            "distance_m": 1014.14
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 542.16m en vértice 117 (>500.0m)",
-          "gap": {
-            "index": 117,
-            "distance_m": 542.16
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 757.45m en vértice 305 (>500.0m)",
-          "gap": {
-            "index": 305,
-            "distance_m": 757.45
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 675.16m en vértice 310 (>500.0m)",
-          "gap": {
-            "index": 310,
-            "distance_m": 675.16
-          }
-        },
-        {
-          "feature": 0,
-          "direction": "ida",
-          "severity": "critical",
-          "issue": "salto de 532.92m en vértice 316 (>500.0m)",
-          "gap": {
-            "index": 316,
-            "distance_m": 532.92
-          }
-        }
-      ]
+      "avg_snap_m": 5.74,
+      "max_snap_m": 28.78,
+      "confidence": 0.975,
+      "issues": []
     },
     {
       "direction": "vuelta",
       "qa_status": "approved",
       "validator": "valhalla+osrm",
-      "avg_snap_m": 3.03,
-      "max_snap_m": 39.22,
-      "confidence": 0.987,
-      "issues": [
-        {
-          "feature": 1,
-          "direction": "vuelta",
-          "severity": "critical",
-          "issue": "salto de 792.96m en vértice 4 (>500.0m)",
-          "gap": {
-            "index": 4,
-            "distance_m": 792.96
-          }
-        },
-        {
-          "feature": 1,
-          "direction": "vuelta",
-          "severity": "critical",
-          "issue": "salto de 542.16m en vértice 26 (>500.0m)",
-          "gap": {
-            "index": 26,
-            "distance_m": 542.16
-          }
-        },
-        {
-          "feature": 1,
-          "direction": "vuelta",
-          "severity": "critical",
-          "issue": "salto de 642.62m en vértice 107 (>500.0m)",
-          "gap": {
-            "index": 107,
-            "distance_m": 642.62
-          }
-        },
-        {
-          "feature": 1,
-          "direction": "vuelta",
-          "severity": "critical",
-          "issue": "salto de 679.53m en vértice 109 (>500.0m)",
-          "gap": {
-            "index": 109,
-            "distance_m": 679.53
-          }
-        },
-        {
-          "feature": 1,
-          "direction": "vuelta",
-          "severity": "critical",
-          "issue": "salto de 502.07m en vértice 226 (>500.0m)",
-          "gap": {
-            "index": 226,
-            "distance_m": 502.07
-          }
-        }
-      ]
+      "avg_snap_m": 5.74,
+      "max_snap_m": 28.78,
+      "confidence": 0.975,
+      "issues": []
     }
   ],
-  "pass": false,
-  "validated_at": "2026-07-09T00:47:11.946585+00:00"
+  "pass": true,
+  "validated_at": "2026-07-09T11:25:47.391607+00:00"
 }

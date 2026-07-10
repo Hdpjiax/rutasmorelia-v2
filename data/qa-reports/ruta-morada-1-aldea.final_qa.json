@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-1-aldea.geojson",
+  "file": "data/processed/matched/ruta-morada-1-aldea.geojson",
   "route_id": "ruta-morada-1-aldea",
   "route_name": "Morada 1 Aldea",
   "status": "approved",
@@ -9,22 +9,23 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm-tune",
-      "avg_snap_m": 10.23,
-      "max_snap_m": 73.69,
-      "confidence": 0.955,
+      "validator": "valhalla+osrm-dual",
+      "avg_snap_m": 19.49,
+      "max_snap_m": 441.87,
+      "confidence": 0.913,
       "issues": []
     },
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm-tune",
-      "avg_snap_m": 7.3,
-      "max_snap_m": 67.51,
-      "confidence": 0.968,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.356376+00:00"
+  "validated_at": "2026-07-10T02:08:28.102Z",
+  "transport_type": "combi"
 }

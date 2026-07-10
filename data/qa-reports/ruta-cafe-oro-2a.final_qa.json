@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-cafe-oro-2a.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-cafe-oro-2a.geojson",
   "route_id": "ruta-cafe-oro-2a",
   "route_name": "Café Oro 2A",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.114255+00:00"
+  "validated_at": "2026-07-09T11:25:46.441303+00:00"
 }

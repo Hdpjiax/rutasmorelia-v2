@@ -8,8 +8,8 @@
         "routeName": "Gris 3 Furamo",
         "direction": "ida",
         "name": "Ida",
-        "color": "#757575",
-        "casingColor": "#222222",
+        "color": "#8A8A8A",
+        "casingColor": "#212121",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/26_GRIS_3_FURAMO/KML/Gris_3_Furamo.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.004,
         "orig_len_m": 26636.0,
-        "matched_len_m": 26731.2
+        "matched_len_m": 26731.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2792,8 +2793,8 @@
         "routeName": "Gris 3 Furamo",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#757575",
-        "casingColor": "#222222",
+        "color": "#8A8A8A",
+        "casingColor": "#212121",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/26_GRIS_3_FURAMO/KML/Gris_3_Furamo.kml",
         "sourceFeatureIndex": 1,
@@ -2805,7 +2806,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.002,
         "orig_len_m": 26600.7,
-        "matched_len_m": 26652.3
+        "matched_len_m": 26652.3,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -5401,5 +5403,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#8A8A8A",
+    "casingColor": "#212121"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "Ruta Naranja 3 Santa Maria-Erandeni",
         "direction": "ida",
         "name": "Ida",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/44_NARANJA_3_SANTA_MARIA-ERANDENI/KML_naranja3_sme/Naranja3_SantaMaría_Erandeni_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.005,
         "orig_len_m": 19143.3,
-        "matched_len_m": 19236.1
+        "matched_len_m": 19236.1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1884,8 +1885,8 @@
         "routeName": "Ruta Naranja 3 Santa Maria-Erandeni",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/44_NARANJA_3_SANTA_MARIA-ERANDENI/KML_naranja3_sme/Naranja3_SantaMaría_Erandeni_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1897,7 +1898,8 @@
         "confidence": 0.987,
         "matched_coverage": 1.002,
         "orig_len_m": 19108.6,
-        "matched_len_m": 19139.0
+        "matched_len_m": 19139.0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3721,5 +3723,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF9800",
+    "casingColor": "#E65100"
+  }
 }

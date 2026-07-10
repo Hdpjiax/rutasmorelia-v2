@@ -2,11 +2,11 @@
   "route": {
     "id": "ruta-crema-2a",
     "name": "Crema 2A",
-    "color": "#C4A574",
-    "casing_color": "#222222",
+    "color": "#D4B483",
+    "casing_color": "#5D4037",
     "transport_type": "combi",
     "status": "approved",
-    "updated_at": "2026-07-09T07:01:03.509Z"
+    "updated_at": "2026-07-10T03:10:09.864Z"
   },
   "shapes": [
     {

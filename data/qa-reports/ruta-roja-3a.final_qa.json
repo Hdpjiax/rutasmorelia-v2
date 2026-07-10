@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-roja-3a.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-roja-3a.geojson",
   "route_id": "ruta-roja-3a",
   "route_name": "Roja 3A",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.257185+00:00"
+  "validated_at": "2026-07-09T11:25:47.546899+00:00"
 }

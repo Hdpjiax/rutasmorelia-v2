@@ -8,8 +8,8 @@
         "routeName": "Azul A Soriana-CBTA",
         "direction": "ida",
         "name": "Ida",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/5_COMBI_AZUL_A_SORIANA-CBTA/KML/Azul_A_Soriana-CBTA.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.0,
         "orig_len_m": 17436.1,
-        "matched_len_m": 17435.4
+        "matched_len_m": 17435.4,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1680,8 +1681,8 @@
         "routeName": "Azul A Soriana-CBTA",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/5_COMBI_AZUL_A_SORIANA-CBTA/KML/Azul_A_Soriana-CBTA.kml",
         "sourceFeatureIndex": 1,
@@ -1693,7 +1694,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.0,
         "orig_len_m": 17939.9,
-        "matched_len_m": 17935.8
+        "matched_len_m": 17935.8,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3433,5 +3435,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1E88E5",
+    "casingColor": "#0D47A1"
+  }
 }

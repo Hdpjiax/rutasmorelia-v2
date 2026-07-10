@@ -1,5 +1,5 @@
 {
-  "file": "data/processed/matched/ruta-alberca-metropolis.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-alberca-metropolis.geojson",
   "route_id": "ruta-alberca-metropolis",
   "route_name": "Alberca (Metropolis)",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T04:52:14.288Z"
+  "validated_at": "2026-07-09T11:25:46.310559+00:00"
 }

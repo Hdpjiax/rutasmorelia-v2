@@ -8,7 +8,7 @@
         "routeName": "Roja 3B",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/61_ROJA_3B/KML_roja3B/Roja_3B_kml.kml",
@@ -21,7 +21,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.074,
         "orig_len_m": 12915.8,
-        "matched_len_m": 13869.3
+        "matched_len_m": 13869.3,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1648,7 +1649,7 @@
         "routeName": "Roja 3B",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/61_ROJA_3B/KML_roja3B/Roja_3B_kml.kml",
@@ -1661,7 +1662,8 @@
         "confidence": 0.991,
         "matched_coverage": 0.998,
         "orig_len_m": 14773.2,
-        "matched_len_m": 14749.4
+        "matched_len_m": 14749.4,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3261,5 +3263,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EF4444",
+    "casingColor": "#222222"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-circuito-carrillo.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-circuito-carrillo.geojson",
   "route_id": "ruta-circuito-carrillo",
   "route_name": "Circuito Carrillo",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:10.643998+00:00"
+  "validated_at": "2026-07-09T11:25:46.648046+00:00"
 }

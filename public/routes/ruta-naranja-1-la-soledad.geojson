@@ -8,8 +8,8 @@
         "routeName": "Ruta Naranja 1 La Soledad",
         "direction": "ida",
         "name": "Ida",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/39_NARANJA_1_LA_SOLEDAD/KML_naranja1_LaSoledad/Naranja_1_La_Soledad_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.987,
         "matched_coverage": 1.005,
         "orig_len_m": 11461.9,
-        "matched_len_m": 11515.6
+        "matched_len_m": 11515.6,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1180,8 +1181,8 @@
         "routeName": "Ruta Naranja 1 La Soledad",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/39_NARANJA_1_LA_SOLEDAD/KML_naranja1_LaSoledad/Naranja_1_La_Soledad_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1193,7 +1194,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.073,
         "orig_len_m": 11447.8,
-        "matched_len_m": 12286.5
+        "matched_len_m": 12286.5,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2357,5 +2359,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF9800",
+    "casingColor": "#E65100"
+  }
 }

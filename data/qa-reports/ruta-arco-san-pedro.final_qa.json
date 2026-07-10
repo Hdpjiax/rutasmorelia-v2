@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-arco-san-pedro.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-arco-san-pedro.geojson",
   "route_id": "ruta-arco-san-pedro",
   "route_name": "Arcos San Pedro",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:09.901458+00:00"
+  "validated_at": "2026-07-09T11:25:46.342020+00:00"
 }

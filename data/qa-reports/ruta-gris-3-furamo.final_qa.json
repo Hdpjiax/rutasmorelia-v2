@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-gris-3-furamo.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-gris-3-furamo.geojson",
   "route_id": "ruta-gris-3-furamo",
   "route_name": "Gris 3 Furamo",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.180223+00:00"
+  "validated_at": "2026-07-09T11:25:47.033106+00:00"
 }

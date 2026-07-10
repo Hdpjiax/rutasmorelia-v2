@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-paloma-azul-zimpanio.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-paloma-azul-zimpanio.geojson",
   "route_id": "ruta-paloma-azul-zimpanio",
   "route_name": "Paloma Azul Zimpanio",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.983795+00:00"
+  "validated_at": "2026-07-09T11:25:47.414509+00:00"
 }

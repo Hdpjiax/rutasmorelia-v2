@@ -8,8 +8,8 @@
         "routeName": "Verde 3 Lomas del Valle",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/74_VERDE_3_LOMAS_DEL_VALLE/KML_v3lv/Verde_3_Lomas_del_Valle_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.99,
         "matched_coverage": 0.999,
         "orig_len_m": 10012.3,
-        "matched_len_m": 9999.0
+        "matched_len_m": 9999.0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1136,8 +1137,8 @@
         "routeName": "Verde 3 Lomas del Valle",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/74_VERDE_3_LOMAS_DEL_VALLE/KML_v3lv/Verde_3_Lomas_del_Valle_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1149,7 +1150,8 @@
         "confidence": 0.991,
         "matched_coverage": 0.991,
         "orig_len_m": 7756.0,
-        "matched_len_m": 7683.4
+        "matched_len_m": 7683.4,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1989,5 +1991,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

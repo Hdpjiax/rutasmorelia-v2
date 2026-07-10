@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-panteon.geojson",
+  "file": "data/processed/matched/ruta-panteon.geojson",
   "route_id": "ruta-panteon",
   "route_name": "Panteon",
   "status": "approved",
@@ -18,13 +18,14 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 2.16,
-      "max_snap_m": 15.79,
-      "confidence": 0.99,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.008061+00:00"
+  "validated_at": "2026-07-10T02:39:20.348Z",
+  "transport_type": "combi"
 }

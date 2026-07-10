@@ -167,7 +167,13 @@ const STREET_ARROW_ICON_OPACITY: ExpressionSpecification = [
 
 async function ensureStreetArrowIcon(map: MapLibreMap): Promise<void> {
   for (const legacyId of ['street-arrow-icon', 'street-arrow-long', STREET_ARROW_ICON]) {
-    if (map.hasImage(legacyId)) map.removeImage(legacyId);
+    if (map.hasImage(legacyId)) {
+      try {
+        map.removeImage(legacyId);
+      } catch {
+        /* ignore */
+      }
+    }
   }
   const img = new Image(22, 22);
   await new Promise<void>((resolve, reject) => {
@@ -175,7 +181,9 @@ async function ensureStreetArrowIcon(map: MapLibreMap): Promise<void> {
     img.onerror = () => reject(new Error(STREET_ARROW_ICON));
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(STREET_ARROW_SVG);
   });
-  map.addImage(STREET_ARROW_ICON, img);
+  if (!map.hasImage(STREET_ARROW_ICON)) {
+    map.addImage(STREET_ARROW_ICON, img);
+  }
 }
 
 function findStreetArrowInsertAfterRoads(map: MapLibreMap): string | undefined {
@@ -190,7 +198,10 @@ type FeatureCollectionData = {
 function addPerifericoLayers(map: MapLibreMap, beforeId: string | undefined, data: FeatureCollectionData) {
   if (map.getSource('rm-periferico')) return;
 
-  map.addSource('rm-periferico', { type: 'geojson', data });
+  map.addSource('rm-periferico', {
+    type: 'geojson',
+    data: data as unknown as GeoJSON.FeatureCollection,
+  });
 
   // Amarillo bajo y translúcido sobre el eje vial real
   map.addLayer(
@@ -380,7 +391,12 @@ function addStreetDirectionArrows(map: MapLibreMap, beforeId: string | undefined
   }
 }
 
-export async function enhanceBasemap(map: MapLibreMap): Promise<void> {
+/** Basemap siempre Positron claro (el tema UI oscuro no cambia el mapa). */
+export async function enhanceBasemap(
+  map: MapLibreMap,
+  _theme: 'light' | 'dark' = 'light'
+): Promise<void> {
+  void _theme;
   setPaintIfExists(map, 'background', 'background-color', MAP_BACKGROUND_TINT);
 
   for (const id of GREEN_LAYERS) {
@@ -468,7 +484,6 @@ export async function enhanceBasemap(map: MapLibreMap): Promise<void> {
   }
 
   await ensureStreetArrowIcon(map);
-  // Al final: encima de pavimento/3D local, debajo de nombres de calle
   addStreetDirectionArrows(map, findStreetArrowInsertAfterRoads(map));
   moveStreetArrowLayersAboveLocalOverlays(map);
 }

@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-rosa-2b.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-rosa-2b.geojson",
   "route_id": "ruta-rosa-2b",
   "route_name": "Rosa 2B",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.433086+00:00"
+  "validated_at": "2026-07-09T11:25:47.636936+00:00"
 }

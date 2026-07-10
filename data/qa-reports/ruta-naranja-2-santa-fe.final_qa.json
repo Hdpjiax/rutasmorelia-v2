@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-2-santa-fe.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-naranja-2-santa-fe.geojson",
   "route_id": "ruta-naranja-2-santa-fe",
   "route_name": "Ruta Naranja 2 Santa Fe",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.632876+00:00"
+  "validated_at": "2026-07-09T11:25:47.252802+00:00"
 }

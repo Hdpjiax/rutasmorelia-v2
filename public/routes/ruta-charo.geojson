@@ -8,8 +8,8 @@
         "routeName": "Charo",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/11_CHARO/KML_charo/Charo_kml.kml",
         "sourceFeatureIndex": 0,
@@ -18,7 +18,8 @@
         "validator": "valhalla+osrm",
         "avg_snap_m": 5.76,
         "max_snap_m": 30.24,
-        "confidence": 0.974
+        "confidence": 0.974,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2457,8 +2458,8 @@
         "routeName": "Charo",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/11_CHARO/KML_charo/Charo_kml.kml",
         "sourceFeatureIndex": 1,
@@ -2467,7 +2468,8 @@
         "validator": "valhalla+osrm",
         "avg_snap_m": 5.08,
         "max_snap_m": 34.45,
-        "confidence": 0.977
+        "confidence": 0.977,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4651,5 +4653,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

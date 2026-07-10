@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-guinda-1-mora.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-guinda-1-mora.geojson",
   "route_id": "ruta-guinda-1-mora",
   "route_name": "Guinda 1 Mora",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.246765+00:00"
+  "validated_at": "2026-07-09T11:25:47.066498+00:00"
 }

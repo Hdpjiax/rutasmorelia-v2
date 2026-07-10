@@ -23,6 +23,16 @@ import {
   transportBadgeClass,
   type TransportFilter,
 } from '@/lib/transport/classify';
+import {
+  applyEditedDirection,
+  directionOfFeature,
+  filterGeojsonByDirection,
+  getDirectionMode,
+  stampDirectionMode,
+  toSingleCorridorDisplay,
+  type RouteFeature,
+  type RouteFeatureCollection,
+} from '@/lib/gis/direction-mode';
 
 interface Props {
   initialSummary: QaSummary | null;
@@ -30,6 +40,8 @@ interface Props {
 }
 
 type FilterStatus = 'all' | QaStatus;
+/** Vista del mapa: un sentido o ambos juntos (como PDF dual) */
+type ViewMode = 'ida' | 'vuelta' | 'both';
 
 function getDistanceToSegment(p1: [number, number], p2: [number, number], point: [number, number]): number {
   const x = point[0];
@@ -61,10 +73,6 @@ const EDIT_VERTICES_HIT = 'edit-vertices-hit';
 const EDIT_VERTICES_CIRCLE = 'edit-vertices-circle';
 const EDIT_VERTICES_ENDPOINTS = 'edit-vertices-endpoints';
 
-function directionOfFeature(f: { properties?: Record<string, unknown> | null }): string {
-  return String(f.properties?.direction ?? f.properties?.name ?? '').toLowerCase();
-}
-
 /** GeoJSON de vértices para capa nativa (sin DOM Markers). */
 function coordsToVertexCollection(coords: [number, number][]) {
   return {
@@ -81,22 +89,22 @@ function coordsToVertexCollection(coords: [number, number][]) {
   };
 }
 
-/** Preview solo del sentido en edición (oculta el otro para no confundir). */
+/** Preview: ida | vuelta | juntas (ambas del KML / dual_ring). */
 function buildEditPreviewGeojson(
-  geojson: { type: string; features?: any[] },
-  direction: 'ida' | 'vuelta',
-  draftCoords: [number, number][]
-) {
-  const features = (geojson.features ?? [])
-    .filter((f) => directionOfFeature(f) === direction)
-    .map((f) => ({
-      ...f,
-      geometry: {
-        ...f.geometry,
-        coordinates: draftCoords,
-      },
-    }));
-  return { type: 'FeatureCollection' as const, features };
+  geojson: RouteFeatureCollection,
+  viewMode: ViewMode,
+  editDirection: 'ida' | 'vuelta',
+  isEditing: boolean,
+  draftCoords?: [number, number][]
+): RouteFeatureCollection {
+  // En edición siempre el sentido activo (con borrador)
+  if (isEditing) {
+    return filterGeojsonByDirection(geojson, editDirection, draftCoords);
+  }
+  if (viewMode === 'both') {
+    return toSingleCorridorDisplay(geojson, { role: 'full' });
+  }
+  return filterGeojsonByDirection(geojson, viewMode);
 }
 
 function ensureEditLayers(map: maplibregl.Map) {
@@ -348,7 +356,10 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   const [draftCoords, setDraftCoords] = useState<[number, number][]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editDirection, setEditDirection] = useState<'ida' | 'vuelta'>('ida');
+  /** Vista: ida, vuelta o juntas (solo lectura; al editar se usa editDirection) */
+  const [viewMode, setViewMode] = useState<ViewMode>('both');
   const [editMode, setEditMode] = useState<'draw' | 'erase' | 'flag'>('draw');
+  const [isDeleting, setIsDeleting] = useState(false);
   const [draftFlags, setDraftFlags] = useState<ReviewFlag[]>([]);
   const [selectedFlagId, setSelectedFlagId] = useState<string | null>(null);
   const [snappingMode, setSnappingMode] = useState<'fast' | 'route' | 'trace'>('fast');
@@ -362,8 +373,12 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   const editModeRef = useRef(editMode);
   const isEditingRef = useRef(isEditing);
   const editDirectionRef = useRef(editDirection);
+  const viewModeRef = useRef(viewMode);
   const eraseSweepSetRef = useRef<Set<number>>(new Set());
   const eraseRafRef = useRef<number | null>(null);
+  const eraseDraggingRef = useRef(false);
+  /** Evita que el `click` posterior al arrastre/mousedown del borrador borre de nuevo */
+  const eraseConsumedClickRef = useRef(false);
   const hoveredVertexIdRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -378,12 +393,18 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   useEffect(() => {
     editDirectionRef.current = editDirection;
   }, [editDirection]);
+  useEffect(() => {
+    viewModeRef.current = viewMode;
+  }, [viewMode]);
 
   const handleDirectionChange = (newDirection: 'ida' | 'vuelta') => {
-    if (newDirection === editDirection) return;
+    if (newDirection === editDirection && viewMode !== 'both') {
+      setViewMode(newDirection);
+      return;
+    }
 
     // 1. Guardar el borrador actual (draftCoords) en loadedGeojson
-    if (loadedGeojson) {
+    if (loadedGeojson && isEditing) {
       const featIdx = loadedGeojson.features?.findIndex(
         (f: any) => directionOfFeature(f) === editDirection
       );
@@ -394,12 +415,62 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
 
     // 2. Cargar el trazo de la nueva dirección a draftCoords
     setEditDirection(newDirection);
+    setViewMode(newDirection);
     const feat = loadedGeojson?.features?.find(
       (f: any) => directionOfFeature(f) === newDirection
     );
     const coords = feat?.geometry?.coordinates ?? [];
     setDraftCoords(coords);
   };
+
+  const applyMapPreview = useCallback(
+    (
+      map: maplibregl.Map,
+      geojson: RouteFeatureCollection,
+      opts?: { fit?: boolean }
+    ) => {
+      const dir = editDirectionRef.current;
+      const mode = viewModeRef.current;
+      const editing = isEditingRef.current;
+      const draft = draftCoordsRef.current;
+      const preview = buildEditPreviewGeojson(
+        geojson,
+        mode,
+        dir,
+        editing,
+        editing ? draft : undefined
+      );
+      setQaPreviewData(map, preview as Parameters<typeof setQaPreviewData>[1]);
+
+      if (opts?.fit) {
+        const coords: [number, number][] = [];
+        for (const f of preview.features ?? []) {
+          if (
+            f.properties?.type === 'sense-label' ||
+            f.geometry?.type !== 'LineString'
+          ) {
+            continue;
+          }
+          const c = f.geometry?.coordinates as [number, number][] | undefined;
+          if (c?.length) coords.push(...c);
+        }
+        if (coords.length === 0) {
+          for (const f of geojson.features ?? []) {
+            const c = f.geometry?.coordinates as [number, number][] | undefined;
+            if (c?.length) coords.push(...c);
+          }
+        }
+        if (coords.length > 0) {
+          const bounds = coords.reduce(
+            (b, c) => b.extend(c),
+            new maplibregl.LngLatBounds(coords[0], coords[0])
+          );
+          map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
+        }
+      }
+    },
+    []
+  );
 
   const selected = reports.find((r) => r.route_id === selectedId) ?? null;
   const filtered = reports.filter((r) => {
@@ -527,38 +598,13 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
           toast('GeoJSON no disponible para esta ruta', 'warning');
           return;
         }
-        const geojson = await res.json();
+        const geojson = await res.json() as RouteFeatureCollection;
         setLoadedGeojson(geojson);
-        // Si está editando, solo mostrar el sentido activo; si no, ambos
-        if (isEditingRef.current) {
-          const dir = editDirectionRef.current;
-          const feat = geojson.features?.find((f: any) => directionOfFeature(f) === dir);
-          const coords = (feat?.geometry?.coordinates ?? []) as [number, number][];
-          setQaPreviewData(map, buildEditPreviewGeojson(geojson, dir, coords));
-        } else {
-          setQaPreviewData(map, geojson);
-        }
-
-        // Cargar coordenadas iniciales de la dirección seleccionada
-        const initialFeat = geojson.features?.find(
-          (f: any) => directionOfFeature(f) === editDirectionRef.current
-        );
-        setDraftCoords(initialFeat?.geometry?.coordinates ?? []);
-
-        const coords: [number, number][] = [];
-        for (const f of geojson.features ?? []) {
-          const g = f.geometry;
-          if (g?.type === 'LineString') {
-            coords.push(...g.coordinates);
-          }
-        }
-        if (coords.length > 0) {
-          const bounds = coords.reduce(
-            (b, c) => b.extend(c as [number, number]),
-            new maplibregl.LngLatBounds(coords[0], coords[0])
-          );
-          map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
-        }
+        const dir = editDirectionRef.current;
+        const feat = geojson.features?.find((f) => directionOfFeature(f) === dir);
+        const dirCoords = (feat?.geometry?.coordinates ?? []) as [number, number][];
+        setDraftCoords(dirCoords);
+        applyMapPreview(map, geojson, { fit: true });
         requestAnimationFrame(() => map.resize());
       } catch (e) {
         console.error('No se pudo cargar GeoJSON de preview', e);
@@ -567,7 +613,7 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     };
 
     loadRoute();
-  }, [selected, mapReady]);
+  }, [selected, mapReady, applyMapPreview]);
 
   // Limpiar estados de edición cuando cambia la ruta seleccionada
   useEffect(() => {
@@ -576,6 +622,8 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     setDraftCoords([]);
     setDraftFlags([]);
     setSelectedFlagId(null);
+    setViewMode('both');
+    setEditMode('draw');
   }, [selectedId]);
 
   // Cargar marcas (flags) iniciales del reporte de notas de revisión
@@ -596,52 +644,19 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     const handleMapClick = (e: maplibregl.MapMouseEvent) => {
       if (!isEditingRef.current) return;
 
+      // Si el borrador ya consumió el gesto (clic o arrastre), no re-borrar
+      if (eraseConsumedClickRef.current) {
+        eraseConsumedClickRef.current = false;
+        return;
+      }
+
       const mode = editModeRef.current;
       const { lng, lat } = e.lngLat;
       const clickCoord: [number, number] = [lng, lat];
       const draftCoords = draftCoordsRef.current;
 
       if (mode === 'erase') {
-        const draft = draftCoordsRef.current;
-        const radius = eraseRadiusMeters(map.getZoom());
-
-        // 1) Intento por capa renderizada (rápido si hay hit)
-        const vertexLayers = [EDIT_VERTICES_HIT, EDIT_VERTICES_CIRCLE].filter((id) =>
-          Boolean(map.getLayer(id))
-        );
-        const hits =
-          vertexLayers.length > 0
-            ? map.queryRenderedFeatures(e.point, { layers: vertexLayers })
-            : [];
-        let indexFromLayer: number | null = null;
-        for (const f of hits) {
-          const raw = f.properties?.index ?? f.id;
-          const n = Number(raw);
-          if (!Number.isNaN(n) && n >= 0 && n < draft.length) {
-            indexFromLayer = n;
-            break;
-          }
-        }
-
-        if (indexFromLayer != null) {
-          setDraftCoords((prev) => prev.filter((_, i) => i !== indexFromLayer));
-          toast(`Vértice ${indexFromLayer + 1} eliminado`, 'info');
-          return;
-        }
-
-        // 2) Fallback geográfico: punto o tramo (no depende de capas)
-        const result = eraseAtClick(draft, clickCoord, radius);
-        if (!result) {
-          toast('Acércate o haz click más cerca del trazo/punto para borrar', 'warning');
-          return;
-        }
-        setDraftCoords(result.next);
-        toast(
-          result.kind === 'point'
-            ? 'Vértice eliminado'
-            : `Tramo eliminado (${result.removed} puntos)`,
-          'info'
-        );
+        // El borrado por clic/arrastre lo maneja el efecto de pincel (mousedown+mousemove)
         return;
       }
 
@@ -732,7 +747,7 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     };
   }, [mapReady]);
 
-  // Borrado por barrido: Shift + arrastre (el paneo normal sigue activo sin Shift)
+  // Borrado por arrastre: en modo borrador, clic+arrastrar borra tramos/puntos (sin Shift)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
@@ -743,6 +758,7 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
       if (toRemove.size === 0) return;
       const remove = new Set(toRemove);
       eraseSweepSetRef.current = new Set();
+      eraseConsumedClickRef.current = true;
       setDraftCoords((prev) => prev.filter((_, i) => !remove.has(i)));
     };
 
@@ -753,14 +769,13 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
       const click: [number, number] = [lngLat.lng, lngLat.lat];
       const radius = eraseRadiusMeters(map.getZoom());
 
-      // Acumular índices a borrar (puntos en radio de pincel)
-      const brush = radius * 1.6;
+      // Pincel un poco generoso para arrastre cómodo
+      const brush = radius * 2.2;
       for (let i = 0; i < draft.length; i++) {
         if (getHaversineDistance(draft[i], click) <= brush) {
           eraseSweepSetRef.current.add(i);
         }
       }
-      // También segmentos cercanos
       for (let i = 0; i < draft.length - 1; i++) {
         if (getDistanceToSegment(draft[i], draft[i + 1], click) <= brush) {
           eraseSweepSetRef.current.add(i);
@@ -773,19 +788,44 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
       }
     };
 
+    const onMouseDown = (e: maplibregl.MapMouseEvent) => {
+      if (!isEditingRef.current || editModeRef.current !== 'erase') return;
+      if (e.originalEvent.button !== 0) return;
+      eraseDraggingRef.current = true;
+      eraseConsumedClickRef.current = false;
+      map.dragPan.disable();
+      map.getCanvas().style.cursor = 'crosshair';
+      queueEraseAtLngLat(e.lngLat);
+    };
+
+    const onMouseUp = () => {
+      if (eraseDraggingRef.current) {
+        eraseDraggingRef.current = false;
+        map.dragPan.enable();
+        if (editModeRef.current === 'erase') {
+          map.getCanvas().style.cursor = 'crosshair';
+        }
+        // Marca el gesto como consumido para que el `click` sintético no haga nada extra
+        if (eraseSweepSetRef.current.size > 0 || eraseConsumedClickRef.current) {
+          eraseConsumedClickRef.current = true;
+        }
+      }
+    };
+
     const onMouseMove = (e: maplibregl.MapMouseEvent) => {
       const oe = e.originalEvent;
-      // Barrido: Shift + arrastre (paneo libre sin Shift)
+      // Arrastre con clic (o Shift+clic por compatibilidad)
+      const dragging =
+        eraseDraggingRef.current ||
+        (oe.shiftKey && (oe.buttons & 1) === 1);
       if (
         isEditingRef.current &&
         editModeRef.current === 'erase' &&
-        oe.shiftKey &&
-        (oe.buttons & 1) === 1
+        dragging
       ) {
         queueEraseAtLngLat(e.lngLat);
       }
 
-      // Hover visual fijo (feature-state, sin scale CSS)
       if (!isEditingRef.current || (editModeRef.current !== 'draw' && editModeRef.current !== 'erase')) {
         if (hoveredVertexIdRef.current != null) {
           try {
@@ -799,6 +839,10 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
           hoveredVertexIdRef.current = null;
         }
         return;
+      }
+
+      if (editModeRef.current === 'erase' && !eraseDraggingRef.current) {
+        map.getCanvas().style.cursor = 'crosshair';
       }
 
       const hits = map.queryRenderedFeatures(e.point, { layers: [EDIT_VERTICES_HIT] });
@@ -827,37 +871,26 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
             /* ignore */
           }
           hoveredVertexIdRef.current = nextId;
-          map.getCanvas().style.cursor = editModeRef.current === 'erase' ? 'pointer' : '';
         } else {
           hoveredVertexIdRef.current = null;
-          if (editModeRef.current === 'erase') {
-            map.getCanvas().style.cursor = '';
-          }
         }
       }
     };
 
-    // Shift mantiene paneo desactivado solo mientras se usa barrido
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Shift' && isEditingRef.current && editModeRef.current === 'erase') {
-        map.dragPan.disable();
-      }
-    };
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        map.dragPan.enable();
-      }
-    };
-
+    map.on('mousedown', onMouseDown);
+    map.on('mouseup', onMouseUp);
+    map.on('mouseleave', onMouseUp);
     map.on('mousemove', onMouseMove);
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('mouseup', onMouseUp);
 
     return () => {
+      map.off('mousedown', onMouseDown);
+      map.off('mouseup', onMouseUp);
+      map.off('mouseleave', onMouseUp);
       map.off('mousemove', onMouseMove);
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('mouseup', onMouseUp);
       map.dragPan.enable();
+      eraseDraggingRef.current = false;
       if (eraseRafRef.current != null) cancelAnimationFrame(eraseRafRef.current);
       map.getCanvas().style.cursor = '';
     };
@@ -948,14 +981,12 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     }
 
     if (loadedGeojson) {
-      if (isEditing) {
-        setQaPreviewData(map, buildEditPreviewGeojson(loadedGeojson, editDirection, draftCoords));
-      } else {
-        setQaPreviewData(map, loadedGeojson);
+      applyMapPreview(map, loadedGeojson);
+      if (!isEditing) {
         map.getCanvas().style.cursor = '';
       }
     }
-  }, [mapReady, isEditing, editMode, draftCoords, editDirection, loadedGeojson]);
+  }, [mapReady, isEditing, editMode, draftCoords, editDirection, viewMode, loadedGeojson, applyMapPreview]);
 
   // Alineación / Snapping de coordenadas usando la API de Valhalla
   const handleSnapping = async () => {
@@ -1042,6 +1073,40 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     }
   };
 
+  /** Copia el sentido actual (reverse) al opuesto y marca mode=mirrored. */
+  const handleMirrorCurrentToOther = () => {
+    if (!loadedGeojson || draftCoords.length < 2) {
+      toast('Necesitas al menos 2 puntos para espejar el sentido.', 'warning');
+      return;
+    }
+    const from = editDirection;
+    const to = from === 'ida' ? 'vuelta' : 'ida';
+    const next = applyEditedDirection(loadedGeojson, from, draftCoords, {
+      forceMirrorSync: true,
+    });
+    setLoadedGeojson(next);
+    toast(
+      `Sentido ${to} = reverse(${from}). Modo espejo: editas un corredor, el otro se deriva.`,
+      'success',
+      'Espejo ida↔vuelta'
+    );
+  };
+
+  /** Desvincula sentidos: se editan por separado (líneas independientes). */
+  const handleUnlinkDirections = () => {
+    if (!loadedGeojson) return;
+    // Guardar draft actual sin sincronizar el opuesto
+    const next = applyEditedDirection(loadedGeojson, editDirection, draftCoords, {
+      forceMirrorSync: false,
+    });
+    setLoadedGeojson(stampDirectionMode(next, 'independent'));
+    toast(
+      'Sentidos independientes. Ida y vuelta se editan por separado.',
+      'info',
+      'Modo independent'
+    );
+  };
+
   // Guardar trazo editado (borrador admin): GeoJSON + Supabase, sin Valhalla ni publicar
   const handleSaveRoute = async () => {
     if (!selected || !loadedGeojson) return;
@@ -1051,23 +1116,18 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     }
     setIsSaving(true);
     try {
-      const nextGeojson = JSON.parse(JSON.stringify(loadedGeojson));
-      // Persistir ambos sentidos: el editado con draft, el otro tal como está en loadedGeojson
-      const featIdx = nextGeojson.features.findIndex(
-        (f: any) => directionOfFeature(f) === editDirection
-      );
-      if (featIdx >= 0) {
-        nextGeojson.features[featIdx].geometry.coordinates = draftCoords;
-        nextGeojson.features[featIdx].properties.matched_to_osm = true;
-        nextGeojson.features[featIdx].properties.validator =
-          nextGeojson.features[featIdx].properties.validator || 'editor-draft';
-        nextGeojson.features[featIdx].properties.qa_status = 'needs_review';
-      }
+      // Si mode=mirrored, el opuesto se actualiza como reverse del editado
+      const nextGeojson = applyEditedDirection(
+        loadedGeojson,
+        editDirection,
+        draftCoords
+      ) as RouteFeatureCollection;
 
-      // También volcar draftCoords del otro sentido si estuviera mutado en loadedGeojson
-      for (const f of nextGeojson.features) {
+      for (const f of nextGeojson.features ?? []) {
         if (!f.properties) f.properties = {};
-        if (!f.properties.qa_status) f.properties.qa_status = 'needs_review';
+        f.properties.matched_to_osm = true;
+        f.properties.validator = f.properties.validator || 'editor-draft';
+        f.properties.qa_status = 'needs_review';
       }
 
       const saveRes = await fetch(`/api/qa/geojson/${selected.route_id}/save`, {
@@ -1155,16 +1215,11 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
         geojson = await res.json();
       }
 
-      const nextGeojson = JSON.parse(JSON.stringify(geojson));
+      let nextGeojson: RouteFeatureCollection = JSON.parse(JSON.stringify(geojson));
 
-      // Si se está editando, aplicar borrador del sentido activo
+      // Si se está editando, aplicar borrador (+ mirror sync si aplica)
       if (isEditing && draftCoords.length >= 2) {
-        const featIdx = nextGeojson.features.findIndex(
-          (f: any) => directionOfFeature(f) === editDirection
-        );
-        if (featIdx >= 0) {
-          nextGeojson.features[featIdx].geometry.coordinates = draftCoords;
-        }
+        nextGeojson = applyEditedDirection(nextGeojson, editDirection, draftCoords);
       }
 
       for (const f of nextGeojson.features ?? []) {
@@ -1215,6 +1270,45 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   const handleClearAll = () => {
     if (window.confirm('¿Seguro que deseas eliminar todos los vértices del borrador actual?')) {
       setDraftCoords([]);
+    }
+  };
+
+  const handleDeleteRoute = async () => {
+    if (!selected) return;
+    const deletedId = selected.route_id;
+    const ok = window.confirm(
+      `¿Eliminar permanentemente la ruta "${selected.route_name}" (${deletedId})?\n\n` +
+        `Se borrarán GeoJSON (matched/processed/public), reportes QA e índice. Esta acción no se puede deshacer.`
+    );
+    if (!ok) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/qa/routes/${encodeURIComponent(deletedId)}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'No se pudo eliminar');
+
+      const rest = reports.filter((r) => r.route_id !== deletedId);
+      setReports(rest);
+      setSelectedId(rest[0]?.route_id ?? null);
+      setLoadedGeojson(null);
+      setDraftCoords([]);
+      setIsEditing(false);
+      setViewMode('both');
+
+      try {
+        await refreshReports();
+      } catch {
+        /* ya actualizamos la lista local */
+      }
+      await loadReviewNotes();
+      toast(`Ruta ${deletedId} eliminada`, 'success', 'Eliminada');
+    } catch (e) {
+      console.error(e);
+      toast(e instanceof Error ? e.message : 'Error al eliminar', 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -1316,6 +1410,48 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
           <div className="relative h-[38vh] min-h-[200px] shrink-0 overflow-hidden bg-[#e8eaed] lg:min-h-0 lg:flex-1">
             <div ref={mapContainerRef} className="qa-map-canvas absolute inset-0 h-full w-full" />
 
+            {/* Filtro de vista ida / vuelta / juntas (fuera del editor) */}
+            {!isEditing && loadedGeojson && (
+              <div className="absolute right-3 top-3 z-10 flex flex-col items-end gap-1.5">
+                <div className="flex rounded-xl border border-[#e5e7eb] bg-white/95 p-1 shadow-lg backdrop-blur-md text-[11px] font-bold">
+                  {(
+                    [
+                      { id: 'ida' as const, label: 'Ida' },
+                      { id: 'vuelta' as const, label: 'Vuelta' },
+                      { id: 'both' as const, label: 'Juntas' },
+                    ] as const
+                  ).map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setViewMode(opt.id);
+                        if (opt.id === 'ida' || opt.id === 'vuelta') {
+                          setEditDirection(opt.id);
+                          const feat = loadedGeojson.features?.find(
+                            (f: RouteFeature) => directionOfFeature(f) === opt.id
+                          );
+                          setDraftCoords(
+                            (feat?.geometry?.coordinates as [number, number][]) ?? []
+                          );
+                        }
+                      }}
+                      className={`rounded-lg px-2.5 py-1.5 transition cursor-pointer ${
+                        viewMode === opt.id
+                          ? 'bg-[#111] text-white shadow'
+                          : 'text-[#4b5563] hover:bg-[#f3f4f6]'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="rounded-md bg-white/90 px-2 py-0.5 text-[10px] text-[#6b7280] shadow">
+                  Vista: {viewMode === 'both' ? 'ida + vuelta juntas' : viewMode}
+                </p>
+              </div>
+            )}
+
             {/* Editor Toolbar Overlay */}
             {isEditing && (
               <div className="absolute left-4 top-4 z-10 flex flex-col gap-3 rounded-2xl border border-orange-200/60 bg-white/95 p-4 shadow-2xl backdrop-blur-md w-72 sm:w-80 select-none max-h-[85%] overflow-y-auto text-xs text-[#1a1a1a]">
@@ -1357,8 +1493,33 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
                     </button>
                   </div>
                   <p className="text-[10px] text-[#9ca3af] leading-snug">
-                    Solo se muestra el sentido seleccionado; el otro queda oculto.
+                    Una sola línea visible. Modo:{' '}
+                    <span className="font-semibold text-[#374151]">
+                      {loadedGeojson ? getDirectionMode(loadedGeojson) : '—'}
+                    </span>
+                    {loadedGeojson && getDirectionMode(loadedGeojson) === 'mirrored'
+                      ? ' · al guardar, el otro sentido = reverse'
+                      : ' · sentidos independientes'}
                   </p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleMirrorCurrentToOther}
+                      disabled={draftCoords.length < 2}
+                      title="Copia reverse del sentido actual al opuesto y activa modo espejo"
+                      className="rounded-md border border-sky-200 bg-sky-50 px-1.5 py-1 text-[10px] font-semibold text-sky-800 hover:bg-sky-100 disabled:opacity-40 cursor-pointer"
+                    >
+                      Espejar → {editDirection === 'ida' ? 'vuelta' : 'ida'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleUnlinkDirections}
+                      title="Editar ida y vuelta por separado (calles de un solo sentido, desvíos)"
+                      className="rounded-md border border-slate-200 bg-white px-1.5 py-1 text-[10px] font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    >
+                      Desvincular
+                    </button>
+                  </div>
                 </div>
 
                 {/* Selector de Herramienta */}
@@ -1412,7 +1573,8 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
 
                 {editMode === 'erase' && (
                   <div className="rounded-lg bg-rose-50/50 border border-rose-100 p-2 text-[10px] text-rose-950 leading-relaxed">
-                    💡 <strong>Modo Borrador:</strong> Click en un <strong>punto</strong> para borrarlo, o sobre la <strong>línea</strong> para borrar un tramo. <strong>Shift + arrastrar</strong> = pincel. Sin Shift el mapa se mueve normal.
+                    💡 <strong>Modo Borrador:</strong> Click en un <strong>punto</strong> o en la <strong>línea</strong> para borrar.
+                    <strong> Clic + arrastrar</strong> = pincel (borra tramos y vértices al pasar). El pan del mapa se desactiva solo mientras arrastras con el borrador.
                   </div>
                 )}
 
@@ -1618,11 +1780,52 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
             selected={selected}
             className="max-h-[28vh] lg:max-h-[32vh]"
             isApproving={isSaving}
+            isDeleting={isDeleting}
+            viewMode={viewMode}
+            isEditing={isEditing}
+            editDirection={editDirection}
+            directionMode={loadedGeojson ? getDirectionMode(loadedGeojson) : null}
+            onViewModeChange={(mode) => {
+              if (isEditing) {
+                // En edición solo se edita un sentido a la vez
+                if (mode === 'both') {
+                  toast('En edición usa Ida o Vuelta. Sal del editor para ver juntas.', 'info');
+                  return;
+                }
+                handleDirectionChange(mode);
+                return;
+              }
+              setViewMode(mode);
+              if (mode === 'ida' || mode === 'vuelta') {
+                setEditDirection(mode);
+                if (loadedGeojson) {
+                  const feat = loadedGeojson.features?.find(
+                    (f: RouteFeature) => directionOfFeature(f) === mode
+                  );
+                  setDraftCoords(
+                    (feat?.geometry?.coordinates as [number, number][]) ?? []
+                  );
+                }
+              }
+            }}
             onApproveClick={handleApproveRoute}
+            onDeleteClick={handleDeleteRoute}
             onEditClick={() => {
               if (selected) {
+                // Al editar, partir del sentido activo (si estabas en juntas → ida)
+                const dir = viewMode === 'both' ? editDirection : viewMode;
+                setEditDirection(dir);
+                setViewMode(dir);
+                if (loadedGeojson) {
+                  const feat = loadedGeojson.features?.find(
+                    (f: RouteFeature) => directionOfFeature(f) === dir
+                  );
+                  setDraftCoords(
+                    (feat?.geometry?.coordinates as [number, number][]) ?? []
+                  );
+                }
                 setIsEditing(true);
-                toast(`Modo edición activado para: ${selected.route_name}`, 'info');
+                toast(`Modo edición · ${dir}`, 'info');
               }
             }}
           />
@@ -1948,13 +2151,28 @@ function RouteDetailPanel({
   className = '',
   onEditClick,
   onApproveClick,
+  onDeleteClick,
   isApproving,
+  isDeleting,
+  viewMode = 'both',
+  isEditing = false,
+  editDirection = 'ida',
+  onViewModeChange,
+  directionMode,
 }: {
   selected: QaFinalReport | null;
   className?: string;
   onEditClick?: () => void;
   onApproveClick?: () => void;
+  onDeleteClick?: () => void;
   isApproving?: boolean;
+  isDeleting?: boolean;
+  /** Vista del mapa: ida | vuelta | juntas */
+  viewMode?: ViewMode;
+  isEditing?: boolean;
+  editDirection?: 'ida' | 'vuelta';
+  onViewModeChange?: (mode: ViewMode) => void;
+  directionMode?: string | null;
 }) {
   if (!selected) {
     return (
@@ -1972,6 +2190,8 @@ function RouteDetailPanel({
     selected.route_id,
     selected.route_name
   );
+  // En edición el filtro activo es el sentido de edición; fuera, viewMode
+  const activeView: ViewMode = isEditing ? editDirection : viewMode;
 
   return (
     <div
@@ -1992,6 +2212,50 @@ function RouteDetailPanel({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
+          <div
+            className="flex rounded-lg border border-[#e5e7eb] bg-[#f3f4f6] p-0.5 text-[10px] font-bold"
+            title="Vista del mapa: un sentido o ambos juntos"
+          >
+            {(
+              [
+                { id: 'ida' as const, label: 'Ida' },
+                { id: 'vuelta' as const, label: 'Vuelta' },
+                { id: 'both' as const, label: 'Juntas' },
+              ] as const
+            ).map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onViewModeChange?.(opt.id)}
+                disabled={isEditing && opt.id === 'both'}
+                className={`rounded-md px-2 py-1 transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${
+                  activeView === opt.id ? 'bg-white shadow text-[#111]' : 'text-[#6b7280] hover:text-[#111]'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {directionMode && (
+            <span
+              className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                directionMode === 'mirrored'
+                  ? 'border-sky-200 bg-sky-50 text-sky-800'
+                  : directionMode === 'dual_ring'
+                    ? 'border-violet-200 bg-violet-50 text-violet-800'
+                    : 'border-slate-200 bg-slate-50 text-slate-600'
+              }`}
+              title={
+                directionMode === 'mirrored'
+                  ? 'Corredor único: vuelta ≈ reverse(ida)'
+                  : directionMode === 'dual_ring'
+                    ? 'Anillo dual: ida y vuelta son trazos reales distintos'
+                    : 'Ida y vuelta independientes'
+              }
+            >
+              {directionMode}
+            </span>
+          )}
           <button
             type="button"
             onClick={onEditClick}
@@ -2002,7 +2266,7 @@ function RouteDetailPanel({
           <button
             type="button"
             onClick={onApproveClick}
-            disabled={isApproving || isApproved}
+            disabled={isApproving || isApproved || isDeleting}
             title={
               isApproved
                 ? 'Ya está aprobada y publicada'
@@ -2011,6 +2275,16 @@ function RouteDetailPanel({
             className="shrink-0 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-100 disabled:text-emerald-700/70 px-3 py-1.5 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow cursor-pointer disabled:cursor-default"
           >
             {isApproving ? 'Publicando…' : isApproved ? '✓ Publicada' : '✓ Aprobar ruta'}
+          </button>
+          <button
+            type="button"
+            onClick={onDeleteClick}
+            disabled={isDeleting || isApproving}
+            title="Eliminar permanentemente esta ruta (GeoJSON, reportes e índice)"
+            className="shrink-0 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            {isDeleting ? 'Eliminando…' : 'Eliminar ruta'}
           </button>
         </div>
       </div>

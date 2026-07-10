@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-verde-4.geojson",
+  "file": "data/processed/matched/ruta-verde-4.geojson",
   "route_id": "ruta-verde-4",
   "route_name": "Verde 4",
   "status": "approved",
@@ -18,7 +18,7 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 5.02,
       "max_snap_m": 110.63,
       "confidence": 0.978,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.744262+00:00"
+  "validated_at": "2026-07-10T03:08:31.568Z",
+  "transport_type": "combi"
 }

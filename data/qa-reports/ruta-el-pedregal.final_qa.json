@@ -1,5 +1,5 @@
 {
-  "file": "data/processed/matched/ruta-el-pedregal.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-el-pedregal.geojson",
   "route_id": "ruta-el-pedregal",
   "route_name": "El Pedregal",
   "status": "approved",
@@ -26,6 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T07:33:43.187Z",
-  "transport_type": "combi"
+  "validated_at": "2026-07-09T11:25:46.985029+00:00"
 }

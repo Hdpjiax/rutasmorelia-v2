@@ -8,11 +8,12 @@
         "routeName": "Dorado (Industrial)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#D4A017",
-        "casingColor": "#222222",
+        "color": "#F0B429",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/80_DORADO_INDUSTRIAL/KML_dorado/Dorado_Industrial_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2035,11 +2036,12 @@
         "routeName": "Dorado (Industrial)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#D4A017",
-        "casingColor": "#222222",
+        "color": "#F0B429",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/80_DORADO_INDUSTRIAL/KML_dorado/Dorado_Industrial_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4175,5 +4177,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#F0B429",
+    "casingColor": "#5D4037"
+  }
 }

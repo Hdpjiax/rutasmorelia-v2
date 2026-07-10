@@ -8,8 +8,8 @@
         "routeName": "Rosa Puerta del Sol - Galaxia",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/70_ROSA_PUERTA_DEL_SOL-GALAXIA/KML_rpsg/Rosa_Puerta_del_Sol-Galaxia_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 1.004,
         "orig_len_m": 19511.1,
-        "matched_len_m": 19595.9
+        "matched_len_m": 19595.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2060,8 +2061,8 @@
         "routeName": "Rosa Puerta del Sol - Galaxia",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/70_ROSA_PUERTA_DEL_SOL-GALAXIA/KML_rpsg/Rosa_Puerta_del_Sol-Galaxia_kml.kml",
         "sourceFeatureIndex": 1,
@@ -2073,7 +2074,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.0,
         "orig_len_m": 18535.9,
-        "matched_len_m": 18543.9
+        "matched_len_m": 18543.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3925,5 +3927,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EC407A",
+    "casingColor": "#880E4F"
+  }
 }

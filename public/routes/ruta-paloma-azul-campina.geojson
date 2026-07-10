@@ -8,8 +8,8 @@
         "routeName": "Paloma Azul Campina",
         "direction": "ida",
         "name": "Ida",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/53_PALOMA_AZUL_CAMPIÑA/KML_pac/Paloma_Azul_Campiña_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 0.998,
         "orig_len_m": 8025.1,
-        "matched_len_m": 8007.9
+        "matched_len_m": 8007.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -740,8 +741,8 @@
         "routeName": "Paloma Azul Campina",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/53_PALOMA_AZUL_CAMPIÑA/KML_pac/Paloma_Azul_Campiña_kml.kml",
         "sourceFeatureIndex": 1,
@@ -753,7 +754,8 @@
         "confidence": 0.991,
         "matched_coverage": 0.999,
         "orig_len_m": 9811.7,
-        "matched_len_m": 9797.2
+        "matched_len_m": 9797.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1769,5 +1771,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1E88E5",
+    "casingColor": "#0D47A1"
+  }
 }

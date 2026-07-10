@@ -8,11 +8,12 @@
         "routeName": "Trincheras",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#795548",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/88_TRINCHERAS/KML_trincheras/Trincheras_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "mirrored"
       },
       "geometry": {
         "type": "LineString",
@@ -1071,11 +1072,12 @@
         "routeName": "Trincheras",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#795548",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/88_TRINCHERAS/KML_trincheras/Trincheras_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "mirrored"
       },
       "geometry": {
         "type": "LineString",
@@ -2255,5 +2257,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "mirrored",
+    "color": "#795548",
+    "casingColor": "#3E2723"
+  }
 }

@@ -8,11 +8,12 @@
         "routeName": "Durazno - Santa Maria",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/87_DURAZO-SANTA_MARIA/KML_durazno_maría/Durazno_Santa_Maria_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "mirrored"
       },
       "geometry": {
         "type": "LineString",
@@ -1147,11 +1148,12 @@
         "routeName": "Durazno - Santa Maria",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/87_DURAZO-SANTA_MARIA/KML_durazno_maría/Durazno_Santa_Maria_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "mirrored"
       },
       "geometry": {
         "type": "LineString",
@@ -2411,5 +2413,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "mirrored",
+    "color": "#8D6E63",
+    "casingColor": "#3E2723"
+  }
 }

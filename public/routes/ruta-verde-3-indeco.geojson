@@ -8,8 +8,8 @@
         "routeName": "Verde 3 INDECO",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/73_VERDE_3_INDECO/KML_indeco/Verde_3_INDECO_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.99,
         "matched_coverage": 1.001,
         "orig_len_m": 8987.9,
-        "matched_len_m": 9000.2
+        "matched_len_m": 9000.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1064,8 +1065,8 @@
         "routeName": "Verde 3 INDECO",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/73_VERDE_3_INDECO/KML_indeco/Verde_3_INDECO_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1077,7 +1078,8 @@
         "confidence": 0.992,
         "matched_coverage": 0.996,
         "orig_len_m": 10515.6,
-        "matched_len_m": 10474.8
+        "matched_len_m": 10474.8,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2153,5 +2155,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

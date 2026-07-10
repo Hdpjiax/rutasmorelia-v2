@@ -8,11 +8,12 @@
         "routeName": "Ruta Jesus Del Monte",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/19_JESUS_DEL_MONTE/KML/Jesus_Del_Monte.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1143,11 +1144,12 @@
         "routeName": "Ruta Jesus Del Monte",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/19_JESUS_DEL_MONTE/KML/Jesus_Del_Monte.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2263,5 +2265,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

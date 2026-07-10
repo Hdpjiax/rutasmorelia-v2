@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-oro-verde-soledad.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-oro-verde-soledad.geojson",
   "route_id": "ruta-oro-verde-soledad",
   "route_name": "Oro Verde Soledad",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.881509+00:00"
+  "validated_at": "2026-07-09T11:25:47.364069+00:00"
 }

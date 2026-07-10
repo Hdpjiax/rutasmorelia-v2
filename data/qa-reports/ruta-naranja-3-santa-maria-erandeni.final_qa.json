@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-3-santa-maria-erandeni.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-naranja-3-santa-maria-erandeni.geojson",
   "route_id": "ruta-naranja-3-santa-maria-erandeni",
   "route_name": "Ruta Naranja 3 Santa Maria-Erandeni",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.686173+00:00"
+  "validated_at": "2026-07-09T11:25:47.279949+00:00"
 }

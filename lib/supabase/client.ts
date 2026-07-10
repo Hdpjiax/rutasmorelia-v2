@@ -76,6 +76,17 @@ export interface FavoritePlace {
   created_at: string;
 }
 
+/** Ubicación favorita libre (nombre + coords) */
+export interface FavoriteLocationRow {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string | null;
+  lng: number;
+  lat: number;
+  created_at: string;
+}
+
 export interface RecentSearch {
   id: string;
   user_id: string;
@@ -284,6 +295,7 @@ class MockDatabase {
   places: Place[] = [...seedPlaces];
   favorite_places: FavoritePlace[] = [];
   favorite_routes: FavoriteRoute[] = [];
+  favorite_locations: FavoriteLocationRow[] = [];
   recent_searches: RecentSearch[] = [];
   dataset_versions: DatasetVersion[] = [];
   gis_quality_reports: GisQualityReport[] = [];
@@ -300,6 +312,7 @@ class MockDatabase {
     this.places = [...seedPlaces];
     this.favorite_places = [];
     this.favorite_routes = [];
+    this.favorite_locations = [];
     this.recent_searches = [];
     this.dataset_versions = [];
     this.gis_quality_reports = [];
@@ -423,6 +436,7 @@ class QueryBuilder {
     const requiresAuth = [
       'favorite_places',
       'favorite_routes',
+      'favorite_locations',
       'recent_searches',
     ].includes(this.tableName);
 
@@ -870,6 +884,55 @@ export const mockSupabaseClient = {
 
       this.listeners.forEach((cb) => cb('SIGNED_IN', session));
       return { data: { user: session.user, session }, error: null as Error | null };
+    },
+
+    /**
+     * Magic link / OTP sin contraseña.
+     * En Supabase real: envía correo con enlace.
+     * En mock: simula envío y crea sesión para desarrollo local.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signInWithOtp(params: {
+      email: string;
+      options?: { emailRedirectTo?: string; shouldCreateUser?: boolean };
+    }) {
+      const useRealSupabase = process.env.NEXT_PUBLIC_USE_REAL_SUPABASE === 'true';
+      if (useRealSupabase) {
+        return getRealClient().auth.signInWithOtp(params as any);
+      }
+
+      const email = (params.email || '').trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        return {
+          data: { user: null, session: null },
+          error: new Error('Correo inválido'),
+        };
+      }
+
+      // Mock: “envía” enlace y deja sesión lista (solo desarrollo)
+      let profile = mockDb.profiles.find((p) => p.username === email);
+      if (!profile) {
+        const userId = 'otp-user-' + Math.random().toString(36).substring(2, 9);
+        profile = {
+          id: userId,
+          username: email,
+          full_name: email.split('@')[0],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        mockDb.profiles.push(profile);
+      }
+      mockDb.currentUser = { id: profile.id, email };
+      mockDb.authToken = 'mock-otp-jwt-' + profile.id;
+      const session = {
+        access_token: mockDb.authToken,
+        user: { id: profile.id, email },
+      };
+      this.listeners.forEach((cb) => cb('SIGNED_IN', session));
+      return {
+        data: { user: session.user, session },
+        error: null as Error | null,
+      };
     },
 
     async signOut() {

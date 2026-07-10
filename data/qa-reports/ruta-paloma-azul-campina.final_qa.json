@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-paloma-azul-campina.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-paloma-azul-campina.geojson",
   "route_id": "ruta-paloma-azul-campina",
   "route_name": "Paloma Azul Campina",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.956028+00:00"
+  "validated_at": "2026-07-09T11:25:47.402858+00:00"
 }

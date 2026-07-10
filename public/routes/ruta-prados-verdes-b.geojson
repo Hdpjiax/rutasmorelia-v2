@@ -8,8 +8,8 @@
         "routeName": "Prados Verdes B",
         "direction": "ida",
         "name": "Ida",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/85_PRADOS_VERDES_B/KML_prados_verdesB/Prados_Verdes_B_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.0,
         "orig_len_m": 10925.6,
-        "matched_len_m": 10930.5
+        "matched_len_m": 10930.5,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1080,8 +1081,8 @@
         "routeName": "Prados Verdes B",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#2E7D32",
-        "casingColor": "#222222",
+        "color": "#43A047",
+        "casingColor": "#1B5E20",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/85_PRADOS_VERDES_B/KML_prados_verdesB/Prados_Verdes_B_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1093,7 +1094,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.003,
         "orig_len_m": 8150.1,
-        "matched_len_m": 8175.9
+        "matched_len_m": 8175.9,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1729,5 +1731,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#43A047",
+    "casingColor": "#1B5E20"
+  }
 }

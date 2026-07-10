@@ -8,8 +8,8 @@
         "routeName": "Café - Oro 2 (Leandro Valle)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/13_CAFE_ORO_2_LEANDRO_VALLE/KML/Café-Oro_2_Leandro_Valle.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.006,
         "orig_len_m": 20006.4,
-        "matched_len_m": 20128.2
+        "matched_len_m": 20128.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1884,8 +1885,8 @@
         "routeName": "Café - Oro 2 (Leandro Valle)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/13_CAFE_ORO_2_LEANDRO_VALLE/KML/Café-Oro_2_Leandro_Valle.kml",
         "sourceFeatureIndex": 1,
@@ -1897,7 +1898,8 @@
         "confidence": 0.989,
         "matched_coverage": 1.032,
         "orig_len_m": 17068.4,
-        "matched_len_m": 17614
+        "matched_len_m": 17614,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3525,5 +3527,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#8D6E63",
+    "casingColor": "#3E2723"
+  }
 }

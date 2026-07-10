@@ -8,11 +8,12 @@
         "routeName": "Coral 2",
         "direction": "ida",
         "name": "Ida",
-        "color": "#FF6F61",
-        "casingColor": "#222222",
+        "color": "#FF7043",
+        "casingColor": "#BF360C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/19_CORAL_2/KML/Coral_2.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1059,11 +1060,12 @@
         "routeName": "Coral 2",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#FF6F61",
-        "casingColor": "#222222",
+        "color": "#FF7043",
+        "casingColor": "#BF360C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/19_CORAL_2/KML/Coral_2.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2099,5 +2101,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF7043",
+    "casingColor": "#BF360C"
+  }
 }

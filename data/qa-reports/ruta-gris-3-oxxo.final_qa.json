@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-gris-3-oxxo.geojson",
+  "file": "data/processed/matched/ruta-gris-3-oxxo.geojson",
   "route_id": "ruta-gris-3-oxxo",
   "route_name": "Gris 3 Oxxo",
   "status": "approved",
@@ -18,7 +18,7 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 1.82,
       "max_snap_m": 14.17,
       "confidence": 0.992,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.206835+00:00"
+  "validated_at": "2026-07-10T01:58:26.787Z",
+  "transport_type": "combi"
 }

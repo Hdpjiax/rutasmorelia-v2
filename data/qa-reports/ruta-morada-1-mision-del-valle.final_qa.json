@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-1-mision-del-valle.geojson",
+  "file": "data/processed/matched/ruta-morada-1-mision-del-valle.geojson",
   "route_id": "ruta-morada-1-mision-del-valle",
   "route_name": "Morada 1 Misión del Valle",
   "status": "approved",
@@ -9,10 +9,10 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 2.0,
-      "max_snap_m": 13.16,
-      "confidence": 0.991,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     },
     {
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.429025+00:00"
+  "validated_at": "2026-07-10T02:08:59.158Z",
+  "transport_type": "combi"
 }

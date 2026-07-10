@@ -8,11 +8,12 @@
         "routeName": "Arcos San Pedro",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/1_ARCO_SAN_PEDRO/KML_asp/Arcos_San_Pedro_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1515,11 +1516,12 @@
         "routeName": "Arcos San Pedro",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#5C6BC0",
+        "casingColor": "#283593",
         "transportType": "foraneo",
         "source": "rutastransporte/02_RUTAS_DE_AUTOBUSES_FORANEOS/1_ARCO_SAN_PEDRO/KML_asp/Arcos_San_Pedro_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2999,5 +3001,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#5C6BC0",
+    "casingColor": "#283593"
+  }
 }

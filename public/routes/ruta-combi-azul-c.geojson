@@ -8,8 +8,8 @@
         "routeName": "Azul C",
         "direction": "ida",
         "name": "Ida",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/9_COMBI_AZUL_C/KML/Azul_C.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.049,
         "orig_len_m": 17661.3,
-        "matched_len_m": 18522.0
+        "matched_len_m": 18522.0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1528,8 +1529,8 @@
         "routeName": "Azul C",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/9_COMBI_AZUL_C/KML/Azul_C.kml",
         "sourceFeatureIndex": 1,
@@ -1541,7 +1542,8 @@
         "confidence": 0.986,
         "matched_coverage": 1.002,
         "orig_len_m": 17168.6,
-        "matched_len_m": 17202.1
+        "matched_len_m": 17202.1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3045,5 +3047,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1E88E5",
+    "casingColor": "#0D47A1"
+  }
 }

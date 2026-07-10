@@ -2,25 +2,29 @@
   {
     "feature": 0,
     "status": "approved",
+    "direction": "ida",
     "metrics": {
-      "avg_snap_m": 2.93,
-      "max_snap_m": 74.49,
-      "confidence": 0.987,
-      "matched_coverage": 1.5,
-      "orig_len_m": 19650.4,
-      "matched_len_m": 332720.9
-    }
+      "avg_snap_m": 11.61,
+      "max_snap_m": 32.64,
+      "confidence": 0.948,
+      "matched_coverage": 1.012,
+      "orig_len_m": 19447.1,
+      "matched_len_m": 19673.1
+    },
+    "note": "single_corridor: vuelta=reverse(ida_matched)"
   },
   {
     "feature": 1,
     "status": "approved",
+    "direction": "vuelta",
     "metrics": {
-      "avg_snap_m": 2.26,
-      "max_snap_m": 27.52,
-      "confidence": 0.99,
-      "matched_coverage": 1.5,
+      "avg_snap_m": 11.61,
+      "max_snap_m": 32.64,
+      "confidence": 0.948,
+      "matched_coverage": 1.012,
       "orig_len_m": 19447.1,
-      "matched_len_m": 360198.0
-    }
+      "matched_len_m": 19673.1
+    },
+    "note": "single_corridor: reverse of matched ida"
   }
 ]

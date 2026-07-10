@@ -8,8 +8,8 @@
         "routeName": "Azul B Xangari",
         "direction": "ida",
         "name": "Ida",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/8_COMBI_AZUL_B_XANGARI/KML/Azul B Xangari.kml",
         "sourceFeatureIndex": 0,
@@ -22,7 +22,8 @@
         "matched_coverage": 1.087,
         "orig_len_m": 18228.7,
         "matched_len_m": 19823.2,
-        "transport_type": "combi"
+        "transport_type": "combi",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1553,8 +1554,8 @@
         "routeName": "Azul B Xangari",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#1565C0",
-        "casingColor": "#222222",
+        "color": "#1E88E5",
+        "casingColor": "#0D47A1",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/8_COMBI_AZUL_B_XANGARI/KML/Azul B Xangari.kml",
         "sourceFeatureIndex": 1,
@@ -1567,7 +1568,8 @@
         "matched_coverage": 1,
         "orig_len_m": 16208,
         "matched_len_m": 16211.8,
-        "transport_type": "combi"
+        "transport_type": "combi",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3159,5 +3161,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#1E88E5",
+    "casingColor": "#0D47A1"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "Café Oro 2B Michoacán",
         "direction": "ida",
         "name": "Ida",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/17_CAFE_ORO_2B_MICHOACAN/KML/Café_Oro_2B_Michoacán.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.99,
         "matched_coverage": 0.996,
         "orig_len_m": 11997.6,
-        "matched_len_m": 11954.8
+        "matched_len_m": 11954.8,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1204,8 +1205,8 @@
         "routeName": "Café Oro 2B Michoacán",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#6F4E37",
-        "casingColor": "#222222",
+        "color": "#8D6E63",
+        "casingColor": "#3E2723",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/17_CAFE_ORO_2B_MICHOACAN/KML/Café_Oro_2B_Michoacán.kml",
         "sourceFeatureIndex": 1,
@@ -1217,7 +1218,8 @@
         "confidence": 0.989,
         "matched_coverage": 1.002,
         "orig_len_m": 10820.9,
-        "matched_len_m": 10837.6
+        "matched_len_m": 10837.6,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2433,5 +2435,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#8D6E63",
+    "casingColor": "#3E2723"
+  }
 }

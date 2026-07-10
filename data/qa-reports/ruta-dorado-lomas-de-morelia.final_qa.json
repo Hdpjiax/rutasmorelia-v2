@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-dorado-lomas-de-morelia.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-dorado-lomas-de-morelia.geojson",
   "route_id": "ruta-dorado-lomas-de-morelia",
   "route_name": "Dorado (Lomas de Morelia)",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.099763+00:00"
+  "validated_at": "2026-07-09T11:25:46.961071+00:00"
 }

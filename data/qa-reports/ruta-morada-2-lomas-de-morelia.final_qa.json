@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-morada-2-lomas-de-morelia.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-morada-2-lomas-de-morelia.geojson",
   "route_id": "ruta-morada-2-lomas-de-morelia",
   "route_name": "Morada 2 Lomas de Morelia",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.461758+00:00"
+  "validated_at": "2026-07-09T11:25:47.181603+00:00"
 }

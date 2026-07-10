@@ -1,0 +1,2076 @@
+{
+  "threshold_m": 25.0,
+  "sync_geometry": false,
+  "totals": {
+    "routes": 295,
+    "mirrored": 7,
+    "independent": 288
+  },
+  "routes": [
+    {
+      "file": "data\\processed\\geojson\\ruta-alberca-gertrudis.geojson",
+      "mode": "independent",
+      "similarity_m": 289.24,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-alberca-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 77.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-amarilla-centro.geojson",
+      "mode": "independent",
+      "similarity_m": 58.2,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-arco-san-pedro.geojson",
+      "mode": "independent",
+      "similarity_m": 42.18,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-arroyo-colorado.geojson",
+      "mode": "independent",
+      "similarity_m": 87.56,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-atecuaro.geojson",
+      "mode": "independent",
+      "similarity_m": 48.05,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-1.geojson",
+      "mode": "independent",
+      "similarity_m": 62.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-1a.geojson",
+      "mode": "independent",
+      "similarity_m": 433.97,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-oro-2-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 96.68,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-oro-2-rafael-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 88.69,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-oro-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 142.06,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-oro-2b-madero.geojson",
+      "mode": "independent",
+      "similarity_m": 74.64,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cafe-oro-2b-michoacan.geojson",
+      "mode": "independent",
+      "similarity_m": 109.2,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-campestre-mision-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 63.06,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-campestre-posta-trebol-monarca.geojson",
+      "mode": "independent",
+      "similarity_m": 306.23,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-canteras-bachilleres.geojson",
+      "mode": "independent",
+      "similarity_m": 99.96,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-capula.geojson",
+      "mode": "independent",
+      "similarity_m": 408.12,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-centros-comerciales-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 57.4,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-centros-comerciales-lucio-cabanas.geojson",
+      "mode": "independent",
+      "similarity_m": 82.34,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-charo-indaparapeo-atapaneo-issste-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 58.05,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-charo-san-antonio-corrales.geojson",
+      "mode": "independent",
+      "similarity_m": 77.76,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-charo.geojson",
+      "mode": "independent",
+      "similarity_m": 68.73,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-chihuerio.geojson",
+      "mode": "independent",
+      "similarity_m": 675.61,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-chucandiro.geojson",
+      "mode": "independent",
+      "similarity_m": 3644.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-circuito-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 43.77,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-ciudad-de-hidalgo.geojson",
+      "mode": "independent",
+      "similarity_m": 7020.93,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-coeneo.geojson",
+      "mode": "independent",
+      "similarity_m": 165.46,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-cointzio.geojson",
+      "mode": "independent",
+      "similarity_m": 51.77,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-amarilla-2.geojson",
+      "mode": "independent",
+      "similarity_m": 102.98,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-amarilla-tenencia-morelos.geojson",
+      "mode": "independent",
+      "similarity_m": 310.61,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-azul-a-soriana-cbta.geojson",
+      "mode": "independent",
+      "similarity_m": 81.09,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-azul-a-soriana-vergel.geojson",
+      "mode": "independent",
+      "similarity_m": 131.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-azul-b-michelena.geojson",
+      "mode": "independent",
+      "similarity_m": 92.03,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-azul-b-xangari.geojson",
+      "mode": "independent",
+      "similarity_m": 106.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-combi-azul-c.geojson",
+      "mode": "independent",
+      "similarity_m": 115.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-coral-1.geojson",
+      "mode": "independent",
+      "similarity_m": 79.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-coral-2.geojson",
+      "mode": "independent",
+      "similarity_m": 86.1,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-coral-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 190.52,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-crema-1.geojson",
+      "mode": "independent",
+      "similarity_m": 68.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-crema-2.geojson",
+      "mode": "independent",
+      "similarity_m": 234.54,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-crema-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 193.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-dorado-industrial.geojson",
+      "mode": "independent",
+      "similarity_m": 40.47,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-dorado-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 125.08,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-durazo-santa-maria.geojson",
+      "mode": "mirrored",
+      "similarity_m": 20.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-el-pedregal.geojson",
+      "mode": "independent",
+      "similarity_m": 145.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-gris-1-circuito.geojson",
+      "mode": "independent",
+      "similarity_m": 101.97,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-gris-3-furamo.geojson",
+      "mode": "independent",
+      "similarity_m": 101.43,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-gris-3-oxxo.geojson",
+      "mode": "independent",
+      "similarity_m": 925.09,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-gris-4.geojson",
+      "mode": "independent",
+      "similarity_m": 102.98,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-guinda-1-mora.geojson",
+      "mode": "independent",
+      "similarity_m": 59.82,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-guinda-1-praderas.geojson",
+      "mode": "independent",
+      "similarity_m": 74.34,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-guinda-2.geojson",
+      "mode": "independent",
+      "similarity_m": 68.5,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-jesus-del-monte.geojson",
+      "mode": "independent",
+      "similarity_m": 134.44,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-1-aldea.geojson",
+      "mode": "independent",
+      "similarity_m": 145.26,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-1-buenos-aires.geojson",
+      "mode": "independent",
+      "similarity_m": 80.44,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-1-mision-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 72.25,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-2-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 197.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-2-satelite.geojson",
+      "mode": "independent",
+      "similarity_m": 150.69,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-morada-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 133.96,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-1-issste.geojson",
+      "mode": "independent",
+      "similarity_m": 86.08,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-1-la-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 66.61,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-2-3-de-agosto.geojson",
+      "mode": "independent",
+      "similarity_m": 124.54,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-2-santa-fe.geojson",
+      "mode": "independent",
+      "similarity_m": 127.76,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-3-centro-puerta-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 113.04,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-3-santa-maria-erandeni.geojson",
+      "mode": "independent",
+      "similarity_m": 139.7,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-3-santa-maria-ita.geojson",
+      "mode": "independent",
+      "similarity_m": 253.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-naranja-3-trico-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 129.39,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-negra-1.geojson",
+      "mode": "independent",
+      "similarity_m": 87.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-negra-2.geojson",
+      "mode": "independent",
+      "similarity_m": 81.64,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-oro-verde-encinos.geojson",
+      "mode": "independent",
+      "similarity_m": 80.81,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-oro-verde-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 77.97,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-oro-verde-trincheras.geojson",
+      "mode": "independent",
+      "similarity_m": 78.43,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-paloma-azul-arquito.geojson",
+      "mode": "independent",
+      "similarity_m": 257.35,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-paloma-azul-campina.geojson",
+      "mode": "independent",
+      "similarity_m": 114.0,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-paloma-azul-zimpanio.geojson",
+      "mode": "independent",
+      "similarity_m": 633.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-panteon.geojson",
+      "mode": "independent",
+      "similarity_m": 90.14,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-por-torreon-nuevo.geojson",
+      "mode": "independent",
+      "similarity_m": 116.08,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-prados-verdes-a.geojson",
+      "mode": "independent",
+      "similarity_m": 256.11,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-prados-verdes-b.geojson",
+      "mode": "independent",
+      "similarity_m": 157.13,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-1-comercial-mexicana.geojson",
+      "mode": "independent",
+      "similarity_m": 57.53,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-1.geojson",
+      "mode": "independent",
+      "similarity_m": 58.9,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-2-oken.geojson",
+      "mode": "independent",
+      "similarity_m": 50.53,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-2-villas-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 50.08,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-3.geojson",
+      "mode": "independent",
+      "similarity_m": 56.85,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-3a.geojson",
+      "mode": "independent",
+      "similarity_m": 60.9,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-3b.geojson",
+      "mode": "independent",
+      "similarity_m": 62.1,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-4-tinijaro.geojson",
+      "mode": "independent",
+      "similarity_m": 59.84,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-4-tzindurio.geojson",
+      "mode": "independent",
+      "similarity_m": 74.64,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-4a.geojson",
+      "mode": "independent",
+      "similarity_m": 51.12,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-roja-4m.geojson",
+      "mode": "independent",
+      "similarity_m": 74.93,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-rosa-2.geojson",
+      "mode": "independent",
+      "similarity_m": 76.06,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-rosa-2b.geojson",
+      "mode": "independent",
+      "similarity_m": 40.29,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-rosa-3.geojson",
+      "mode": "independent",
+      "similarity_m": 99.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-rosa-metropolis-estrella.geojson",
+      "mode": "independent",
+      "similarity_m": 663.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-rosa-puerta-del-sol-galaxia.geojson",
+      "mode": "independent",
+      "similarity_m": 70.21,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-ruta-2.geojson",
+      "mode": "independent",
+      "similarity_m": 69.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-trincheras.geojson",
+      "mode": "mirrored",
+      "similarity_m": 15.61,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-1.geojson",
+      "mode": "independent",
+      "similarity_m": 102.45,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-2.geojson",
+      "mode": "independent",
+      "similarity_m": 91.63,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-3-indeco.geojson",
+      "mode": "independent",
+      "similarity_m": 98.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-3-lomas-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 186.71,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-4.geojson",
+      "mode": "independent",
+      "similarity_m": 58.57,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\geojson\\ruta-verde-4b.geojson",
+      "mode": "independent",
+      "similarity_m": 111.98,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-alberca-gertrudis.geojson",
+      "mode": "independent",
+      "similarity_m": 303.86,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-alberca-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 77.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-amarilla-centro.geojson",
+      "mode": "independent",
+      "similarity_m": 64.05,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-arco-san-pedro.geojson",
+      "mode": "independent",
+      "similarity_m": 46.17,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-arroyo-colorado.geojson",
+      "mode": "independent",
+      "similarity_m": 110.99,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-atecuaro.geojson",
+      "mode": "independent",
+      "similarity_m": 40.02,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-1.geojson",
+      "mode": "independent",
+      "similarity_m": 66.55,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-1a.geojson",
+      "mode": "independent",
+      "similarity_m": 651.51,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-oro-2-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 96.68,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-oro-2-rafael-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 108.2,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-oro-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 130.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-oro-2b-madero.geojson",
+      "mode": "independent",
+      "similarity_m": 58.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cafe-oro-2b-michoacan.geojson",
+      "mode": "independent",
+      "similarity_m": 108.28,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-campestre-mision-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 185.18,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-campestre-posta-trebol-monarca.geojson",
+      "mode": "independent",
+      "similarity_m": 263.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-canteras-bachilleres.geojson",
+      "mode": "independent",
+      "similarity_m": 580.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-capula.geojson",
+      "mode": "independent",
+      "similarity_m": 347.2,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-centros-comerciales-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 58.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-centros-comerciales-lucio-cabanas.geojson",
+      "mode": "independent",
+      "similarity_m": 83.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-charo-indaparapeo-atapaneo-issste-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 51.11,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-charo-san-antonio-corrales.geojson",
+      "mode": "independent",
+      "similarity_m": 64.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-charo.geojson",
+      "mode": "independent",
+      "similarity_m": 71.71,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-chihuerio.geojson",
+      "mode": "independent",
+      "similarity_m": 273.67,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-chucandiro.geojson",
+      "mode": "independent",
+      "similarity_m": 3358.26,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-circuito-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 47.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-ciudad-de-hidalgo.geojson",
+      "mode": "independent",
+      "similarity_m": 5527.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-coeneo.geojson",
+      "mode": "independent",
+      "similarity_m": 281.79,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-cointzio.geojson",
+      "mode": "independent",
+      "similarity_m": 136.82,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-amarilla-2.geojson",
+      "mode": "independent",
+      "similarity_m": 89.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-amarilla-tenencia-morelos.geojson",
+      "mode": "independent",
+      "similarity_m": 241.79,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-azul-a-soriana-cbta.geojson",
+      "mode": "independent",
+      "similarity_m": 83.11,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-azul-a-soriana-vergel.geojson",
+      "mode": "independent",
+      "similarity_m": 108.53,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-azul-b-michelena.geojson",
+      "mode": "independent",
+      "similarity_m": 77.13,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-azul-b-xangari.geojson",
+      "mode": "independent",
+      "similarity_m": 106.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-combi-azul-c.geojson",
+      "mode": "independent",
+      "similarity_m": 169.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-coral-1.geojson",
+      "mode": "independent",
+      "similarity_m": 79.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-coral-2.geojson",
+      "mode": "independent",
+      "similarity_m": 85.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-coral-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 191.29,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-crema-1.geojson",
+      "mode": "independent",
+      "similarity_m": 68.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-crema-2.geojson",
+      "mode": "independent",
+      "similarity_m": 209.32,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-crema-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 193.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-dorado-industrial.geojson",
+      "mode": "independent",
+      "similarity_m": 43.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-dorado-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 95.18,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-durazo-santa-maria.geojson",
+      "mode": "mirrored",
+      "similarity_m": 14.19,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-el-pedregal.geojson",
+      "mode": "independent",
+      "similarity_m": 145.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-gris-1-circuito.geojson",
+      "mode": "independent",
+      "similarity_m": 157.57,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-gris-3-furamo.geojson",
+      "mode": "independent",
+      "similarity_m": 118.21,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-gris-3-oxxo.geojson",
+      "mode": "independent",
+      "similarity_m": 1113.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-gris-4.geojson",
+      "mode": "independent",
+      "similarity_m": 116.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-guinda-1-mora.geojson",
+      "mode": "independent",
+      "similarity_m": 57.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-guinda-1-praderas.geojson",
+      "mode": "independent",
+      "similarity_m": 77.12,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-guinda-2.geojson",
+      "mode": "independent",
+      "similarity_m": 62.06,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-jesus-del-monte.geojson",
+      "mode": "independent",
+      "similarity_m": 129.44,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-1-aldea.geojson",
+      "mode": "independent",
+      "similarity_m": 105.09,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-1-buenos-aires.geojson",
+      "mode": "independent",
+      "similarity_m": 85.4,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-1-mision-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 71.77,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-2-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 215.51,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-2-satelite.geojson",
+      "mode": "independent",
+      "similarity_m": 139.79,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-morada-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 101.04,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-1-issste.geojson",
+      "mode": "independent",
+      "similarity_m": 87.32,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-1-la-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 65.42,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-2-3-de-agosto.geojson",
+      "mode": "independent",
+      "similarity_m": 125.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-2-santa-fe.geojson",
+      "mode": "independent",
+      "similarity_m": 119.99,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-3-centro-puerta-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 118.25,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-3-santa-maria-erandeni.geojson",
+      "mode": "independent",
+      "similarity_m": 156.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-3-santa-maria-ita.geojson",
+      "mode": "independent",
+      "similarity_m": 249.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-naranja-3-trico-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 65.62,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-negra-1.geojson",
+      "mode": "independent",
+      "similarity_m": 81.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-negra-2.geojson",
+      "mode": "independent",
+      "similarity_m": 86.89,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-oro-verde-encinos.geojson",
+      "mode": "independent",
+      "similarity_m": 92.73,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-oro-verde-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 89.14,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-oro-verde-trincheras.geojson",
+      "mode": "independent",
+      "similarity_m": 78.43,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-paloma-azul-arquito.geojson",
+      "mode": "independent",
+      "similarity_m": 78.54,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-paloma-azul-campina.geojson",
+      "mode": "independent",
+      "similarity_m": 129.03,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-paloma-azul-zimpanio.geojson",
+      "mode": "independent",
+      "similarity_m": 807.5,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-panteon.geojson",
+      "mode": "independent",
+      "similarity_m": 76.27,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-por-torreon-nuevo.geojson",
+      "mode": "mirrored",
+      "similarity_m": 16.48,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-prados-verdes-a.geojson",
+      "mode": "independent",
+      "similarity_m": 353.69,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-prados-verdes-b.geojson",
+      "mode": "independent",
+      "similarity_m": 137.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-1-comercial-mexicana.geojson",
+      "mode": "independent",
+      "similarity_m": 62.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-1.geojson",
+      "mode": "independent",
+      "similarity_m": 66.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-2-oken.geojson",
+      "mode": "independent",
+      "similarity_m": 47.15,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-2-villas-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 40.89,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-3.geojson",
+      "mode": "independent",
+      "similarity_m": 56.87,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-3a.geojson",
+      "mode": "independent",
+      "similarity_m": 52.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-3b.geojson",
+      "mode": "independent",
+      "similarity_m": 71.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-4-tinijaro.geojson",
+      "mode": "independent",
+      "similarity_m": 109.02,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-4-tzindurio.geojson",
+      "mode": "independent",
+      "similarity_m": 69.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-4a.geojson",
+      "mode": "independent",
+      "similarity_m": 52.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-roja-4m.geojson",
+      "mode": "independent",
+      "similarity_m": 70.46,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-rosa-2.geojson",
+      "mode": "independent",
+      "similarity_m": 58.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-rosa-2b.geojson",
+      "mode": "independent",
+      "similarity_m": 32.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-rosa-3.geojson",
+      "mode": "independent",
+      "similarity_m": 85.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-rosa-metropolis-estrella.geojson",
+      "mode": "independent",
+      "similarity_m": 470.86,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-rosa-puerta-del-sol-galaxia.geojson",
+      "mode": "independent",
+      "similarity_m": 60.26,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-ruta-2.geojson",
+      "mode": "independent",
+      "similarity_m": 46.36,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-trincheras.geojson",
+      "mode": "mirrored",
+      "similarity_m": 16.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-1.geojson",
+      "mode": "independent",
+      "similarity_m": 127.07,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-2.geojson",
+      "mode": "independent",
+      "similarity_m": 129.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-3-indeco.geojson",
+      "mode": "independent",
+      "similarity_m": 62.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-3-lomas-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 187.87,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-4.geojson",
+      "mode": "independent",
+      "similarity_m": 90.93,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "data\\processed\\matched\\ruta-verde-4b.geojson",
+      "mode": "independent",
+      "similarity_m": 179.91,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-alberca-gertrudis.geojson",
+      "mode": "independent",
+      "similarity_m": 303.86,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-alberca-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 77.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-amarilla-centro.geojson",
+      "mode": "independent",
+      "similarity_m": 64.05,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-arco-san-pedro.geojson",
+      "mode": "independent",
+      "similarity_m": 46.17,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-atecuaro.geojson",
+      "mode": "independent",
+      "similarity_m": 40.02,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-1.geojson",
+      "mode": "independent",
+      "similarity_m": 66.55,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-1a.geojson",
+      "mode": "independent",
+      "similarity_m": 651.51,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-oro-2-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 96.68,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-oro-2-rafael-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 108.2,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-oro-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 130.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-oro-2b-madero.geojson",
+      "mode": "independent",
+      "similarity_m": 58.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-cafe-oro-2b-michoacan.geojson",
+      "mode": "independent",
+      "similarity_m": 108.28,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-centros-comerciales-leandro-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 58.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-centros-comerciales-lucio-cabanas.geojson",
+      "mode": "independent",
+      "similarity_m": 83.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-charo-indaparapeo-atapaneo-issste-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 51.11,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-charo-san-antonio-corrales.geojson",
+      "mode": "independent",
+      "similarity_m": 64.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-charo.geojson",
+      "mode": "independent",
+      "similarity_m": 71.71,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-chucandiro.geojson",
+      "mode": "independent",
+      "similarity_m": 3358.26,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-circuito-carrillo.geojson",
+      "mode": "independent",
+      "similarity_m": 47.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-amarilla-2.geojson",
+      "mode": "independent",
+      "similarity_m": 89.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-amarilla-tenencia-morelos.geojson",
+      "mode": "independent",
+      "similarity_m": 241.79,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-azul-a-soriana-cbta.geojson",
+      "mode": "independent",
+      "similarity_m": 83.11,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-azul-a-soriana-vergel.geojson",
+      "mode": "independent",
+      "similarity_m": 108.53,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-azul-b-michelena.geojson",
+      "mode": "independent",
+      "similarity_m": 77.13,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-azul-b-xangari.geojson",
+      "mode": "independent",
+      "similarity_m": 106.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-combi-azul-c.geojson",
+      "mode": "independent",
+      "similarity_m": 169.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-coral-1.geojson",
+      "mode": "independent",
+      "similarity_m": 79.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-coral-2.geojson",
+      "mode": "independent",
+      "similarity_m": 85.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-coral-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 191.29,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-crema-1.geojson",
+      "mode": "independent",
+      "similarity_m": 68.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-crema-2.geojson",
+      "mode": "independent",
+      "similarity_m": 209.32,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-crema-2a.geojson",
+      "mode": "independent",
+      "similarity_m": 193.33,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-dorado-industrial.geojson",
+      "mode": "independent",
+      "similarity_m": 43.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-dorado-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 95.18,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-durazo-santa-maria.geojson",
+      "mode": "mirrored",
+      "similarity_m": 14.19,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-el-pedregal.geojson",
+      "mode": "independent",
+      "similarity_m": 145.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-gris-3-furamo.geojson",
+      "mode": "independent",
+      "similarity_m": 118.21,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-gris-3-oxxo.geojson",
+      "mode": "independent",
+      "similarity_m": 1113.74,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-guinda-1-mora.geojson",
+      "mode": "independent",
+      "similarity_m": 57.92,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-guinda-1-praderas.geojson",
+      "mode": "independent",
+      "similarity_m": 77.12,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-guinda-2.geojson",
+      "mode": "independent",
+      "similarity_m": 62.06,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-jesus-del-monte.geojson",
+      "mode": "independent",
+      "similarity_m": 129.44,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-morada-1-aldea.geojson",
+      "mode": "independent",
+      "similarity_m": 105.09,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-morada-1-buenos-aires.geojson",
+      "mode": "independent",
+      "similarity_m": 85.4,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-morada-1-mision-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 71.77,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-morada-2-lomas-de-morelia.geojson",
+      "mode": "independent",
+      "similarity_m": 215.51,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-morada-2-satelite.geojson",
+      "mode": "independent",
+      "similarity_m": 139.79,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-1-issste.geojson",
+      "mode": "independent",
+      "similarity_m": 87.32,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-1-la-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 65.42,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-2-3-de-agosto.geojson",
+      "mode": "independent",
+      "similarity_m": 125.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-2-santa-fe.geojson",
+      "mode": "independent",
+      "similarity_m": 119.99,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-3-centro-puerta-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 118.25,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-3-santa-maria-erandeni.geojson",
+      "mode": "independent",
+      "similarity_m": 156.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-3-santa-maria-ita.geojson",
+      "mode": "independent",
+      "similarity_m": 249.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-naranja-3-trico-metropolis.geojson",
+      "mode": "independent",
+      "similarity_m": 65.62,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-negra-1.geojson",
+      "mode": "independent",
+      "similarity_m": 81.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-negra-2.geojson",
+      "mode": "independent",
+      "similarity_m": 86.89,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-oro-verde-encinos.geojson",
+      "mode": "independent",
+      "similarity_m": 92.73,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-oro-verde-soledad.geojson",
+      "mode": "independent",
+      "similarity_m": 89.14,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-oro-verde-trincheras.geojson",
+      "mode": "independent",
+      "similarity_m": 78.43,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-paloma-azul-campina.geojson",
+      "mode": "independent",
+      "similarity_m": 129.03,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-paloma-azul-zimpanio.geojson",
+      "mode": "independent",
+      "similarity_m": 807.5,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-panteon.geojson",
+      "mode": "independent",
+      "similarity_m": 76.27,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-prados-verdes-a.geojson",
+      "mode": "independent",
+      "similarity_m": 353.69,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-prados-verdes-b.geojson",
+      "mode": "independent",
+      "similarity_m": 137.6,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-1-comercial-mexicana.geojson",
+      "mode": "independent",
+      "similarity_m": 62.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-1.geojson",
+      "mode": "independent",
+      "similarity_m": 66.83,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-2-oken.geojson",
+      "mode": "independent",
+      "similarity_m": 47.15,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-2-villas-del-sol.geojson",
+      "mode": "independent",
+      "similarity_m": 40.89,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-3.geojson",
+      "mode": "independent",
+      "similarity_m": 56.87,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-3a.geojson",
+      "mode": "independent",
+      "similarity_m": 52.49,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-3b.geojson",
+      "mode": "independent",
+      "similarity_m": 71.41,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-4-tzindurio.geojson",
+      "mode": "independent",
+      "similarity_m": 69.16,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-4a.geojson",
+      "mode": "independent",
+      "similarity_m": 52.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-roja-4m.geojson",
+      "mode": "independent",
+      "similarity_m": 70.46,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-rosa-2.geojson",
+      "mode": "independent",
+      "similarity_m": 58.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-rosa-2b.geojson",
+      "mode": "independent",
+      "similarity_m": 32.78,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-rosa-3.geojson",
+      "mode": "independent",
+      "similarity_m": 85.3,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-rosa-metropolis-estrella.geojson",
+      "mode": "independent",
+      "similarity_m": 470.86,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-rosa-puerta-del-sol-galaxia.geojson",
+      "mode": "independent",
+      "similarity_m": 60.26,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-ruta-2.geojson",
+      "mode": "independent",
+      "similarity_m": 46.36,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-trincheras.geojson",
+      "mode": "mirrored",
+      "similarity_m": 16.38,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-1.geojson",
+      "mode": "independent",
+      "similarity_m": 127.07,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-2.geojson",
+      "mode": "independent",
+      "similarity_m": 129.72,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-3-indeco.geojson",
+      "mode": "independent",
+      "similarity_m": 62.65,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-3-lomas-del-valle.geojson",
+      "mode": "independent",
+      "similarity_m": 187.87,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-4.geojson",
+      "mode": "independent",
+      "similarity_m": 90.93,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\ruta-verde-4b.geojson",
+      "mode": "independent",
+      "similarity_m": 179.91,
+      "changed": true,
+      "synced": false
+    },
+    {
+      "file": "public\\routes\\test-route-1.geojson",
+      "mode": "independent",
+      "similarity_m": 55.6,
+      "changed": true,
+      "synced": false
+    }
+  ]
+}

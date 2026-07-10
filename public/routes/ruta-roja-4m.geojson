@@ -8,7 +8,7 @@
         "routeName": "Roja 4M",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/65_ROJA_4M/KML_roja4M/Roja_4M_kml.kml",
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 1.0,
         "orig_len_m": 12640.9,
-        "matched_len_m": 12641.2
+        "matched_len_m": 12641.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1236,7 +1237,7 @@
         "routeName": "Roja 4M",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E53935",
+        "color": "#EF4444",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/65_ROJA_4M/KML_roja4M/Roja_4M_kml.kml",
@@ -1249,7 +1250,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.0,
         "orig_len_m": 13833.8,
-        "matched_len_m": 13838.6
+        "matched_len_m": 13838.6,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2589,5 +2591,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EF4444",
+    "casingColor": "#222222"
+  }
 }

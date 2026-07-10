@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-durazo-santa-maria.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-durazo-santa-maria.geojson",
   "route_id": "ruta-durazo-santa-maria",
   "route_name": "Durazno - Santa Maria",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.120247+00:00"
+  "validated_at": "2026-07-09T11:25:46.971676+00:00"
 }

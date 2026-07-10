@@ -12,6 +12,9 @@ Reglas absolutas:
 - Deploy en Vercel.
 - Desarrollo local en Windows.
 - Instalar QGIS/GDAL en Windows y Valhalla/OSRM/OSM preferentemente vía WSL2 Ubuntu si no existen.
+- Producción (Vercel): el usuario ve solo `public/routes/*.geojson` + `index.json`. No requiere Valhalla en el servidor.
+- Valhalla/OSRM son opcionales y solo locales (en tu PC/WSL) si quieres re-alinear trazos; los cambios de producción se hacen en local y se suben al repo.
+- Subir rutas a Supabase Cloud: `npx tsx scripts/seed_supabase_from_geojson.ts` (usa service role de `.env.local`).
 - No usar Google Maps, Google Directions, Mapbox ni APIs propietarias de routing.
 - No usar paradas oficiales como base del sistema.
 - Usar solo origen/destino, rutas/corredores y puntos virtuales.

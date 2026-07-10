@@ -939,172 +939,200 @@ def estimate_metrics(original_coords: list[tuple[float, float]], matched_coords:
         "matched_len_m": round(matched_len, 1),
     }
 
+def _pick_canonical_coords(features: list) -> tuple[list, dict]:
+    """Elige la LineString canónica (más larga entre ida/vuelta o features sin dirección)."""
+    best_coords: list = []
+    best_props: dict = {}
+    best_len = -1
+    for f in features:
+        lines = flatten_lines(f.get("geometry", {}))
+        if not lines:
+            continue
+        coords = max(lines, key=len)
+        coords_2d = [list(c[:2]) for c in coords]
+        if len(coords_2d) < 2:
+            continue
+        # longitud aproximada por nº de puntos (suficiente para elegir)
+        n = len(coords_2d)
+        if n > best_len:
+            best_len = n
+            best_coords = coords_2d
+            best_props = dict(f.get("properties") or {})
+    return best_coords, best_props
+
+
+def _match_coords(coords: list) -> tuple[list, dict, str, str]:
+    """Valhalla map-match; fallback Shapely. Devuelve (coords, metrics, status, validator)."""
+    valhalla_ok = False
+    matched_coords: list = []
+    metrics: dict = {}
+    try:
+        matched_coords, trace_meta = valhalla_trace_route(coords)
+        if len(matched_coords) >= 2:
+            valhalla_ok = True
+        else:
+            print(f"Valhalla sin geometría útil ({trace_meta})")
+    except Exception as e:
+        print(f"Valhalla matching failed, using Shapely fallback. Error: {e}")
+
+    if valhalla_ok:
+        metrics = estimate_metrics(coords, matched_coords)
+        status = qa_status(metrics)
+        validator_name = "valhalla+osrm"
+    else:
+        matched_coords, distances = snap_to_network(coords)
+        avg_snap = sum(distances) / len(distances) if distances else 999.0
+        max_snap = max(distances) if distances else 999.0
+        confidence = max(0.0, min(1.0, 1.0 - 0.08 * (avg_snap / STRICT_DISTANCE_MAX_M)))
+        metrics = {
+            "avg_snap_m": round(avg_snap, 2),
+            "max_snap_m": round(max_snap, 2),
+            "confidence": round(confidence, 3),
+            "note": "Fallback Shapely GIS (Valhalla no disponible o sin geometría).",
+        }
+        status = qa_status(metrics)
+        validator_name = "python-shapely-fallback"
+    return matched_coords, metrics, status, validator_name
+
+
 if __name__ == "__main__":
+    # FORCE_SINGLE_CORRIDOR=true (default): match solo ida con Valhalla; vuelta=reverse(ida)
+    FORCE_SINGLE = os.getenv("FORCE_SINGLE_CORRIDOR", "true").lower() in ("1", "true", "yes")
+
     for path in sorted(IN_DIR.glob("*.geojson")):
         if ONLY_ROUTES and path.stem not in ONLY_ROUTES:
             continue
         print(f"Procesando: {path.name}")
         data = json.loads(path.read_text(encoding="utf-8"))
-        
-        # Verificar si las features ya tienen direction de ida/vuelta
-        has_direction = any(f.get("properties", {}).get("direction") in ONLY_DIRECTIONS for f in data.get("features", []))
-        
-        raw_features = data.get("features", [])
-        features_to_process = []
-        
-        if not has_direction:
-            print(f" -> Separando ruta {path.stem} en sentidos ida y vuelta con offsets...")
-            for idx, f in enumerate(raw_features):
-                geom = f.get("geometry", {})
-                lines = flatten_lines(geom)
-                if not lines:
-                    continue
-                
-                # Procesar la línea más larga del archivo de entrada y forzar a 2D
-                coords = max(lines, key=len)
-                coords_2d = [c[:2] for c in coords]
-                shp = LineString(coords_2d)
-                if shp.is_empty:
-                    continue
-                
-                # Proyectar la línea base a métrico
-                shp_m = transform(project_to_metric, shp)
-                
-                # Ida: Offset 4 metros a la derecha
-                ida_m = shp_m.parallel_offset(4.0, 'right', join_style=1)
-                if ida_m.geom_type == "MultiLineString":
-                    parts = list(ida_m.geoms)
-                    if parts:
-                        ida_m = max(parts, key=lambda p: p.length)
-                
-                # Reorientar ida_m si parallel_offset la invirtió
-                if len(ida_m.coords) > 0:
-                    p_start_shp = shp_m.coords[0]
-                    p_end_shp = shp_m.coords[-1]
-                    p_start_ida = ida_m.coords[0]
-                    if math.dist(p_start_ida, p_end_shp) < math.dist(p_start_ida, p_start_shp):
-                        ida_m = LineString(list(ida_m.coords)[::-1])
-                        
-                # Vuelta: Offset 4 metros a la izquierda, y reversar sentido de recorrido
-                vuelta_m = shp_m.parallel_offset(4.0, 'left', join_style=1)
-                if vuelta_m.geom_type == "MultiLineString":
-                    parts = list(vuelta_m.geoms)
-                    if parts:
-                        vuelta_m = max(parts, key=lambda p: p.length)
-                
-                # Reorientar vuelta_m para que fluya end -> start respecto al original
-                if len(vuelta_m.coords) > 0:
-                    p_start_shp = shp_m.coords[0]
-                    p_end_shp = shp_m.coords[-1]
-                    p_start_v = vuelta_m.coords[0]
-                    if math.dist(p_start_v, p_start_shp) < math.dist(p_start_v, p_end_shp):
-                        vuelta_m = LineString(list(vuelta_m.coords)[::-1])
-                
-                # Proyectar sentidos alineados de vuelta a WGS84
-                ida_wgs84 = transform(project_to_wgs84, ida_m)
-                vuelta_wgs84 = transform(project_to_wgs84, vuelta_m)
-                
-                props_base = dict(f.get("properties", {}))
-                for key in ["direction", "name", "id", "routeId", "routeName", "color", "transportType"]:
-                    props_base.pop(key, None)
-                    
-                route_id = path.stem
-                route_name = route_id.replace("-", " ").title()
-                color = "#FFC800" if "amarilla" in route_id else "#FF0000" if "roja" in route_id else "#3b82f6"
-                
-                features_to_process.append({
-                    "type": "Feature",
-                    "properties": {
-                        **props_base,
-                        "routeId": route_id,
-                        "routeName": route_name,
-                        "direction": "ida",
-                        "name": "Ida",
-                        "color": color,
-                        "transportType": "combi"
-                    },
-                    "geometry": {
-                        "type": "LineString",
-                        "coordinates": list(ida_wgs84.coords)
-                    }
-                })
-                
-                features_to_process.append({
-                    "type": "Feature",
-                    "properties": {
-                        **props_base,
-                        "routeId": route_id,
-                        "routeName": route_name,
-                        "direction": "vuelta",
-                        "name": "Vuelta",
-                        "color": color,
-                        "transportType": "combi"
-                    },
-                    "geometry": {
-                        "type": "LineString",
-                        "coordinates": list(vuelta_wgs84.coords)
-                    }
-                })
-        else:
-            features_to_process = raw_features
+        raw_features = data.get("features", []) or []
+
+        route_id = path.stem
+        route_name = route_id.replace("-", " ").title()
+        color = (
+            "#FFC800"
+            if "amarilla" in route_id
+            else "#FF0000"
+            if "roja" in route_id
+            else "#3b82f6"
+        )
 
         out_features, qa = [], []
-        for idx, f in enumerate(features_to_process):
-            direction = f.get("properties", {}).get("direction")
-            if direction and direction not in ONLY_DIRECTIONS:
-                qa.append({"feature": idx, "status": "rejected", "issue": f"direction inválida: {direction}"})
+
+        if FORCE_SINGLE:
+            # === Un solo corredor: Valhalla 1 vez + vuelta = reverse ===
+            # Evita línea doble (ida y vuelta matcheadas por separado casi paralelas).
+            print(f" -> Corredor único + Valhalla (ida match, vuelta=reverse)...")
+            canon_coords, props_base = _pick_canonical_coords(raw_features)
+            if len(canon_coords) < 2:
+                qa.append({"feature": 0, "status": "rejected", "issue": "sin LineString usable"})
+                out = {"type": "FeatureCollection", "features": [], "properties": {"directionMode": "mirrored"}}
+                (OUT_DIR / path.name).write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
+                (QA_DIR / f"{path.stem}.qa.json").write_text(
+                    json.dumps(qa, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+                print(f" -> RECHAZADO {path.name}: sin geometría")
                 continue
-            
-            lines = flatten_lines(f.get("geometry", {}))
-            if not lines:
-                qa.append({"feature": idx, "status": "rejected", "issue": "no es LineString/MultiLineString"})
+
+            for key in [
+                "direction",
+                "name",
+                "id",
+                "routeId",
+                "routeName",
+                "color",
+                "transportType",
+                "directionMode",
+            ]:
+                props_base.pop(key, None)
+
+            matched_coords, metrics, status, validator_name = _match_coords(canon_coords)
+            if len(matched_coords) < 2:
+                qa.append({"feature": 0, "status": "rejected", "issue": "match sin puntos"})
+                print(f" -> RECHAZADO {path.name}: match vacío")
                 continue
-            
-            # Map-matching con fallback
-            for coords in lines:
-                valhalla_ok = False
-                matched_coords = []
-                metrics = {}
-                
-                try:
-                    matched_coords, trace_meta = valhalla_trace_route(coords)
-                    if len(matched_coords) >= 2:
-                        valhalla_ok = True
-                    else:
-                        print(f"Valhalla sin geometría útil ({trace_meta})")
-                except Exception as e:
-                    print(f"Valhalla matching failed, using Shapely fallback. Error: {e}")
-                
-                if valhalla_ok:
-                    metrics = estimate_metrics(coords, matched_coords)
-                    status = qa_status(metrics)
-                    validator_name = "valhalla+osrm"
-                else:
-                    # Fallback robusto con Shapely
-                    matched_coords, distances = snap_to_network(coords)
-                    avg_snap = sum(distances) / len(distances) if distances else 999.0
-                    max_snap = max(distances) if distances else 999.0
-                    confidence = max(0.0, min(1.0, 1.0 - 0.08 * (avg_snap / STRICT_DISTANCE_MAX_M)))
-                    metrics = {
-                        "avg_snap_m": round(avg_snap, 2),
-                        "max_snap_m": round(max_snap, 2),
-                        "confidence": round(confidence, 3),
-                        "note": "Alineación local calculada con motor de fallback Shapely GIS debido a inactividad del servidor Valhalla."
-                    }
-                    status = qa_status(metrics)
-                    validator_name = "python-shapely-fallback"
-                
-                new_geom = {
-                    "type": "LineString",
-                    "coordinates": matched_coords
+
+            vuelta_coords = list(reversed(matched_coords))
+            base_props = {
+                **props_base,
+                "routeId": route_id,
+                "routeName": props_base.get("routeName") or route_name,
+                "color": props_base.get("color") or color,
+                "transportType": props_base.get("transportType") or props_base.get("transport_type") or "combi",
+                "directionMode": "mirrored",
+                "qa_status": status,
+                "matched_to_osm": True,
+                "validator": validator_name,
+                **metrics,
+            }
+
+            out_features.append(
+                {
+                    "type": "Feature",
+                    "properties": {
+                        **base_props,
+                        "direction": "ida",
+                        "name": "Ida",
+                    },
+                    "geometry": {"type": "LineString", "coordinates": matched_coords},
                 }
-                
-                props = dict(f.get("properties", {}), qa_status=status, matched_to_osm=True, validator=validator_name, **metrics)
-                out_features.append({**f, "geometry": new_geom, "properties": props})
-                qa.append({"feature": idx, "status": status, "metrics": metrics})
-                
-        out = {"type": "FeatureCollection", "features": out_features}
-        (OUT_DIR / path.name).write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
-        (QA_DIR / f"{path.stem}.qa.json").write_text(json.dumps(qa, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f" -> Guardado {path.name} en matched/")
+            )
+            out_features.append(
+                {
+                    "type": "Feature",
+                    "properties": {
+                        **base_props,
+                        "direction": "vuelta",
+                        "name": "Vuelta",
+                        # misma QA que ida (misma geometría invertida)
+                    },
+                    "geometry": {"type": "LineString", "coordinates": vuelta_coords},
+                }
+            )
+            qa.append(
+                {
+                    "feature": 0,
+                    "status": status,
+                    "direction": "ida",
+                    "metrics": metrics,
+                    "note": "single_corridor: vuelta=reverse(ida_matched)",
+                }
+            )
+            qa.append(
+                {
+                    "feature": 1,
+                    "status": status,
+                    "direction": "vuelta",
+                    "metrics": metrics,
+                    "note": "single_corridor: reverse of matched ida",
+                }
+            )
+
+            out = {
+                "type": "FeatureCollection",
+                "properties": {
+                    "directionMode": "mirrored",
+                    "corridor": "single",
+                    "validator": validator_name,
+                },
+                "features": out_features,
+            }
+            (OUT_DIR / path.name).write_text(
+                json.dumps(out, ensure_ascii=False), encoding="utf-8"
+            )
+            # también actualiza processed/geojson para el pipeline
+            try:
+                proc = Path(os.getenv("PROCESSED_DIR", "data/processed")) / "geojson"
+                proc.mkdir(parents=True, exist_ok=True)
+                (proc / path.name).write_text(
+                    json.dumps(out, ensure_ascii=False), encoding="utf-8"
+                )
+            except Exception:
+                pass
+            (QA_DIR / f"{path.stem}.qa.json").write_text(
+                json.dumps(qa, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            print(
+                f" -> Guardado {path.name} corredor único ({len(matched_coords)} pts) "
+                f"status={status} validator={validator_name}"
+            )
 

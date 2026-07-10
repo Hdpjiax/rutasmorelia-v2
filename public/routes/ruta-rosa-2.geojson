@@ -8,8 +8,8 @@
         "routeName": "Rosa 2",
         "direction": "ida",
         "name": "Ida",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/66_ROSA_2/KML_rosa2/Rosa_2_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.991,
         "matched_coverage": 1.005,
         "orig_len_m": 16365.5,
-        "matched_len_m": 16452.2
+        "matched_len_m": 16452.2,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1392,8 +1393,8 @@
         "routeName": "Rosa 2",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#E91E63",
-        "casingColor": "#222222",
+        "color": "#EC407A",
+        "casingColor": "#880E4F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/66_ROSA_2/KML_rosa2/Rosa_2_kml.kml",
         "sourceFeatureIndex": 1,
@@ -1405,7 +1406,8 @@
         "confidence": 0.989,
         "matched_coverage": 0.998,
         "orig_len_m": 16848.4,
-        "matched_len_m": 16812.5
+        "matched_len_m": 16812.5,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2861,5 +2863,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#EC407A",
+    "casingColor": "#880E4F"
+  }
 }

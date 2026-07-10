@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-prados-verdes-a.geojson",
+  "file": "data/processed/matched/ruta-prados-verdes-a.geojson",
   "route_id": "ruta-prados-verdes-a",
   "route_name": "Prados Verdes A",
   "status": "approved",
@@ -18,7 +18,7 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 2.31,
       "max_snap_m": 6.54,
       "confidence": 0.99,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.042952+00:00"
+  "validated_at": "2026-07-10T03:06:32.126Z",
+  "transport_type": "combi"
 }

@@ -8,11 +8,12 @@
         "routeName": "Amarilla Tenencia Morelos",
         "direction": "ida",
         "name": "Ida",
-        "color": "#FFC800",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/2_COMBI_AMARILLA_TENENCIA_MORELOS/KML/Amarilla Tenencia Morelos.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1679,11 +1680,12 @@
         "routeName": "Amarilla Tenencia Morelos",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#FFC800",
+        "color": "#FFD000",
         "casingColor": "#222222",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/2_COMBI_AMARILLA_TENENCIA_MORELOS/KML/Amarilla Tenencia Morelos.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -4639,5 +4641,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FFD000",
+    "casingColor": "#222222"
+  }
 }

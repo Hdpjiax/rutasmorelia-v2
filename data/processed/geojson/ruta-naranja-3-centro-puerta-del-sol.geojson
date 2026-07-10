@@ -8,11 +8,12 @@
         "routeName": "Ruta Naranja 3 Centro-Puerta Del Sol",
         "direction": "ida",
         "name": "Ida",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/42_NARANJA_3_CENTRO-PUERTA_DEL_SOL/KML_naranja3_cps/Naranja_3_Centro_PuertaSol_kml.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1371,11 +1372,12 @@
         "routeName": "Ruta Naranja 3 Centro-Puerta Del Sol",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#F57C00",
-        "casingColor": "#222222",
+        "color": "#FF9800",
+        "casingColor": "#E65100",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/42_NARANJA_3_CENTRO-PUERTA_DEL_SOL/KML_naranja3_cps/Naranja_3_Centro_PuertaSol_kml.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2743,5 +2745,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#FF9800",
+    "casingColor": "#E65100"
+  }
 }

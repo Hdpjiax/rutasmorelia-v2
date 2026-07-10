@@ -8,8 +8,8 @@
         "routeName": "Crema 2",
         "direction": "ida",
         "name": "Ida",
-        "color": "#C4A574",
-        "casingColor": "#222222",
+        "color": "#D4B483",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/22_CREMA_2/KML/Crema_2.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.988,
         "matched_coverage": 1.07,
         "orig_len_m": 19004.7,
-        "matched_len_m": 20326.4
+        "matched_len_m": 20326.4,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1936,8 +1937,8 @@
         "routeName": "Crema 2",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#C4A574",
-        "casingColor": "#222222",
+        "color": "#D4B483",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/22_CREMA_2/KML/Crema_2.kml",
         "sourceFeatureIndex": 1,
@@ -1949,7 +1950,8 @@
         "confidence": 0.986,
         "matched_coverage": 1.014,
         "orig_len_m": 18315.7,
-        "matched_len_m": 18568.0
+        "matched_len_m": 18568.0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3729,5 +3731,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#D4B483",
+    "casingColor": "#5D4037"
+  }
 }

@@ -8,8 +8,8 @@
         "routeName": "El Pedregal",
         "direction": "ida",
         "name": "Ida",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#78909C",
+        "casingColor": "#37474F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/82_EL_PEDREGAL/KML_pedregal/El_Pedregal_kml.kml",
         "sourceFeatureIndex": 0,
@@ -22,7 +22,8 @@
         "matched_coverage": 1.5,
         "orig_len_m": 14130,
         "matched_len_m": 61712,
-        "transport_type": "combi"
+        "transport_type": "combi",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -865,8 +866,8 @@
         "routeName": "El Pedregal",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#3b82f6",
-        "casingColor": "#222222",
+        "color": "#78909C",
+        "casingColor": "#37474F",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/82_EL_PEDREGAL/KML_pedregal/El_Pedregal_kml.kml",
         "sourceFeatureIndex": 1,
@@ -879,7 +880,8 @@
         "matched_coverage": 1.5,
         "orig_len_m": 13601.6,
         "matched_len_m": 55071.6,
-        "transport_type": "combi"
+        "transport_type": "combi",
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2051,5 +2053,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#78909C",
+    "casingColor": "#37474F"
+  }
 }

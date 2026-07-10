@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-2-3-de-agosto.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-naranja-2-3-de-agosto.geojson",
   "route_id": "ruta-naranja-2-3-de-agosto",
   "route_name": "Ruta Naranja 2-3 De Agosto",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.606303+00:00"
+  "validated_at": "2026-07-09T11:25:47.239168+00:00"
 }

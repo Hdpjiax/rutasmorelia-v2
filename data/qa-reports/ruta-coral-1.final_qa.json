@@ -1,5 +1,5 @@
 {
-  "file": "data/processed/matched/ruta-coral-1.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-coral-1.geojson",
   "route_id": "ruta-coral-1",
   "route_name": "Coral 1",
   "status": "approved",
@@ -26,6 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T05:09:54.895Z",
-  "transport_type": "combi"
+  "validated_at": "2026-07-09T11:25:46.875297+00:00"
 }

@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-naranja-3-trico-metropolis.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-naranja-3-trico-metropolis.geojson",
   "route_id": "ruta-naranja-3-trico-metropolis",
   "route_name": "Ruta Naranja 3 Trico-Metropolis",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:11.770290+00:00"
+  "validated_at": "2026-07-09T11:25:47.307324+00:00"
 }

@@ -8,8 +8,8 @@
         "routeName": "Dorado (Lomas de Morelia)",
         "direction": "ida",
         "name": "Ida",
-        "color": "#D4A017",
-        "casingColor": "#222222",
+        "color": "#F0B429",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/89_DORADO-LOMAS_DE_MORELIA/KML_dorado_lomas/Dorado_Lomas_de_Morelia_kml.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.992,
         "matched_coverage": 1.005,
         "orig_len_m": 4056.7,
-        "matched_len_m": 4076.8
+        "matched_len_m": 4076.8,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -336,8 +337,8 @@
         "routeName": "Dorado (Lomas de Morelia)",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#D4A017",
-        "casingColor": "#222222",
+        "color": "#F0B429",
+        "casingColor": "#5D4037",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/89_DORADO-LOMAS_DE_MORELIA/KML_dorado_lomas/Dorado_Lomas_de_Morelia_kml.kml",
         "sourceFeatureIndex": 1,
@@ -349,7 +350,8 @@
         "confidence": 0.988,
         "matched_coverage": 0.988,
         "orig_len_m": 4792.7,
-        "matched_len_m": 4735.7
+        "matched_len_m": 4735.7,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -737,5 +739,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#F0B429",
+    "casingColor": "#5D4037"
+  }
 }

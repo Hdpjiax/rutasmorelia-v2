@@ -8,8 +8,8 @@
         "routeName": "Guinda 2",
         "direction": "ida",
         "name": "Ida",
-        "color": "#880E4F",
-        "casingColor": "#222222",
+        "color": "#C2185B",
+        "casingColor": "#4A0026",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/31_GUINDA_2/KML/Guinda_2.kml",
         "sourceFeatureIndex": 0,
@@ -21,7 +21,8 @@
         "confidence": 0.987,
         "matched_coverage": 1.01,
         "orig_len_m": 10547.4,
-        "matched_len_m": 10650.7
+        "matched_len_m": 10650.7,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -1216,8 +1217,8 @@
         "routeName": "Guinda 2",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#880E4F",
-        "casingColor": "#222222",
+        "color": "#C2185B",
+        "casingColor": "#4A0026",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/31_GUINDA_2/KML/Guinda_2.kml",
         "sourceFeatureIndex": 1,
@@ -1229,7 +1230,8 @@
         "confidence": 0.987,
         "matched_coverage": 1.009,
         "orig_len_m": 10135.8,
-        "matched_len_m": 10229.3
+        "matched_len_m": 10229.3,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2361,5 +2363,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#C2185B",
+    "casingColor": "#4A0026"
+  }
 }

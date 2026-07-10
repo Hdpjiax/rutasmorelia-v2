@@ -8,11 +8,12 @@
         "routeName": "Morada 2 Lomas de Morelia",
         "direction": "ida",
         "name": "Ida",
-        "color": "#7B1FA2",
-        "casingColor": "#222222",
+        "color": "#9C27B0",
+        "casingColor": "#4A148C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/35_MORADA_2_LOMAS_DE_MORELIA/KML/Morada_2_Lomas_de_Morelia.kml",
-        "sourceFeatureIndex": 0
+        "sourceFeatureIndex": 0,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -2379,11 +2380,12 @@
         "routeName": "Morada 2 Lomas de Morelia",
         "direction": "vuelta",
         "name": "Vuelta",
-        "color": "#7B1FA2",
-        "casingColor": "#222222",
+        "color": "#9C27B0",
+        "casingColor": "#4A148C",
         "transportType": "combi",
         "source": "rutastransporte/01_RUTAS_DE_COMBI/35_MORADA_2_LOMAS_DE_MORELIA/KML/Morada_2_Lomas_de_Morelia.kml",
-        "sourceFeatureIndex": 1
+        "sourceFeatureIndex": 1,
+        "directionMode": "independent"
       },
       "geometry": {
         "type": "LineString",
@@ -3907,5 +3909,10 @@
         ]
       }
     }
-  ]
+  ],
+  "properties": {
+    "directionMode": "independent",
+    "color": "#9C27B0",
+    "casingColor": "#4A148C"
+  }
 }

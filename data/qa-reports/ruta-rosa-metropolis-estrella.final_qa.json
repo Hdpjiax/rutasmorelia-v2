@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/d/rutasmorelia/data/processed/matched/ruta-rosa-metropolis-estrella.geojson",
+  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-rosa-metropolis-estrella.geojson",
   "route_id": "ruta-rosa-metropolis-estrella",
   "route_name": "Rosa Metropolis - Estrella",
   "status": "approved",
@@ -26,5 +26,5 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T00:47:12.475049+00:00"
+  "validated_at": "2026-07-09T11:25:47.662805+00:00"
 }
