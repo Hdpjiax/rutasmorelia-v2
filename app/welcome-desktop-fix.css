@@ -12,3 +12,15 @@
     bottom: calc(4.75rem + var(--vm-safe-bottom)) !important;
   }
 }
+
+/*
+ * En móvil el mapa es la interfaz principal. La ficha completa de la ruta
+ * seleccionada (sentido, compartir y detalles) ocupaba demasiado espacio.
+ * Se oculta solo en pantallas pequeñas; el Dock permanece disponible para
+ * volver a Rutas y consultar detalles cuando el usuario lo necesite.
+ */
+@media (max-width: 767px) {
+  #main-content > .pointer-events-auto.absolute.z-30.flex.justify-center {
+    display: none !important;
+  }
+}
