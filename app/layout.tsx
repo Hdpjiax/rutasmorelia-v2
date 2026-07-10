@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
+import "./welcome-desktop-fix.css";
 
 /**
  * App tipo mapa: el usuario hace zoom solo en MapLibre, no en la página.
