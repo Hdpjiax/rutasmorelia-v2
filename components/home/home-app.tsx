@@ -631,22 +631,22 @@ export default function HomeApp() {
   };
 
   const renderFavorites = () => (
-    <div className="flex flex-col gap-3 p-3 md:gap-4 md:p-4">
-      <p className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] leading-snug text-slate-600 md:px-4 md:py-2.5 md:text-sm">
+    <div className="flex flex-col gap-2.5 p-3 md:gap-2.5 md:p-3">
+      <p className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] leading-snug text-slate-600">
         Tus favoritos se guardan <strong>solo en este dispositivo</strong> (sin cuenta).
       </p>
       <div>
-        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 md:mb-2 md:text-xs">
+        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
           Ubicaciones favoritas
         </p>
         {favoriteLocations.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3 text-center text-[11px] text-slate-400 md:p-4 md:text-sm">
+          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-2.5 text-center text-[11px] text-slate-400">
             Marca el corazón al buscar una dirección.
           </p>
         ) : (
-          <div className="flex flex-col gap-1.5 md:gap-2">
+          <div className="flex flex-col gap-1.5">
             {favoriteLocations.map((loc) => (
-              <div key={loc.id} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2.5 md:gap-3 md:rounded-2xl md:p-3.5">
+              <div key={loc.id} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2">
                 <button
                   type="button"
                   className="min-w-0 flex-1 text-left cursor-pointer"
@@ -660,15 +660,15 @@ export default function HomeApp() {
                     });
                   }}
                 >
-                  <p className="truncate text-sm font-semibold text-slate-800 md:text-base">{loc.name}</p>
-                  <p className="text-[10px] text-slate-400 md:text-xs">{loc.description || 'Ubicación'}</p>
+                  <p className="truncate text-sm font-semibold text-slate-800">{loc.name}</p>
+                  <p className="text-[10px] text-slate-400">{loc.description || 'Ubicación'}</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => void toggleLocationFavorite(loc)}
-                  className="p-1 cursor-pointer md:p-1.5"
+                  className="p-1 cursor-pointer"
                 >
-                  <Heart className="h-4 w-4 fill-rose-500 text-rose-500 md:h-5 md:w-5" />
+                  <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />
                 </button>
               </div>
             ))}
@@ -676,25 +676,25 @@ export default function HomeApp() {
         )}
       </div>
       <div>
-        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 md:mb-2 md:text-xs">
+        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
           Rutas favoritas
         </p>
         {favRoutes.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3 text-center text-[11px] text-slate-400 md:p-4 md:text-sm">
+          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-2.5 text-center text-[11px] text-slate-400">
             Explora rutas y marca el corazón.
           </p>
         ) : (
-          <div className="flex flex-col gap-1.5 md:gap-2">
+          <div className="flex flex-col gap-1.5">
             {favRoutes.map((route) => (
               <button
                 key={route.id}
                 type="button"
                 onClick={() => viewRouteOnMap(route)}
-                className="flex min-h-11 items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 text-left transition hover:bg-slate-50 cursor-pointer md:min-h-13 md:rounded-2xl md:p-3.5"
+                className="flex min-h-10 items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2 text-left transition hover:bg-slate-50 cursor-pointer"
               >
-                <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-white shadow md:h-4 md:w-4" style={{ backgroundColor: route.color }} />
-                <span className="flex-1 text-sm font-semibold text-slate-800 md:text-base">{route.name}</span>
-                <Heart className="h-4 w-4 fill-rose-500 text-rose-500 md:h-5 md:w-5" />
+                <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-white shadow" style={{ backgroundColor: route.color }} />
+                <span className="flex-1 text-sm font-semibold text-slate-800">{route.name}</span>
+                <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />
               </button>
             ))}
           </div>
@@ -796,7 +796,7 @@ export default function HomeApp() {
             alt=""
             width={64}
             height={64}
-            className="relative z-10 block h-9 w-9 shrink-0 object-contain drop-shadow-md sm:h-10 sm:w-10 md:h-11 md:w-11 lg:h-12 lg:w-12"
+            className="relative z-10 block h-9 w-9 shrink-0 object-contain drop-shadow-md sm:h-9 sm:w-9 md:h-10 md:w-10"
             priority
           />
           <Image
@@ -804,7 +804,7 @@ export default function HomeApp() {
             alt="ViaMorelia"
             width={480}
             height={100}
-            className="relative z-0 ml-0.5 block h-8 w-auto max-w-[min(42vw,9rem)] object-contain object-left drop-shadow-md sm:h-9 sm:max-w-[12rem] md:h-10 md:max-w-[15rem] lg:h-11 lg:max-w-[17rem]"
+            className="relative z-0 ml-0.5 block h-8 w-auto max-w-[min(42vw,9rem)] object-contain object-left drop-shadow-md sm:h-8 sm:max-w-[11rem] md:h-9 md:max-w-[13rem]"
             priority
           />
         </motion.div>
@@ -881,12 +881,12 @@ export default function HomeApp() {
               setPanel('favorites');
               setResultsOpen(true);
             }}
-            className="vm-btn-icon md:!h-12 md:!w-12 md:!rounded-2xl lg:!h-13 lg:!w-13"
+            className="vm-btn-icon md:!h-11 md:!w-11 md:!rounded-xl"
             title="Favoritos en este dispositivo"
             aria-label="Favoritos"
           >
             <Heart
-              className={`h-5 w-5 md:h-6 md:w-6 ${
+              className={`h-5 w-5 md:h-5 md:w-5 ${
                 hasMounted && (favorites.length || favoriteLocations.length)
                   ? 'fill-rose-500 text-rose-500'
                   : 'text-slate-600'
@@ -909,40 +909,40 @@ export default function HomeApp() {
           <button
             type="button"
             onClick={() => zoomBy(1)}
-            className="vm-btn-icon !h-10 !w-10 !rounded-xl md:!h-12 md:!w-12 md:!rounded-2xl"
+            className="vm-btn-icon !h-10 !w-10 !rounded-xl md:!h-11 md:!w-11 md:!rounded-xl"
             title="Acercar"
           >
-            <Plus className="h-5 w-5 md:h-6 md:w-6 text-slate-700" />
+            <Plus className="h-5 w-5 md:h-5 md:w-5 text-slate-700" />
           </button>
           <button
             type="button"
             onClick={() => zoomBy(-1)}
-            className="vm-btn-icon !h-10 !w-10 !rounded-xl md:!h-12 md:!w-12 md:!rounded-2xl"
+            className="vm-btn-icon !h-10 !w-10 !rounded-xl md:!h-11 md:!w-11 md:!rounded-xl"
             title="Alejar"
           >
-            <Minus className="h-5 w-5 md:h-6 md:w-6 text-slate-700" />
+            <Minus className="h-5 w-5 md:h-5 md:w-5 text-slate-700" />
           </button>
           
           {/* Botones de Pin Drop Origen y Destino */}
           <button
             type="button"
             onClick={() => setPinDropMode(pinDropMode === 'origin' ? null : 'origin')}
-            className={`vm-btn-icon !h-10 !w-10 !rounded-xl border-2 md:!h-12 md:!w-12 md:!rounded-2xl ${
+            className={`vm-btn-icon !h-10 !w-10 !rounded-xl border-2 md:!h-11 md:!w-11 md:!rounded-xl ${
               pinDropMode === 'origin' ? 'border-emerald-600 bg-emerald-50' : 'border-slate-200'
             }`}
             title="Fijar origen en el centro del mapa"
           >
-            <MapPin className={`h-5 w-5 md:h-6 md:w-6 ${pinDropMode === 'origin' ? 'text-emerald-600' : 'text-emerald-700'}`} />
+            <MapPin className={`h-5 w-5 md:h-5 md:w-5 ${pinDropMode === 'origin' ? 'text-emerald-600' : 'text-emerald-700'}`} />
           </button>
           <button
             type="button"
             onClick={() => setPinDropMode(pinDropMode === 'destination' ? null : 'destination')}
-            className={`vm-btn-icon !h-10 !w-10 !rounded-xl border-2 md:!h-12 md:!w-12 md:!rounded-2xl ${
+            className={`vm-btn-icon !h-10 !w-10 !rounded-xl border-2 md:!h-11 md:!w-11 md:!rounded-xl ${
               pinDropMode === 'destination' ? 'border-rose-600 bg-rose-50' : 'border-slate-200'
             }`}
             title="Fijar destino en el centro del mapa"
           >
-            <Navigation className={`h-5 w-5 md:h-6 md:w-6 ${pinDropMode === 'destination' ? 'text-rose-600' : 'text-rose-700'}`} />
+            <Navigation className={`h-5 w-5 md:h-5 md:w-5 ${pinDropMode === 'destination' ? 'text-rose-600' : 'text-rose-700'}`} />
           </button>
         </motion.div>
 
@@ -1002,33 +1002,33 @@ export default function HomeApp() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
-              className="pointer-events-auto absolute z-30 sm:left-1/2 sm:right-auto sm:w-[min(92vw,420px)] sm:-translate-x-1/2 md:w-[min(92vw,480px)] lg:w-[min(90vw,520px)]"
+              className="pointer-events-auto absolute z-30 sm:left-1/2 sm:right-auto sm:w-[min(92vw,400px)] sm:-translate-x-1/2 md:w-[min(92vw,440px)]"
               style={{
                 left: 'max(0.75rem, var(--vm-safe-left))',
                 right: 'max(0.75rem, var(--vm-safe-right))',
                 bottom: 'calc(var(--vm-dock-clearance, 4.75rem) + var(--vm-safe-bottom))',
               }}
             >
-              <div className="vm-panel rounded-2xl border p-3.5 shadow-2xl md:rounded-3xl md:p-5 lg:p-6">
-                <div className="mb-2 flex items-start justify-between gap-2 md:mb-3">
+              <div className="vm-panel rounded-2xl border p-3.5 shadow-2xl md:p-4">
+                <div className="mb-2 flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold text-slate-900 md:text-xl lg:text-2xl">
+                    <p className="text-sm font-bold text-slate-900 md:text-base">
                       Bienvenido a ViaMorelia
                     </p>
-                    <p className="mt-0.5 text-[12px] font-medium leading-snug text-slate-600 md:mt-1 md:text-base md:leading-relaxed">
+                    <p className="mt-0.5 text-[12px] font-medium leading-snug text-slate-600 md:text-sm">
                       Consulta rutas y planifica viajes. Elige cómo empezar:
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={dismissWelcome}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 cursor-pointer md:p-1.5"
+                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 cursor-pointer"
                     aria-label="Cerrar bienvenida"
                   >
-                    <X className="h-4 w-4 md:h-5 md:w-5" />
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="flex flex-col gap-2 md:gap-2.5">
+                <div className="flex flex-col gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -1037,12 +1037,12 @@ export default function HomeApp() {
                       openResultsPanel('results');
                       dismissWelcome();
                     }}
-                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-left text-xs font-bold text-white cursor-pointer hover:bg-emerald-700 md:gap-3 md:rounded-2xl md:px-4 md:py-3.5 md:text-base"
+                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-left text-xs font-bold text-white cursor-pointer hover:bg-emerald-700 md:px-3.5 md:py-3 md:text-sm"
                   >
-                    <Navigation className="h-4 w-4 shrink-0 animate-pulse md:h-6 md:w-6" />
+                    <Navigation className="h-4 w-4 shrink-0 animate-pulse md:h-5 md:w-5" />
                     <span>
                       Planear un viaje
-                      <span className="mt-0.5 block text-[10px] font-medium text-emerald-100 md:mt-1 md:text-sm">
+                      <span className="mt-0.5 block text-[10px] font-medium text-emerald-100 md:text-[11px]">
                         Ingresa origen → destino para saber qué combi tomar
                       </span>
                     </span>
@@ -1053,12 +1053,12 @@ export default function HomeApp() {
                       openResultsPanel('routes');
                       dismissWelcome();
                     }}
-                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:gap-3 md:rounded-2xl md:px-4 md:py-3.5 md:text-base"
+                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:px-3.5 md:py-3 md:text-sm"
                   >
-                    <List className="h-4 w-4 shrink-0 text-slate-600 md:h-6 md:w-6" />
+                    <List className="h-4 w-4 shrink-0 text-slate-600 md:h-5 md:w-5" />
                     <span>
                       Explorar rutas
-                      <span className="mt-0.5 block text-[10px] font-medium text-slate-500 md:mt-1 md:text-sm">
+                      <span className="mt-0.5 block text-[10px] font-medium text-slate-500 md:text-[11px]">
                         Ver el recorrido completo de cualquier ruta
                       </span>
                     </span>

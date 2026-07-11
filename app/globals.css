@@ -107,43 +107,38 @@ a,
   }
 }
 
-/* Escritorio (md+): UI más grande y legible */
+/* Escritorio (md+): un poco más grande que móvil, sin pasarse */
 @media (min-width: 768px) {
   :root {
-    --vm-top-bar-h: 3.75rem;
-    --vm-side: 1.25rem;
-    --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.65rem);
-    --vm-ui-font: 1.0625rem; /* 17px base en paneles */
-    --vm-dock-clearance: 5.75rem;
+    --vm-top-bar-h: 3.25rem;
+    --vm-side: 1rem;
+    --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.45rem);
+    --vm-dock-clearance: 5.25rem;
   }
 
   .vm-app-shell {
-    font-size: 15px;
+    font-size: 14.5px;
   }
 
   .vm-app-shell .vm-panel {
-    font-size: 1rem;
+    font-size: 0.9375rem;
   }
 
-  /* Contenido interno del modal de rutas / viaje / favoritos */
   .vm-modal-body-desktop {
-    font-size: 1.0625rem;
-    line-height: 1.5;
-  }
-  .vm-modal-body-desktop > * {
-    --tw-text-opacity: 1;
+    font-size: 0.8125rem;
+    line-height: 1.35;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --vm-top-bar-h: 3.5rem;
-    --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.55rem);
-    --vm-dock-clearance: 6rem;
+    --vm-top-bar-h: 3.35rem;
+    --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.5rem);
+    --vm-dock-clearance: 5.5rem;
   }
 
   .vm-app-shell {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
@@ -260,25 +255,25 @@ textarea::placeholder {
 
 @media (min-width: 640px) {
   .vm-btn-icon {
-    height: 3rem;
-    width: 3rem;
-    border-radius: 1rem;
+    height: 2.75rem;
+    width: 2.75rem;
+    border-radius: 0.9rem;
   }
 }
 
 @media (min-width: 768px) {
   .vm-btn-icon {
-    height: 3.15rem;
-    width: 3.15rem;
-    border-radius: 1rem;
+    height: 2.9rem;
+    width: 2.9rem;
+    border-radius: 0.95rem;
   }
 }
 
 @media (min-width: 1024px) {
   .vm-btn-icon {
-    height: 3.35rem;
-    width: 3.35rem;
-    border-radius: 1.1rem;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 1rem;
   }
 }
 

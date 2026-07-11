@@ -721,8 +721,8 @@ export function useMaplibreSetup({
           const coords = feat.geometry.coordinates as [number, number][];
           const color = feat.properties?.color || '#3b82f6';
 
-          // Dibujar 4 partículas por cada trazo para efecto de flujo constante
-          const numParticles = 4;
+          // Más orbes por trazo = flujo más legible en corredores largos
+          const numParticles = 6;
           for (let p = 0; p < numParticles; p++) {
             const offset = (progress + p / numParticles) % 1;
             const pt = interpolatePointAlongLine(coords, offset);

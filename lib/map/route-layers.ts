@@ -36,6 +36,47 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
+  // Halo suave detrás (más visible a distancia)
+  if (!map.getLayer('route-flow-particles-glow')) {
+    map.addLayer({
+      id: 'route-flow-particles-glow',
+      type: 'circle',
+      source: 'routes-flow-source',
+      paint: {
+        'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
+        'circle-radius': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          10,
+          7,
+          14,
+          11,
+          18,
+          16,
+        ],
+        'circle-blur': 0.75,
+        'circle-opacity': 0.45,
+        'circle-stroke-width': 0,
+      },
+    });
+  } else {
+    map.setPaintProperty('route-flow-particles-glow', 'circle-radius', [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      10,
+      7,
+      14,
+      11,
+      18,
+      16,
+    ]);
+    map.setPaintProperty('route-flow-particles-glow', 'circle-blur', 0.75);
+    map.setPaintProperty('route-flow-particles-glow', 'circle-opacity', 0.45);
+  }
+
+  // Núcleo del orbe (opaco, borde blanco para contraste sobre el trazo)
   if (!map.getLayer('route-flow-particles')) {
     map.addLayer({
       id: 'route-flow-particles',
@@ -48,19 +89,56 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
           ['linear'],
           ['zoom'],
           10,
-          2.5,
+          4.5,
           14,
-          4,
+          7.5,
           18,
-          6,
+          11,
         ],
-        'circle-blur': 0.35,
-        'circle-opacity': 0.85,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#111111',
-        'circle-stroke-opacity': 0.4,
+        'circle-blur': 0.05,
+        'circle-opacity': 1,
+        'circle-stroke-width': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          10,
+          1.5,
+          14,
+          2.25,
+          18,
+          3,
+        ],
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-opacity': 0.95,
       },
     });
+  } else {
+    map.setPaintProperty('route-flow-particles', 'circle-radius', [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      10,
+      4.5,
+      14,
+      7.5,
+      18,
+      11,
+    ]);
+    map.setPaintProperty('route-flow-particles', 'circle-blur', 0.05);
+    map.setPaintProperty('route-flow-particles', 'circle-opacity', 1);
+    map.setPaintProperty('route-flow-particles', 'circle-stroke-width', [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      10,
+      1.5,
+      14,
+      2.25,
+      18,
+      3,
+    ]);
+    map.setPaintProperty('route-flow-particles', 'circle-stroke-color', '#ffffff');
+    map.setPaintProperty('route-flow-particles', 'circle-stroke-opacity', 0.95);
   }
 
   // Líneas: no dibujar walk ni sense-label (solo corredor / segmento)
@@ -162,6 +240,12 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
         'icon-padding': 2,
       },
     });
+  }
+
+  // Orbes de flujo por encima del trazo y flechas (no tapados por la línea)
+  if (map.getLayer('route-flow-particles-glow') && map.getLayer('route-flow-particles')) {
+    map.moveLayer('route-flow-particles-glow');
+    map.moveLayer('route-flow-particles');
   }
 
   // Etiquetas Ida / Vuelta (dual_ring o sense-label)

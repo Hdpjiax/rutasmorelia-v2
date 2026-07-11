@@ -31,7 +31,7 @@ export function SelectedRouteCard({
 
   return (
     <div
-      className="vm-panel w-full max-w-md rounded-2xl border px-3 py-2.5 shadow-xl md:max-w-lg md:rounded-3xl md:px-4 md:py-3.5 lg:max-w-xl"
+      className="vm-panel w-full max-w-md rounded-2xl border px-3 py-2.5 shadow-xl md:max-w-lg md:rounded-2xl md:px-4 md:py-3.5 lg:max-w-xl"
       role="status"
       aria-live="polite"
       aria-label={`Ruta seleccionada: ${route.name}`}
@@ -43,7 +43,7 @@ export function SelectedRouteCard({
           aria-hidden
         />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-slate-900 md:text-lg">{route.name}</p>
+          <p className="truncate text-sm font-bold text-slate-900 md:text-sm">{route.name}</p>
           <p className="text-[11px] text-slate-600 md:text-sm">
             {kind === 'combi' ? 'Combi' : 'Autobús'} · Ruta completa
             {info.corridorLabel ? ` · ${info.corridorLabel}` : ''}

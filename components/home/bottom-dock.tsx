@@ -39,7 +39,7 @@ export function BottomDock({
       }}
       aria-label="Acciones principales"
     >
-      <div className="pointer-events-auto mx-auto flex w-full max-w-md items-stretch gap-0 rounded-xl border border-slate-200/80 bg-white/95 p-0.5 shadow-xl backdrop-blur-md sm:max-w-lg sm:gap-0.5 sm:rounded-2xl sm:p-1 sm:shadow-2xl md:max-w-xl md:gap-0.5 md:rounded-2xl md:p-1.5 lg:max-w-xl lg:p-1.5">
+      <div className="pointer-events-auto mx-auto flex w-full max-w-md items-stretch gap-0 rounded-xl border border-slate-200/80 bg-white/95 p-0.5 shadow-xl backdrop-blur-md sm:max-w-md sm:gap-0.5 sm:rounded-2xl sm:p-1 sm:shadow-2xl md:max-w-lg md:p-1">
         <DockBtn onClick={onPlan} label="Viaje" icon={Navigation} tone="emerald" />
         <DockBtn
           onClick={onRoutes}
@@ -101,21 +101,21 @@ function DockBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        // Móvil compacto; escritorio un poco más grande (sin pasarse)
-        'flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1 text-slate-800 transition cursor-pointer disabled:opacity-40 sm:min-h-12 sm:gap-1 sm:rounded-xl sm:px-1 sm:py-2 md:min-h-[3.5rem] md:gap-1 md:rounded-xl md:px-1.5 md:py-2 lg:min-h-14',
+        // Móvil compacto; escritorio solo un poco más grande
+        'flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1 text-slate-800 transition cursor-pointer disabled:opacity-40 sm:min-h-11 sm:gap-0.5 sm:rounded-xl sm:px-1 sm:py-1.5 md:min-h-12 md:py-2',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700',
         hover
       )}
     >
       <Icon
         className={cn(
-          'h-5 w-5 shrink-0 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-7 lg:w-7',
+          'h-5 w-5 shrink-0 sm:h-5 sm:w-5 md:h-6 md:w-6',
           color,
           spinning && 'animate-spin'
         )}
         aria-hidden
       />
-      <span className="max-w-full truncate text-[10px] font-bold leading-none sm:text-[11px] md:text-xs lg:text-[13px]">
+      <span className="max-w-full truncate text-[10px] font-bold leading-none sm:text-[10px] md:text-[11px]">
         {label}
       </span>
     </button>

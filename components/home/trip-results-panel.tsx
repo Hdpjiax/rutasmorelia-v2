@@ -69,10 +69,10 @@ export function TripResultsPanel({
   onCopyLink,
 }: Props) {
   return (
-    <div data-testid="trip-planner-results" className="flex flex-col gap-2.5 p-3 md:gap-3.5 md:p-4">
+    <div data-testid="trip-planner-results" className="flex flex-col gap-2 p-3 md:gap-2.5 md:p-3">
       {geocodeDegraded && (
         <p
-          className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-900 md:px-4 md:py-2.5 md:text-sm"
+          className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-900 md:text-[11px]"
           role="status"
         >
           Búsqueda en mapa limitada. Usa lugares de Morelia del catálogo o toca el mapa.
@@ -93,17 +93,17 @@ export function TripResultsPanel({
 
       {planning && (
         <div
-          className="flex flex-col gap-1.5 rounded-xl bg-slate-50 px-3 py-4 text-sm text-slate-700 md:gap-2 md:px-4 md:py-5 md:text-base"
+          className="flex flex-col gap-1.5 rounded-xl bg-slate-50 px-3 py-3 text-sm text-slate-700 md:py-3 md:text-sm"
           role="status"
           aria-live="polite"
         >
           <div className="flex items-center gap-2 font-medium">
-            <Loader2 className="h-4 w-4 animate-spin text-emerald-600 md:h-5 md:w-5" aria-hidden />
+            <Loader2 className="h-4 w-4 animate-spin text-emerald-600" aria-hidden />
             {geometriesLoading
               ? 'Cargando geometrías de rutas cercanas…'
               : 'Calculando mejores opciones…'}
           </div>
-          <p className="text-[11px] text-slate-500 md:text-sm">
+          <p className="text-[11px] text-slate-500">
             Solo usamos rutas del área de tu viaje para ir más rápido.
           </p>
         </div>
@@ -135,7 +135,7 @@ export function TripResultsPanel({
                 key={f.id}
                 type="button"
                 onClick={() => onPlanTypeFilter(f.id)}
-                className={`rounded-full border px-2.5 py-1 text-[10px] font-bold cursor-pointer transition md:min-h-10 md:px-3.5 md:py-1.5 md:text-sm ${
+                className={`rounded-full border px-2.5 py-1 text-[10px] font-bold cursor-pointer transition md:min-h-8 md:px-2.5 md:py-1 md:text-[11px] ${
                   planTypeFilter === f.id
                     ? 'border-emerald-700 bg-emerald-700 text-white'
                     : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
@@ -146,8 +146,8 @@ export function TripResultsPanel({
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 md:gap-2" role="group" aria-label="Ordenar por">
-            <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500 md:text-xs">
+          <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Ordenar por">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
               Orden:
             </span>
             {(
@@ -162,7 +162,7 @@ export function TripResultsPanel({
                 type="button"
                 data-testid={`plan-sort-${s.id}`}
                 onClick={() => onPlanSort(s.id)}
-                className={`rounded-full border px-2 py-0.5 text-[10px] font-bold cursor-pointer md:min-h-9 md:px-3 md:py-1 md:text-sm ${
+                className={`rounded-full border px-2 py-0.5 text-[10px] font-bold cursor-pointer md:min-h-8 md:px-2.5 md:py-1 md:text-[11px] ${
                   planSort === s.id
                     ? 'border-slate-900 bg-slate-900 text-white'
                     : 'border-slate-200 bg-white text-slate-600'
@@ -173,23 +173,23 @@ export function TripResultsPanel({
             ))}
           </div>
 
-          <div className="flex gap-2 md:gap-2.5">
+          <div className="flex gap-2">
             <button
               type="button"
               data-testid="share-trip"
               onClick={onShare}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[11px] font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:min-h-12 md:gap-2 md:rounded-2xl md:py-2.5 md:text-sm"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[11px] font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:min-h-9 md:py-2 md:text-[11px]"
             >
-              <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden />
+              <Share2 className="h-3.5 w-3.5" aria-hidden />
               Compartir
             </button>
             <button
               type="button"
               data-testid="copy-trip-link"
               onClick={onCopyLink}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[11px] font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:min-h-12 md:gap-2 md:rounded-2xl md:py-2.5 md:text-sm"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[11px] font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:min-h-9 md:py-2 md:text-[11px]"
             >
-              <Link2 className="h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden />
+              <Link2 className="h-3.5 w-3.5" aria-hidden />
               Copiar enlace
             </button>
           </div>
@@ -210,7 +210,7 @@ export function TripResultsPanel({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: listIdx * 0.04 }}
               onClick={() => onSelectPlan(idx)}
-              className={`vm-card vm-press w-full rounded-2xl border p-3 text-left cursor-pointer md:rounded-3xl md:p-4 ${
+              className={`vm-card vm-press w-full rounded-xl border p-2.5 text-left cursor-pointer md:rounded-xl md:p-3 ${
                 selectedPlanIndex === idx ? 'ring-2 ring-emerald-600/40 shadow-md' : ''
               }`}
               style={
@@ -223,36 +223,36 @@ export function TripResultsPanel({
               }
               aria-pressed={selectedPlanIndex === idx}
             >
-              <div className="mb-2 flex items-center justify-between gap-2 md:mb-3">
-                <span className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-emerald-800 md:text-sm">
+              <div className="mb-1.5 flex items-center justify-between gap-2 md:mb-2">
+                <span className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-emerald-800">
                   {plan.type === 'direct' ? (
                     <>
-                      <Bus className="h-3.5 w-3.5 md:h-4.5 md:w-4.5" aria-hidden /> Directo
+                      <Bus className="h-3.5 w-3.5" aria-hidden /> Directo
                     </>
                   ) : (
                     <>
-                      <ArrowRightLeft className="h-3.5 w-3.5 md:h-4.5 md:w-4.5" aria-hidden /> Transbordo
+                      <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden /> Transbordo
                       {xfers > 0 ? ` · ${xfers}` : ''}
                     </>
                   )}
                 </span>
-                <span className="text-right text-xs font-bold text-slate-800 md:text-base">
+                <span className="text-right text-xs font-bold text-slate-800">
                   {formatDurationSec(plan.totalDuration)}
-                  <span className="mt-0.5 block text-[10px] font-semibold text-slate-500 md:text-xs">
+                  <span className="mt-0.5 block text-[10px] font-semibold text-slate-500">
                     {formatDistanceKm(plan.totalDistance)} · {formatWalkMeters(plan.walkDistanceTotal)}
                   </span>
                 </span>
               </div>
 
               {rideSegs.length > 0 && (
-                <div className="mb-2 flex flex-wrap items-center gap-1.5 md:mb-2.5 md:gap-2">
+                <div className="mb-1.5 flex flex-wrap items-center gap-1.5 md:mb-2">
                   {rideSegs.map((r, ri) => (
                     <span
                       key={`${r.routeId}-${ri}`}
-                      className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-800 md:gap-1.5 md:px-2.5 md:py-1 md:text-xs"
+                      className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-800"
                     >
                       <span
-                        className="h-2.5 w-2.5 rounded-full ring-1 ring-slate-300 md:h-3 md:w-3"
+                        className="h-2.5 w-2.5 rounded-full ring-1 ring-slate-300"
                         style={{ backgroundColor: r.color || '#3b82f6' }}
                       />
                       {ri + 1}. {r.routeName}
@@ -262,17 +262,17 @@ export function TripResultsPanel({
               )}
 
               {firstWalk && firstWalk.distance > 0 && (
-                <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-sky-800 md:mb-2.5 md:text-sm">
-                  <Footprints className={`h-3.5 w-3.5 md:h-4 md:w-4 ${selectedPlanIndex === idx ? 'vm-walk-active' : ''}`} aria-hidden />
+                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-sky-800">
+                  <Footprints className={`h-3.5 w-3.5 ${selectedPlanIndex === idx ? 'vm-walk-active' : ''}`} aria-hidden />
                   Camina {formatWalkMeters(firstWalk.distance)} hasta el punto de subida
                 </p>
               )}
 
-              <div className="flex flex-col gap-1.5 md:gap-2">
+              <div className="flex flex-col gap-1.5">
                 {plan.segments.map((seg, sIdx) => (
-                  <div key={sIdx} className="flex gap-2 text-[11px] md:gap-2.5 md:text-sm">
+                  <div key={sIdx} className="flex gap-2 text-[11px]">
                     <div
-                      className={`mt-0.5 h-2 w-2 shrink-0 rounded-full md:mt-1 md:h-2.5 md:w-2.5 ${
+                      className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${
                         seg.walkKind === 'transfer'
                           ? 'bg-violet-600 ring-2 ring-violet-200'
                           : seg.type === 'walk'
@@ -296,14 +296,14 @@ export function TripResultsPanel({
 
               {/* Botón de Seguimiento GPS (Seguir mi viaje) */}
               {selectedPlanIndex === idx && onToggleTracking && (
-                <div className="mt-3 flex items-center gap-2 md:mt-4">
+                <div className="mt-2.5 flex items-center gap-2">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       onToggleTracking(idx);
                     }}
-                    className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition shadow-md cursor-pointer touch-manipulation md:min-h-12 md:gap-2 md:rounded-2xl md:py-3 md:text-sm ${
+                    className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition shadow-md cursor-pointer touch-manipulation md:min-h-9 md:py-2 md:text-xs ${
                       activeTrackingIndex === idx
                         ? 'bg-rose-600 text-white hover:bg-rose-700 animate-pulse'
                         : 'bg-emerald-600 text-white hover:bg-emerald-700'
@@ -316,7 +316,7 @@ export function TripResultsPanel({
                       </>
                     ) : (
                       <>
-                        <LocateFixed className="h-4 w-4 md:h-5 md:w-5" />
+                        <LocateFixed className="h-4 w-4" />
                         Seguir mi viaje (Alertas GPS)
                       </>
                     )}
@@ -324,7 +324,7 @@ export function TripResultsPanel({
                 </div>
               )}
 
-              <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-[9px] font-medium leading-relaxed text-amber-950 md:mt-3 md:px-3 md:py-2 md:text-xs">
+              <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-[9px] font-medium leading-relaxed text-amber-950 md:text-[10px]">
                 Los puntos de <strong>subida y bajada</strong> son sugeridos (aprox.). En el mapa
                 se marcan con etiquetas Sube / Baja.
               </p>
