@@ -1,14 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('E2E completo producto', () => {
-  test('login magic link (mock) + logout UI', async ({ page }) => {
+  test('sin auth de usuario: no hay login en la UI pública', async ({ page }) => {
     await page.goto('/');
-    await page.getByLabel(/Entrar o registrarte|Cuenta/i).first().click();
-    await page.locator('[data-testid="login-email"]').fill('editor@rutas.com');
-    await page.locator('[data-testid="login-magic-link"]').click();
-    await expect(page.locator('[data-testid="user-profile-header"]')).toBeVisible({
-      timeout: 12000,
-    });
+    await expect(page.locator('[data-testid="login-email"]')).toHaveCount(0);
+    await expect(page.getByTitle(/Entrar|Cuenta/i)).toHaveCount(0);
   });
 
   test('favoritos: abrir y marcar ruta', async ({ page }) => {

@@ -36,7 +36,7 @@ export function initMoreliaMap({
   }
   const map = new maplibregl.Map({
     container,
-    style: basemapStyleUrl('light'),
+    style: basemapStyleUrl(),
     center: MORELIA_CENTER,
     zoom: MORELIA_ZOOM,
     minZoom: 10,
@@ -57,6 +57,17 @@ export function initMoreliaMap({
       await enhanceBasemap(map, 'light');
       await ensureRouteArrowIcon(map);
       addRouteLayers(map, { includeWalk: includeWalkLayers });
+      // Producción: GeoJSON bajo demanda + IndexedDB.
+      // PMTiles es opcional y SOLO se carga si defines NEXT_PUBLIC_ROUTES_PMTILES_URL
+      // (tippecanoe NUNCA va a Vercel; solo genera el archivo en tu PC/WSL si quieres).
+      if (process.env.NEXT_PUBLIC_ROUTES_PMTILES_URL?.trim()) {
+        try {
+          const { addRoutesPmtilesLayer } = await import('./routes-pmtiles');
+          await addRoutesPmtilesLayer(map);
+        } catch {
+          /* no bloquear el mapa si falla el tile set opcional */
+        }
+      }
       onReady?.(map);
     } catch (e) {
       console.error('Error mejorando basemap:', e);

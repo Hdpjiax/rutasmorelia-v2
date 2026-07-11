@@ -10,8 +10,14 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAdminPage = pathname.startsWith('/admin');
   const isQaApi = pathname.startsWith('/api/qa');
+  // Login admin accesible sin sesión (solo UI oculta; no es la app pública)
+  const isAdminLogin = pathname === '/admin/login' || pathname.startsWith('/admin/login/');
 
   if (!isAdminPage && !isQaApi) {
+    return NextResponse.next();
+  }
+
+  if (isAdminLogin) {
     return NextResponse.next();
   }
 
@@ -46,7 +52,8 @@ export async function middleware(request: NextRequest) {
     if (isAdminPage) {
       const u = request.nextUrl.clone();
       u.pathname = '/';
-      u.searchParams.set('admin', 'login');
+      // Preferir login admin dedicado (no ensucia la home pública)
+      u.pathname = '/admin/login';
       return NextResponse.redirect(u);
     }
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -90,7 +97,7 @@ export async function middleware(request: NextRequest) {
   if (!allowed) {
     if (isAdminPage) {
       const u = request.nextUrl.clone();
-      u.pathname = '/';
+      u.pathname = '/admin/login';
       u.searchParams.set('admin', 'required');
       return NextResponse.redirect(u);
     }

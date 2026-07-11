@@ -19,12 +19,11 @@ test.describe('Product UX: deep links, share, admin gate', () => {
     });
   });
 
-  test('auth panel tiene magic link y google', async ({ page }) => {
+  test('no hay panel de cuenta (auth desactivado)', async ({ page }) => {
     await page.goto('/');
-    await page.getByLabel(/Entrar o registrarte|Cuenta/i).first().click();
-    await expect(page.locator('[data-testid="login-email"]')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('[data-testid="login-magic-link"]')).toBeVisible();
-    await expect(page.locator('[data-testid="login-google"]')).toBeVisible();
+    await expect(page.locator('[data-testid="login-email"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="login-magic-link"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="login-google"]')).toHaveCount(0);
   });
 
   test('favoritos abre panel', async ({ page }) => {

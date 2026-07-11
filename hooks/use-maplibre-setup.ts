@@ -67,6 +67,7 @@ export function useMaplibreSetup({
   const markersRef = useRef<Record<string, Marker>>({});
   const transferMarkersRef = useRef<Marker[]>([]);
   const mlRef = useRef<typeof import('maplibre-gl') | null>(null);
+  const activeRutasRef = useRef<any>(null);
   const [styleLoaded, setStyleLoaded] = useState(false);
 
   const handleMapReady = useCallback((m: MapLibreMap) => {
@@ -221,6 +222,7 @@ export function useMaplibreSetup({
             if (!display.features?.length) display = single;
           }
           source?.setData(display as unknown as GeoJSON.FeatureCollection);
+          activeRutasRef.current = display;
 
           const lineFeat = (display.features ?? []).find(
             (f) => f.geometry?.type === 'LineString' && Array.isArray(f.geometry.coordinates)
@@ -289,6 +291,7 @@ export function useMaplibreSetup({
     } else {
       const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
       source?.setData({ type: 'FeatureCollection', features: [] });
+      activeRutasRef.current = null;
       setTripStopsData(map, []);
     }
   }, [selectedRouteId, styleLoaded, tripPlans.length, routes, routeDirection, fitMapToBounds]);
@@ -440,10 +443,12 @@ export function useMaplibreSetup({
     });
 
     const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource;
-    source?.setData({
+    const geojsonPayload = {
       type: 'FeatureCollection',
       features,
-    } as unknown as GeoJSON.FeatureCollection);
+    } as unknown as GeoJSON.FeatureCollection;
+    source?.setData(geojsonPayload);
+    activeRutasRef.current = geojsonPayload;
 
     const isMapCoord = (c?: Coordinate | null): c is Coordinate => {
       if (!c || c.length < 2) return false;
@@ -627,6 +632,9 @@ export function useMaplibreSetup({
     if (map) {
       const source = map.getSource(ROUTES_SOURCE_ID) as GeoJSONSource | undefined;
       source?.setData({ type: 'FeatureCollection', features: [] });
+      const flowSource = map.getSource('routes-flow-source') as GeoJSONSource | undefined;
+      flowSource?.setData({ type: 'FeatureCollection', features: [] });
+      activeRutasRef.current = null;
       setTripStopsData(map, []);
     }
     Object.values(markersRef.current).forEach((m) => m.remove());
@@ -634,6 +642,118 @@ export function useMaplibreSetup({
     transferMarkersRef.current.forEach((m) => m.remove());
     transferMarkersRef.current = [];
   }, [setSelectedRouteId, setRouteDirection]);
+
+  // Animación de orbes fluyentes a lo largo de las rutas activas
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !styleLoaded) return;
+
+    let animFrameId: number;
+    let progress = 0;
+
+    const interpolatePointAlongLine = (
+      coords: [number, number][],
+      ratio: number
+    ): [number, number] | null => {
+      if (coords.length === 0) return null;
+      if (coords.length === 1) return coords[0];
+
+      const segments: number[] = [];
+      let totalLength = 0;
+      for (let i = 0; i < coords.length - 1; i++) {
+        const dx = coords[i + 1][0] - coords[i][0];
+        const dy = coords[i + 1][1] - coords[i][1];
+        const len = Math.sqrt(dx * dx + dy * dy);
+        segments.push(len);
+        totalLength += len;
+      }
+
+      if (totalLength === 0) return coords[0];
+
+      const targetDist = ratio * totalLength;
+      let accumDist = 0;
+      for (let i = 0; i < segments.length; i++) {
+        const segLen = segments[i];
+        if (accumDist + segLen >= targetDist) {
+          const segRatio = (targetDist - accumDist) / segLen;
+          const p1 = coords[i];
+          const p2 = coords[i + 1];
+          const x = p1[0] + (p2[0] - p1[0]) * segRatio;
+          const y = p1[1] + (p2[1] - p1[1]) * segRatio;
+          return [x, y];
+        }
+        accumDist += segLen;
+      }
+
+      return coords[coords.length - 1];
+    };
+
+    const animate = () => {
+      const currentMap = mapRef.current;
+      if (!currentMap) return;
+
+      const flowSource = currentMap.getSource('routes-flow-source') as GeoJSONSource | undefined;
+      if (!flowSource) {
+        animFrameId = requestAnimationFrame(animate);
+        return;
+      }
+
+      const activeData = activeRutasRef.current;
+      if (!activeData || !activeData.features || activeData.features.length === 0) {
+        flowSource.setData({ type: 'FeatureCollection', features: [] });
+        animFrameId = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Velocidad de las partículas
+      progress += 0.0022;
+      if (progress > 1) progress = 0;
+
+      const particles: any[] = [];
+
+      for (const feat of activeData.features) {
+        if (
+          feat.geometry?.type === 'LineString' &&
+          feat.properties?.type !== 'walk' &&
+          Array.isArray(feat.geometry.coordinates) &&
+          feat.geometry.coordinates.length >= 2
+        ) {
+          const coords = feat.geometry.coordinates as [number, number][];
+          const color = feat.properties?.color || '#3b82f6';
+
+          // Dibujar 4 partículas por cada trazo para efecto de flujo constante
+          const numParticles = 4;
+          for (let p = 0; p < numParticles; p++) {
+            const offset = (progress + p / numParticles) % 1;
+            const pt = interpolatePointAlongLine(coords, offset);
+            if (pt) {
+              particles.push({
+                type: 'Feature',
+                properties: { color },
+                geometry: {
+                  type: 'Point',
+                  coordinates: pt,
+                },
+              });
+            }
+          }
+        }
+      }
+
+      flowSource.setData({
+        type: 'FeatureCollection',
+        features: particles,
+      });
+
+      animFrameId = requestAnimationFrame(animate);
+    };
+
+    animFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animFrameId);
+    };
+  }, [styleLoaded]);
 
   return {
     mapRef,

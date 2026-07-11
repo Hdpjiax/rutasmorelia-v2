@@ -12,6 +12,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "report:routes": "node scripts/report_bundle_routes.mjs",
+    "build:routes-geojson-merge": "node scripts/merge_routes_geojson_for_tiles.mjs",
+    "build:routes-pmtiles": "echo [local-only] tippecanoe no se usa en Vercel && bash scripts/build_routes_pmtiles.sh",
     "check": "pnpm typecheck && pnpm lint && pnpm test:unit"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
     "maplibre-gl": "^5.24.0",
     "motion": "^12.42.2",
     "next": "16.2.10",
+    "pmtiles": "^4.4.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.81.0",

@@ -91,7 +91,7 @@ export function ResultsSheet({
             aria-label="Panel de viaje y rutas"
             className={
               isDesktop
-                ? 'pointer-events-auto fixed left-1/2 top-1/2 z-50 max-h-[min(78vh,640px)] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2'
+                ? 'pointer-events-auto fixed left-1/2 top-1/2 z-50 max-h-[min(88vh,820px)] w-[min(94vw,580px)] -translate-x-1/2 -translate-y-1/2 lg:w-[min(92vw,620px)]'
                 : 'pointer-events-auto fixed inset-x-0 bottom-0 z-50'
             }
           >
@@ -122,7 +122,7 @@ export function ResultsSheet({
               onDragEnd={onDragEnd}
               className={
                 isDesktop
-                  ? 'pointer-events-auto vm-panel flex h-full max-h-[min(78vh,640px)] w-full flex-col overflow-hidden rounded-3xl border'
+                  ? 'pointer-events-auto vm-panel flex h-full max-h-[min(88vh,820px)] w-full flex-col overflow-hidden rounded-3xl border text-base lg:text-[17px]'
                   : 'pointer-events-auto vm-panel relative flex w-full flex-col overflow-hidden rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(15,23,42,0.18)]'
               }
               style={!isDesktop ? { maxHeight: '70dvh', minHeight: '48vh' } : undefined}
@@ -173,10 +173,13 @@ export function ResultsSheet({
 
               {/* Pestañas */}
               <div
-                className="flex shrink-0 items-center justify-between gap-2 px-3 py-2"
+                className={cn(
+                  'flex shrink-0 items-center justify-between gap-2 px-3 py-2',
+                  isDesktop && 'px-4 py-3'
+                )}
                 style={{ borderBottom: '1px solid var(--vm-card-border)' }}
               >
-                <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto pr-12" role="tablist">
+                <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto pr-12 md:gap-1.5" role="tablist">
                   {(
                     [
                       { id: 'results' as const, label: 'Mi viaje', icon: Navigation },
@@ -193,11 +196,11 @@ export function ResultsSheet({
                         aria-selected={panel === tab.id}
                         onClick={() => onPanelChange(tab.id)}
                         className={cn(
-                          'vm-press flex min-h-11 shrink-0 items-center gap-1 rounded-full px-3 py-2 text-[11px] font-bold cursor-pointer touch-manipulation',
+                          'vm-press flex min-h-11 shrink-0 items-center gap-1 rounded-full px-3 py-2 text-[11px] font-bold cursor-pointer touch-manipulation md:min-h-12 md:gap-1.5 md:px-4 md:py-2.5 md:text-sm',
                           panel === tab.id ? 'vm-chip-active' : 'vm-chip'
                         )}
                       >
-                        <Icon className="h-3.5 w-3.5" aria-hidden />
+                        <Icon className={cn('h-3.5 w-3.5', isDesktop && 'h-5 w-5')} aria-hidden />
                         {tab.label}
                       </button>
                     );
@@ -208,18 +211,21 @@ export function ResultsSheet({
                   <button
                     type="button"
                     onClick={closeSheet}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-800 cursor-pointer hover:bg-slate-300"
                     aria-label="Cerrar y ver mapa"
                     title="Cerrar"
                   >
-                    <X className="h-5 w-5" aria-hidden />
+                    <X className="h-6 w-6" aria-hidden />
                   </button>
                 )}
               </div>
 
               {/* Contenido con scroll propio — no pelea con el drag del asa */}
               <div
-                className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+                className={cn(
+                  'min-h-0 flex-1 overflow-y-auto overscroll-contain',
+                  isDesktop && 'vm-modal-body-desktop text-base leading-relaxed'
+                )}
                 role="tabpanel"
                 style={{ touchAction: 'pan-y' }}
               >
@@ -229,7 +235,10 @@ export function ResultsSheet({
               {/* CTA fija: Ver en el mapa (no depender del gesto) */}
               {footerAction && (
                 <div
-                  className="shrink-0 border-t border-slate-200/80 bg-white/95 px-3 py-2.5 backdrop-blur-sm"
+                  className={cn(
+                    'shrink-0 border-t border-slate-200/80 bg-white/95 px-3 py-2.5 backdrop-blur-sm',
+                    isDesktop && 'px-4 py-3.5'
+                  )}
                   style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
                 >
                   <button
@@ -245,12 +254,13 @@ export function ResultsSheet({
                     }}
                     className={cn(
                       'flex min-h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition active:scale-[0.99]',
+                      isDesktop && 'min-h-14 gap-2.5 rounded-2xl py-3.5 text-base',
                       footerAction.disabled
                         ? 'cursor-not-allowed bg-slate-100 text-slate-400'
                         : 'cursor-pointer bg-emerald-600 text-white shadow-md hover:bg-emerald-700'
                     )}
                   >
-                    <Map className="h-4 w-4 shrink-0" aria-hidden />
+                    <Map className={cn('h-4 w-4 shrink-0', isDesktop && 'h-5 w-5')} aria-hidden />
                     {footerAction.label}
                   </button>
                 </div>

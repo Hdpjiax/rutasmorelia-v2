@@ -691,15 +691,24 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     void loadProductionRoute();
   }, [compareMode, compareMapReady, selected, applyMapPreview]);
 
-  // Gestores de arrastre del slider vertical de cortina
+  // Gestores de arrastre del slider — rAF para no saturar React con setState por frame
+  const sliderRafRef = useRef<number | null>(null);
+  const applySliderX = useCallback((clientX: number) => {
+    const rect = mapContainerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = clientX - rect.left;
+    const ratio = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    if (sliderRafRef.current != null) cancelAnimationFrame(sliderRafRef.current);
+    sliderRafRef.current = requestAnimationFrame(() => {
+      setSliderRatio(ratio);
+      sliderRafRef.current = null;
+    });
+  }, []);
+
   const handleSliderMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const rect = mapContainerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const x = moveEvent.clientX - rect.left;
-      const ratio = Math.max(0, Math.min(100, (x / rect.width) * 100));
-      setSliderRatio(ratio);
+      applySliderX(moveEvent.clientX);
     };
     const onMouseUp = () => {
       window.removeEventListener('mousemove', onMouseMove);
@@ -710,12 +719,8 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   };
 
   const handleSliderTouchMove = (e: React.TouchEvent) => {
-    const rect = mapContainerRef.current?.getBoundingClientRect();
-    if (!rect) return;
     const touch = e.touches[0];
-    const x = touch.clientX - rect.left;
-    const ratio = Math.max(0, Math.min(100, (x / rect.width) * 100));
-    setSliderRatio(ratio);
+    applySliderX(touch.clientX);
   };
 
   useEffect(() => {
@@ -1645,26 +1650,36 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
             {/* Mapa A (Principal/Borrador) */}
             <div ref={mapContainerRef} className="qa-map-canvas absolute inset-0 h-full w-full" />
 
-            {/* Mapa B (Comparación de Producción, superpuesto con recorte CSS) */}
+            {/* Mapa B (Comparación de Producción) — clip-path en GPU */}
             {compareMode && (
               <div
                 ref={compareMapContainerRef}
-                className="qa-map-canvas absolute inset-0 h-full w-full pointer-events-none z-10"
+                className="qa-map-canvas absolute inset-0 z-10 h-full w-full pointer-events-none"
                 style={{
-                  clipPath: `polygon(${sliderRatio}% 0, 100% 0, 100% 100%, ${sliderRatio}% 100%)`,
+                  clipPath: `inset(0 0 0 ${sliderRatio}%)`,
+                  willChange: 'clip-path',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden',
+                  contain: 'strict',
                 }}
               />
             )}
 
-            {/* Barra divisoria central arrastrable (Swipe Slider) */}
+            {/* Barra divisoria — GPU: translate3d + will-change */}
             {compareMode && (
               <div
-                className="absolute inset-y-0 z-20 w-1.5 bg-amber-500 cursor-ew-resize flex items-center justify-center shadow-2xl"
-                style={{ left: `${sliderRatio}%`, transform: 'translateX(-50%)' }}
+                className="absolute inset-y-0 z-20 flex w-1.5 cursor-ew-resize items-center justify-center bg-amber-500 shadow-2xl"
+                style={{
+                  left: `${sliderRatio}%`,
+                  transform: 'translate3d(-50%, 0, 0)',
+                  willChange: 'transform, left',
+                  backfaceVisibility: 'hidden',
+                  touchAction: 'none',
+                }}
                 onMouseDown={handleSliderMouseDown}
                 onTouchMove={handleSliderTouchMove}
               >
-                <div className="h-10 w-6 rounded-md bg-amber-600 border border-amber-400 text-white flex flex-col items-center justify-center text-[10px] font-extrabold shadow-md pointer-events-none select-none">
+                <div className="pointer-events-none flex h-10 w-6 select-none flex-col items-center justify-center rounded-md border border-amber-400 bg-amber-600 text-[10px] font-extrabold text-white shadow-md">
                   ↔
                 </div>
               </div>

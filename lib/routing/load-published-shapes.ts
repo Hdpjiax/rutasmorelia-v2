@@ -1,5 +1,6 @@
 import type { Coordinate } from './planner';
 import { bboxFromOriginDest, filterShapesByBBox, type BBox } from './bbox';
+import { fetchRouteGeojsonCached } from './route-geojson-idb';
 
 export type PublishedShape = {
   id: string;
@@ -85,10 +86,15 @@ export async function loadPublishedRoutes(force = false): Promise<PublishedRoute
     return cache.routes;
   }
 
-  const indexRes = await fetch('/routes/index.json', {
-    // revalidate-friendly: next/browser pueden cachear
+  // Preferir API ISR (5 min); fallback a estático public/routes/index.json
+  let indexRes = await fetch('/api/routes/catalog', {
     next: { revalidate: 300 },
   } as RequestInit);
+  if (!indexRes.ok) {
+    indexRes = await fetch('/routes/index.json', {
+      next: { revalidate: 300 },
+    } as RequestInit);
+  }
 
   if (!indexRes.ok) {
     return cache?.routes ?? [];
@@ -139,15 +145,27 @@ export async function loadShapesForRouteIds(
           return;
         }
         try {
-          const res = await fetch(geojsonUrl(id, meta.geojsonFile), {
+          const url = geojsonUrl(id, meta.geojsonFile);
+          // IndexedDB read-through: 1er clic red, siguientes local / offline
+          const gj = await fetchRouteGeojsonCached(id, url, {
             next: { revalidate: 1800 },
           } as RequestInit);
-          if (!res.ok) {
+          if (!gj) {
             cache!.shapes.set(id, []);
             return;
           }
-          const gj = await res.json();
-          cache!.shapes.set(id, parseShapesFromGeojson(meta, gj));
+          cache!.shapes.set(
+            id,
+            parseShapesFromGeojson(
+              meta,
+              gj as {
+                features?: Array<{
+                  properties?: Record<string, unknown> | null;
+                  geometry?: { type?: string; coordinates?: number[][] };
+                }>;
+              }
+            )
+          );
         } catch {
           cache!.shapes.set(id, []);
         }

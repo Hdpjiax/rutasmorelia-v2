@@ -397,6 +397,8 @@ export async function enhanceBasemap(
   _theme: 'light' | 'dark' = 'light'
 ): Promise<void> {
   void _theme;
+
+  // Comportamiento original para Light
   setPaintIfExists(map, 'background', 'background-color', MAP_BACKGROUND_TINT);
 
   for (const id of GREEN_LAYERS) {

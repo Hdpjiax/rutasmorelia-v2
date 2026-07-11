@@ -57,28 +57,11 @@ test.describe('Tier 4: E2E ViaMorelia', () => {
     await expect(originInput).not.toHaveValue('');
   });
 
-  test('4. Auth: magic link or Google under user icon', async ({ page }) => {
+  test('4. Sin cuentas de usuario: favoritos locales y sin login', async ({ page }) => {
     await page.goto('/');
-
-    await page.getByTitle('Cuenta').click();
-
-    const emailInput = page.locator('[data-testid="login-email"]').first();
-    const magicBtn = page.locator('[data-testid="login-magic-link"]').first();
-    const googleBtn = page.locator('[data-testid="login-google"]').first();
-
-    await expect(emailInput).toBeVisible({ timeout: 10000 });
-    await expect(magicBtn).toBeVisible();
-    await expect(googleBtn).toBeVisible();
-    // Sin campo de contraseña
-    await expect(page.locator('[data-testid="login-password"]')).toHaveCount(0);
-
-    await emailInput.fill('editor@rutas.com');
-    await magicBtn.click();
-
-    // En mock/dev la sesión se crea al instante
-    const profileHeader = page.locator('[data-testid="user-profile-header"]').first();
-    await expect(profileHeader).toBeVisible({ timeout: 10000 });
-    await expect(profileHeader).toContainText('editor@rutas.com');
+    await expect(page.locator('[data-testid="login-email"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="login-google"]')).toHaveCount(0);
+    await expect(page.getByLabel(/Favoritos/i).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('5. Map container initialization and visibility', async ({ page }) => {

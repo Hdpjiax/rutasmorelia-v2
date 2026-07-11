@@ -46,7 +46,17 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
+            // ISR-like: 5 min en CDN, stale-while-revalidate
             value: 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+          },
+        ],
+      },
+      {
+        source: '/api/routes/catalog',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=30, s-maxage=300, stale-while-revalidate=600',
           },
         ],
       },
@@ -58,6 +68,16 @@ const nextConfig: NextConfig = {
             value: 'public, max-age=300, s-maxage=1800, stale-while-revalidate=3600',
           },
           { key: 'Content-Type', value: 'application/geo+json; charset=utf-8' },
+        ],
+      },
+      {
+        source: '/tiles/:path*.pmtiles',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
+          },
+          { key: 'Accept-Ranges', value: 'bytes' },
         ],
       },
       {

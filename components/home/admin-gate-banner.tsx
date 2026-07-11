@@ -39,9 +39,15 @@ export function AdminGateBanner() {
           <p className="text-xs font-bold text-amber-900">Panel admin no disponible</p>
           <p className="mt-0.5 text-[11px] leading-snug text-amber-800">
             {reason === 'login'
-              ? 'Inicia sesión con una cuenta autorizada (ADMIN_EMAILS) para acceder al QA.'
+              ? 'Inicia sesión como administrador para el panel QA.'
               : 'Tu sesión no tiene permiso de administrador. Solo correos en ADMIN_EMAILS pueden entrar a /admin/qa.'}
           </p>
+          <a
+            href="/admin/login"
+            className="mt-1.5 inline-block text-[11px] font-bold text-emerald-800 underline-offset-2 hover:underline"
+          >
+            Ir a acceso admin →
+          </a>
         </div>
         <button
           type="button"

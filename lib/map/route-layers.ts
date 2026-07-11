@@ -29,6 +29,40 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
+  if (!map.getSource('routes-flow-source')) {
+    map.addSource('routes-flow-source', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+    });
+  }
+
+  if (!map.getLayer('route-flow-particles')) {
+    map.addLayer({
+      id: 'route-flow-particles',
+      type: 'circle',
+      source: 'routes-flow-source',
+      paint: {
+        'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
+        'circle-radius': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          10,
+          2.5,
+          14,
+          4,
+          18,
+          6,
+        ],
+        'circle-blur': 0.35,
+        'circle-opacity': 0.85,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#111111',
+        'circle-stroke-opacity': 0.4,
+      },
+    });
+  }
+
   // Líneas: no dibujar walk ni sense-label (solo corredor / segmento)
   const lineFilter: maplibregl.FilterSpecification = [
     'all',
