@@ -1,11 +1,14 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "org.viamorelia.app",
       "sha256_cert_fingerprints": [
-        "A7:59:F9:45:7E:5C:3E:26:F1:BE:2D:CA:88:50:F0:AB:35:95:2F:49:E5:B2:2E:41:F5:A7:B7:B6:55:69:0C:47"
+        "A7:59:F9:45:7E:5C:3E:26:F1:BE:2D:CA:88:50:F0:AB:35:95:2F:49:E5:B2:2E:41:F5:A7:B7:B6:55:69:0C:47",
+        "36:87:5D:1C:36:29:FE:00:C8:D3:BF:F1:E7:20:DE:DD:20:32:08:6E:91:A1:A8:C1:50:93:BB:33:CB:66:FA:E7"
       ]
     }
   }
