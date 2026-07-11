@@ -102,16 +102,16 @@ function DockBtn({
       disabled={disabled}
       className={cn(
         // Móvil más compacto; sm+ un poco más holgado (sigue ≥ ~40px táctil)
-        'flex min-h-9 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0 rounded-lg px-0.5 py-1.5 text-slate-800 transition cursor-pointer disabled:opacity-40 sm:min-h-11 sm:gap-0.5 sm:rounded-xl sm:px-1 sm:py-2.5',
+        'flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1 text-slate-800 transition cursor-pointer disabled:opacity-40 sm:min-h-13 sm:gap-1 sm:rounded-xl sm:px-1 sm:py-2',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700',
         hover
       )}
     >
       <Icon
-        className={cn('h-4 w-4 shrink-0 sm:h-5 sm:w-5', color, spinning && 'animate-spin')}
+        className={cn('h-6 w-6 shrink-0 sm:h-[26px] sm:w-[26px]', color, spinning && 'animate-spin')}
         aria-hidden
       />
-      <span className="max-w-full truncate text-[9px] font-bold leading-none sm:text-[10px]">
+      <span className="max-w-full truncate text-[10px] font-bold leading-none sm:text-[11px]">
         {label}
       </span>
     </button>
