@@ -342,6 +342,11 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const compareMapContainerRef = useRef<HTMLDivElement>(null);
+  const compareMapRef = useRef<maplibregl.Map | null>(null);
+  const [compareMapReady, setCompareMapReady] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [sliderRatio, setSliderRatio] = useState(50);
   const [reports, setReports] = useState(initialReports);
   const [summary, setSummary] = useState(initialSummary);
   const [reviewNotes, setReviewNotes] = useState<ReviewNote[]>([]);
@@ -578,6 +583,140 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
       setMapReady(false);
     };
   }, []);
+
+  // Inicializar segundo mapa (Compare)
+  useEffect(() => {
+    if (!compareMode || !selected) {
+      if (compareMapRef.current) {
+        destroyMoreliaMap(compareMapRef.current);
+        compareMapRef.current = null;
+        setCompareMapReady(false);
+      }
+      return;
+    }
+
+    const container = compareMapContainerRef.current;
+    if (!container || compareMapRef.current) return;
+
+    let map: maplibregl.Map | null = null;
+    try {
+      map = initMoreliaMap({
+        container,
+        includeWalkLayers: false,
+        onReady: (m) => {
+          ensureQaPreviewLayers(m);
+          setCompareMapReady(true);
+          m.resize();
+        },
+      });
+      compareMapRef.current = map;
+    } catch (e) {
+      console.error('Error inicializando mapa de comparación QA', e);
+    }
+
+    return () => {
+      if (map) {
+        destroyMoreliaMap(map);
+      }
+      compareMapRef.current = null;
+      setCompareMapReady(false);
+    };
+  }, [compareMode, selected]);
+
+  // Sincronizar cámaras de ambos mapas (Compare Mode)
+  useEffect(() => {
+    const mapA = mapRef.current;
+    const mapB = compareMapRef.current;
+    if (!mapA || !mapB || !compareMode) return;
+
+    let isSyncing = false;
+
+    const syncAtoB = () => {
+      if (isSyncing) return;
+      isSyncing = true;
+      mapB.jumpTo({
+        center: mapA.getCenter(),
+        zoom: mapA.getZoom(),
+        bearing: mapA.getBearing(),
+        pitch: mapA.getPitch(),
+      });
+      isSyncing = false;
+    };
+
+    const syncBtoA = () => {
+      if (isSyncing) return;
+      isSyncing = true;
+      mapA.jumpTo({
+        center: mapB.getCenter(),
+        zoom: mapB.getZoom(),
+        bearing: mapB.getBearing(),
+        pitch: mapB.getPitch(),
+      });
+      isSyncing = false;
+    };
+
+    mapA.on('move', syncAtoB);
+    mapB.on('move', syncBtoA);
+
+    return () => {
+      mapA.off('move', syncAtoB);
+      mapB.off('move', syncBtoA);
+    };
+  }, [compareMode, mapReady, compareMapReady]);
+
+  // Cargar ruta oficial de producción en el mapa B (Compare)
+  useEffect(() => {
+    const map = compareMapRef.current;
+    if (!map || !compareMapReady || !selected) return;
+
+    const loadProductionRoute = async () => {
+      try {
+        const res = await fetch(`/routes/${selected.route_id}.geojson?t=${Date.now()}`, {
+          cache: 'no-store',
+        });
+        if (res.ok) {
+          const geojson = await res.json() as RouteFeatureCollection;
+          applyMapPreview(map, geojson);
+          
+          // Cambiar color de línea a rosa/rojo en el mapa B para contrastar
+          if (map.getLayer('route-lines')) {
+            map.setPaintProperty('route-lines', 'line-color', '#f43f5e'); // rose-500
+          }
+        }
+      } catch (e) {
+        console.error('No se pudo cargar GeoJSON de producción para comparar', e);
+      }
+    };
+
+    void loadProductionRoute();
+  }, [compareMode, compareMapReady, selected, applyMapPreview]);
+
+  // Gestores de arrastre del slider vertical de cortina
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const rect = mapContainerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const x = moveEvent.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      setSliderRatio(ratio);
+    };
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  const handleSliderTouchMove = (e: React.TouchEvent) => {
+    const rect = mapContainerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderRatio(ratio);
+  };
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1263,6 +1402,90 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
     }
   };
 
+  const handleRejectRoute = async () => {
+    if (!selected) return;
+    if (!window.confirm(`¿Marcar la ruta "${selected.route_name}" como RECHAZADA?\n\nEsta ruta dejará de mostrarse en producción.`)) return;
+
+    setIsSaving(true);
+    try {
+      let geojson = loadedGeojson;
+      if (!geojson) {
+        let res = await fetch(`/api/qa/geojson/${selected.route_id}?t=${Date.now()}`);
+        if (!res.ok) res = await fetch(`/routes/${selected.route_id}.geojson?t=${Date.now()}`);
+        if (res.ok) geojson = await res.json();
+      }
+      if (!geojson) throw new Error('No se pudo cargar el GeoJSON de la ruta.');
+
+      const nextGeojson = JSON.parse(JSON.stringify(geojson));
+      for (const f of nextGeojson.features ?? []) {
+        if (!f.properties) f.properties = {};
+        f.properties.qa_status = 'rejected';
+      }
+
+      const res = await fetch(`/api/qa/geojson/${selected.route_id}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          geojson: nextGeojson,
+          directions: buildDirectionsPayload(nextGeojson),
+          forceStatus: 'rejected',
+        }),
+      });
+      if (!res.ok) throw new Error('Error al actualizar el estado de la ruta');
+
+      setLoadedGeojson(nextGeojson);
+      await refreshReports();
+      toast('Estado actualizado a RECHAZADO.', 'info');
+    } catch (e) {
+      console.error(e);
+      toast(e instanceof Error ? e.message : 'Error al rechazar la ruta', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleMarkReviewRoute = async () => {
+    if (!selected) return;
+    if (!window.confirm(`¿Marcar la ruta "${selected.route_name}" como EN REVISIÓN?\n\nQuedará catalogada en estado de validación pendiente.`)) return;
+
+    setIsSaving(true);
+    try {
+      let geojson = loadedGeojson;
+      if (!geojson) {
+        let res = await fetch(`/api/qa/geojson/${selected.route_id}?t=${Date.now()}`);
+        if (!res.ok) res = await fetch(`/routes/${selected.route_id}.geojson?t=${Date.now()}`);
+        if (res.ok) geojson = await res.json();
+      }
+      if (!geojson) throw new Error('No se pudo cargar el GeoJSON de la ruta.');
+
+      const nextGeojson = JSON.parse(JSON.stringify(geojson));
+      for (const f of nextGeojson.features ?? []) {
+        if (!f.properties) f.properties = {};
+        f.properties.qa_status = 'needs_review';
+      }
+
+      const res = await fetch(`/api/qa/geojson/${selected.route_id}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          geojson: nextGeojson,
+          directions: buildDirectionsPayload(nextGeojson),
+          forceStatus: 'needs_review',
+        }),
+      });
+      if (!res.ok) throw new Error('Error al actualizar el estado de la ruta');
+
+      setLoadedGeojson(nextGeojson);
+      await refreshReports();
+      toast('Estado actualizado a EN REVISIÓN.', 'info');
+    } catch (e) {
+      console.error(e);
+      toast(e instanceof Error ? e.message : 'Error al cambiar estado de la ruta', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleUndo = () => {
     setDraftCoords((prev) => prev.slice(0, -1));
   };
@@ -1419,11 +1642,48 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
         <div className="flex min-h-0 shrink-0 flex-col overflow-hidden border-b border-[#e5e7eb] lg:order-2 lg:min-w-0 lg:flex-1 lg:border-b-0">
           <div className="relative h-[38vh] min-h-[200px] shrink-0 overflow-hidden bg-[#e8eaed] lg:min-h-0 lg:flex-1">
+            {/* Mapa A (Principal/Borrador) */}
             <div ref={mapContainerRef} className="qa-map-canvas absolute inset-0 h-full w-full" />
+
+            {/* Mapa B (Comparación de Producción, superpuesto con recorte CSS) */}
+            {compareMode && (
+              <div
+                ref={compareMapContainerRef}
+                className="qa-map-canvas absolute inset-0 h-full w-full pointer-events-none z-10"
+                style={{
+                  clipPath: `polygon(${sliderRatio}% 0, 100% 0, 100% 100%, ${sliderRatio}% 100%)`,
+                }}
+              />
+            )}
+
+            {/* Barra divisoria central arrastrable (Swipe Slider) */}
+            {compareMode && (
+              <div
+                className="absolute inset-y-0 z-20 w-1.5 bg-amber-500 cursor-ew-resize flex items-center justify-center shadow-2xl"
+                style={{ left: `${sliderRatio}%`, transform: 'translateX(-50%)' }}
+                onMouseDown={handleSliderMouseDown}
+                onTouchMove={handleSliderTouchMove}
+              >
+                <div className="h-10 w-6 rounded-md bg-amber-600 border border-amber-400 text-white flex flex-col items-center justify-center text-[10px] font-extrabold shadow-md pointer-events-none select-none">
+                  ↔
+                </div>
+              </div>
+            )}
 
             {/* Filtro de vista ida / vuelta / juntas (fuera del editor) */}
             {!isEditing && loadedGeojson && (
-              <div className="absolute right-3 top-3 z-10 flex flex-col items-end gap-1.5">
+              <div className="absolute right-3 top-3 z-30 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCompareMode((v) => !v)}
+                  className={`rounded-xl border border-[#e5e7eb] px-3 py-1.5 text-xs font-bold shadow-md cursor-pointer transition backdrop-blur-md ${
+                    compareMode
+                      ? 'bg-amber-600 text-white hover:bg-amber-700'
+                      : 'bg-white/95 text-slate-800 hover:bg-slate-50'
+                  }`}
+                >
+                  {compareMode ? 'Normal' : 'Comparar (Swipe)'}
+                </button>
                 <div className="flex rounded-xl border border-[#e5e7eb] bg-white/95 p-1 shadow-lg backdrop-blur-md text-[11px] font-bold">
                   {(
                     [
@@ -1791,7 +2051,10 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
             selected={selected}
             className="max-h-[28vh] lg:max-h-[32vh]"
             isApproving={isSaving}
+            isSaving={isSaving}
             isDeleting={isDeleting}
+            onRejectClick={handleRejectRoute}
+            onReviewClick={handleMarkReviewRoute}
             viewMode={viewMode}
             isEditing={isEditing}
             editDirection={editDirection}
@@ -2162,8 +2425,11 @@ function RouteDetailPanel({
   className = '',
   onEditClick,
   onApproveClick,
+  onRejectClick,
+  onReviewClick,
   onDeleteClick,
   isApproving,
+  isSaving,
   isDeleting,
   viewMode = 'both',
   isEditing = false,
@@ -2175,8 +2441,11 @@ function RouteDetailPanel({
   className?: string;
   onEditClick?: () => void;
   onApproveClick?: () => void;
+  onRejectClick?: () => void;
+  onReviewClick?: () => void;
   onDeleteClick?: () => void;
   isApproving?: boolean;
+  isSaving?: boolean;
   isDeleting?: boolean;
   /** Vista del mapa: ida | vuelta | juntas */
   viewMode?: ViewMode;
@@ -2287,6 +2556,30 @@ function RouteDetailPanel({
           >
             {isApproving ? 'Publicando…' : isApproved ? '✓ Publicada' : '✓ Aprobar ruta'}
           </button>
+
+          {!isApproved && (
+            <>
+              <button
+                type="button"
+                onClick={onReviewClick}
+                disabled={isSaving || isApproving || isDeleting || selected.status === 'needs_review'}
+                className="shrink-0 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 disabled:opacity-50 px-3 py-1.5 text-xs font-semibold text-amber-800 transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                title="Marcar ruta en revisión pendiente"
+              >
+                ⚠️ En Revisión
+              </button>
+              <button
+                type="button"
+                onClick={onRejectClick}
+                disabled={isSaving || isApproving || isDeleting || selected.status === 'rejected'}
+                className="shrink-0 rounded-lg border border-rose-300 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 text-xs font-semibold text-rose-800 transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                title="Marcar ruta como rechazada"
+              >
+                ✕ Rechazar
+              </button>
+            </>
+          )}
+
           <button
             type="button"
             onClick={onDeleteClick}

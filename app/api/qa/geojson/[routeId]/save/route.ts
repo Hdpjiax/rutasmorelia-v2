@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs/promises';
 import path from 'path';
 import { NextResponse } from 'next/server';
@@ -27,6 +28,7 @@ interface SaveRequestBody {
   }>;
   /** Publica en /public/routes + índice (usuarios). Guardar sin esto = borrador admin. */
   forceApprove?: boolean;
+  forceStatus?: QaStatus;
 }
 
 function directionOf(f: { properties?: Record<string, unknown> | null }): string {
@@ -306,7 +308,21 @@ export async function POST(
     let routeStatus: QaStatus;
     let publishable: boolean;
 
-    if (forceApprove && !hasBlockingCritical) {
+    if (body.forceStatus === 'rejected') {
+      routeStatus = 'rejected';
+      publishable = false;
+      for (const f of geojson.features) {
+        if (!f.properties) f.properties = {};
+        f.properties.qa_status = 'rejected';
+      }
+    } else if (body.forceStatus === 'needs_review') {
+      routeStatus = 'needs_review';
+      publishable = false;
+      for (const f of geojson.features) {
+        if (!f.properties) f.properties = {};
+        f.properties.qa_status = 'needs_review';
+      }
+    } else if (forceApprove && !hasBlockingCritical) {
       routeStatus = 'approved';
       publishable = true;
       for (const f of geojson.features) {
