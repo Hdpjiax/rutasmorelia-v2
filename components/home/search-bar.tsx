@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React from 'react';
@@ -12,11 +13,13 @@ import {
   ArrowUpDown,
   ArrowRightLeft,
   X,
+  Mic,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { PlaceHit } from '@/lib/search/morelia-places';
 import type { SearchField } from '@/lib/trip/home-store';
 import { cn } from '@/lib/utils/cn';
+import { toast } from '@/lib/ui/toast';
 
 type Props = {
   searchExpanded: boolean;
@@ -74,6 +77,75 @@ export function SearchBar({
   onSeeOptions,
   onSelectSuggestion,
 }: Props) {
+  const [recordingField, setRecordingField] = React.useState<'origin' | 'destination' | null>(null);
+
+  const startSpeechRecognition = (field: 'origin' | 'destination') => {
+    if (typeof window === 'undefined') return;
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      toast('Tu navegador no soporta reconocimiento de voz', 'error');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-MX';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setRecordingField(field);
+      toast(
+        `Escuchando... Di el punto de ${field === 'origin' ? 'origen' : 'destino'}`,
+        'info',
+        'ViaMorelia'
+      );
+    };
+
+    recognition.onresult = (event: any) => {
+      const resultText = event.results[0][0].transcript;
+      if (field === 'origin') {
+        onOriginChange(resultText);
+        requestAnimationFrame(() => {
+          const el = document.getElementById('search-origin') as HTMLInputElement;
+          if (el) {
+            el.focus();
+            el.value = resultText;
+          }
+        });
+      } else {
+        onDestinationChange(resultText);
+        requestAnimationFrame(() => {
+          const el = document.getElementById('search-destination') as HTMLInputElement;
+          if (el) {
+            el.focus();
+            el.value = resultText;
+          }
+        });
+      }
+      toast(`Buscando: "${resultText}"`, 'success', 'ViaMorelia');
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('[speech] Error:', event.error);
+      if (event.error === 'not-allowed') {
+        toast('Permiso de micrófono denegado', 'error');
+      } else if (event.error === 'no-speech') {
+        // Ignorar o toast silencioso
+      } else {
+        toast('No se escuchó con claridad. Intenta de nuevo.', 'warning');
+      }
+      setRecordingField(null);
+    };
+
+    recognition.onend = () => {
+      setRecordingField(null);
+    };
+
+    recognition.start();
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: -12 }}
@@ -206,7 +278,7 @@ export function SearchBar({
                     : 'border-slate-300'
                 )}
               />
-              {originInput && (
+              {originInput ? (
                 <button
                   type="button"
                   onClick={onClearOrigin}
@@ -214,6 +286,18 @@ export function SearchBar({
                   aria-label="Borrar origen"
                 >
                   <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => startSpeechRecognition('origin')}
+                  className={cn(
+                    "absolute right-1.5 top-2 cursor-pointer sm:right-2 sm:top-2.5 text-slate-400 hover:text-emerald-700 transition",
+                    recordingField === 'origin' && "text-rose-600 animate-pulse"
+                  )}
+                  title="Buscar por voz"
+                >
+                  <Mic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               )}
             </div>
@@ -264,7 +348,7 @@ export function SearchBar({
                     : 'border-slate-300'
                 )}
               />
-              {destinationInput && (
+              {destinationInput ? (
                 <button
                   type="button"
                   onClick={onClearDestination}
@@ -272,6 +356,18 @@ export function SearchBar({
                   aria-label="Borrar destino"
                 >
                   <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => startSpeechRecognition('destination')}
+                  className={cn(
+                    "absolute right-1.5 top-2 cursor-pointer sm:right-2 sm:top-2.5 text-slate-400 hover:text-rose-700 transition",
+                    recordingField === 'destination' && "text-rose-600 animate-pulse"
+                  )}
+                  title="Buscar por voz"
+                >
+                  <Mic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               )}
             </div>

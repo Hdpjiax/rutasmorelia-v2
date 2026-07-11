@@ -105,6 +105,66 @@ function normalize(s: string): string {
     .trim();
 }
 
+/** Calcula distancia de edición de Levenshtein entre dos cadenas. */
+function levenshteinDistance(s1: string, s2: string): number {
+  const m = s1.length;
+  const n = s2.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (s1[i - 1] === s2[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        dp[i][j] = Math.min(
+          dp[i - 1][j] + 1,    // borrar
+          dp[i][j - 1] + 1,    // insertar
+          dp[i - 1][j - 1] + 1 // sustitución
+        );
+      }
+    }
+  }
+  return dp[m][n];
+}
+
+/** Genera código fonético simplificado para el español de México. */
+function phoneticCode(word: string): string {
+  let w = normalize(word);
+  if (!w) return '';
+
+  w = w.replace(/ch/g, 'X'); // preservar ch
+  w = w.replace(/h/g, '');   // H muda
+  w = w.replace(/X/g, 'ch');
+
+  w = w.replace(/v/g, 'b');  // v -> b
+  w = w.replace(/ll/g, 'y'); // ll -> y
+
+  w = w.replace(/c(?=[ei])/g, 's'); // c suave -> s
+  w = w.replace(/z/g, 's');         // z -> s
+
+  w = w.replace(/c(?=[aou])/g, 'k'); // c fuerte -> k
+  w = w.replace(/c$/g, 'k');
+  w = w.replace(/q/g, 'k');
+
+  w = w.replace(/g(?=[ei])/g, 'j');  // g suave -> j
+  w = w.replace(/x/g, 's');         // x -> s en nombres comunes
+
+  // Eliminar caracteres repetidos consecutivos
+  let prev = '';
+  let cleaned = '';
+  for (let i = 0; i < w.length; i++) {
+    const c = w[i];
+    if (c !== prev) {
+      cleaned += c;
+      prev = c;
+    }
+  }
+  return cleaned;
+}
+
 function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
   const q = normalize(query);
   if (!q) return 0;
@@ -114,7 +174,7 @@ function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
   const nameTokens = name.split(/\s+/).filter(Boolean);
   let score = 0;
 
-  // Exacto / prefijo primero (el ranking final en mergeAndRankPlaces refuerza esto)
+  // 1) Coincidencias textuales estrictas
   if (name === q) score += 500;
   else if (name.startsWith(q)) score += 320;
   else if (nameTokens.some((w) => w === q)) score += 280;
@@ -131,6 +191,37 @@ function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
   }
   if (qTokens.length) score += (tokenHits / qTokens.length) * 80;
 
+  // 2) Coincidencias Fonéticas & Similitud Levenshtein
+  const qPhonetic = phoneticCode(q);
+  const namePhonetic = phoneticCode(name);
+
+  if (qPhonetic === namePhonetic) score += 180;
+  else if (namePhonetic.startsWith(qPhonetic)) score += 90;
+
+  const qPhoneticTokens = qTokens.filter((w) => w.length >= 3).map(phoneticCode);
+  const namePhoneticTokens = nameTokens.filter((w) => w.length >= 3).map(phoneticCode);
+
+  let phoneticHits = 0;
+  for (const qP of qPhoneticTokens) {
+    if (namePhoneticTokens.some((nP) => nP === qP)) {
+      phoneticHits += 1.0;
+    } else {
+      // Distancia Levenshtein fonética tolerando ligeros errores tipográficos
+      for (const nP of namePhoneticTokens) {
+        if (Math.abs(qP.length - nP.length) <= 2) {
+          const dist = levenshteinDistance(qP, nP);
+          if (dist === 1) {
+            phoneticHits += 0.75;
+          } else if (dist === 2) {
+            phoneticHits += 0.35;
+          }
+        }
+      }
+    }
+  }
+  if (qPhoneticTokens.length) score += (phoneticHits / qPhoneticTokens.length) * 100;
+
+  // 3) Typos cortos tradicionales
   for (const word of nameTokens) {
     if (word.length < 3 || q.length < 3) continue;
     if (word.includes(q) || q.includes(word)) {
@@ -138,34 +229,21 @@ function scorePlace(query: string, place: Omit<PlaceHit, 'source'>): number {
       break;
     }
     if (word.slice(0, 3) === q.slice(0, 3)) score += 12;
-    // Typos cortos: morda→morada, cam→camelinas (prefijo)
     if (q.length >= 3 && word.startsWith(q.slice(0, Math.min(3, q.length)))) score += 18;
-    if (q.length >= 4 && word.length >= 4) {
-      let dist = 0;
-      const a = q.slice(0, 6);
-      const b = word.slice(0, 6);
-      // distancia simple (no importar levenshtein aquí para no ciclar)
-      const maxL = Math.max(a.length, b.length);
-      for (let i = 0; i < maxL; i++) {
-        if (a[i] !== b[i]) dist++;
-      }
-      if (dist <= 2) score += 22;
-    }
   }
 
   return score;
 }
 
-/** Busca en el catálogo local. */
+/** Busca en el catálogo local con tolerancia fonética y de typos. */
 export function searchLocalPlaces(query: string, limit = 20): PlaceHit[] {
   const q = query.trim();
   if (!q) {
     return CATALOG.slice(0, limit).map((p) => ({ ...p, source: 'catalog' as const }));
   }
 
-  // Umbral bajo: el merge final recorta; no ocultar coincidencias débiles del catálogo
   return CATALOG.map((p) => ({ place: p, score: scorePlace(q, p) }))
-    .filter((x) => x.score > 8)
+    .filter((x) => x.score > 12)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => ({ ...x.place, source: 'catalog' as const }));
