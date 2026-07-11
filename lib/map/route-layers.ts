@@ -29,96 +29,10 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
-  if (!map.getSource('routes-flow-source')) {
-    map.addSource('routes-flow-source', {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features: [] },
-    });
-  }
-
-  // Orbes: compactos en zoom móvil (11–14), un poco más grandes al acercar
-  const flowGlowRadius: maplibregl.ExpressionSpecification = [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    10,
-    4.5,
-    13,
-    5.5,
-    16,
-    7.5,
-    18,
-    9,
-  ];
-  const flowCoreRadius: maplibregl.ExpressionSpecification = [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    10,
-    3,
-    13,
-    3.75,
-    16,
-    5.25,
-    18,
-    6.5,
-  ];
-  const flowStrokeWidth: maplibregl.ExpressionSpecification = [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    10,
-    1,
-    14,
-    1.4,
-    18,
-    1.8,
-  ];
-
-  // Halo suave detrás
-  if (!map.getLayer('route-flow-particles-glow')) {
-    map.addLayer({
-      id: 'route-flow-particles-glow',
-      type: 'circle',
-      source: 'routes-flow-source',
-      paint: {
-        'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
-        'circle-radius': flowGlowRadius,
-        'circle-blur': 0.7,
-        'circle-opacity': 0.38,
-        'circle-stroke-width': 0,
-      },
-    });
-  } else {
-    map.setPaintProperty('route-flow-particles-glow', 'circle-radius', flowGlowRadius);
-    map.setPaintProperty('route-flow-particles-glow', 'circle-blur', 0.7);
-    map.setPaintProperty('route-flow-particles-glow', 'circle-opacity', 0.38);
-  }
-
-  // Núcleo del orbe (opaco, borde blanco)
-  if (!map.getLayer('route-flow-particles')) {
-    map.addLayer({
-      id: 'route-flow-particles',
-      type: 'circle',
-      source: 'routes-flow-source',
-      paint: {
-        'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
-        'circle-radius': flowCoreRadius,
-        'circle-blur': 0.05,
-        'circle-opacity': 1,
-        'circle-stroke-width': flowStrokeWidth,
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-opacity': 0.95,
-      },
-    });
-  } else {
-    map.setPaintProperty('route-flow-particles', 'circle-radius', flowCoreRadius);
-    map.setPaintProperty('route-flow-particles', 'circle-blur', 0.05);
-    map.setPaintProperty('route-flow-particles', 'circle-opacity', 1);
-    map.setPaintProperty('route-flow-particles', 'circle-stroke-width', flowStrokeWidth);
-    map.setPaintProperty('route-flow-particles', 'circle-stroke-color', '#ffffff');
-    map.setPaintProperty('route-flow-particles', 'circle-stroke-opacity', 0.95);
-  }
+  // Retirar orbes de flujo si existían de una versión anterior
+  if (map.getLayer('route-flow-particles')) map.removeLayer('route-flow-particles');
+  if (map.getLayer('route-flow-particles-glow')) map.removeLayer('route-flow-particles-glow');
+  if (map.getSource('routes-flow-source')) map.removeSource('routes-flow-source');
 
   // Líneas: no dibujar walk ni sense-label (solo corredor / segmento)
   const lineFilter: maplibregl.FilterSpecification = [
@@ -219,12 +133,6 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
         'icon-padding': 2,
       },
     });
-  }
-
-  // Orbes de flujo por encima del trazo y flechas (no tapados por la línea)
-  if (map.getLayer('route-flow-particles-glow') && map.getLayer('route-flow-particles')) {
-    map.moveLayer('route-flow-particles-glow');
-    map.moveLayer('route-flow-particles');
   }
 
   // Etiquetas Ida / Vuelta (dual_ring o sense-label)
