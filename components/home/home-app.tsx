@@ -41,6 +41,7 @@ import { OfflineBanner } from '@/components/home/offline-banner';
 import { LegalLinks } from '@/components/home/legal-links';
 import { RouteExplorerList } from '@/components/home/route-explorer-list';
 import { SkipLink } from '@/components/ui/skip-link';
+import { openExternalUrl } from '@/lib/utils/external-link';
 import { buildTripShareUrl, shareOrCopyTripUrl, copyTextToClipboard, sortTripPlans, readTripUrlState } from '@/features/planner';
 import { TripResultsPanel } from '@/components/home/trip-results-panel';
 import { type Coordinate, type TripPlan } from '@/lib/routing/planner';
@@ -967,9 +968,12 @@ export default function HomeApp() {
         >
           <a
             href="/privacidad"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="vm-btn-icon md:!h-11 md:!w-11 md:!rounded-xl"
+            onClick={(e) => {
+              e.preventDefault();
+              const absoluteUrl = window.location.origin + '/privacidad';
+              void openExternalUrl(absoluteUrl);
+            }}
+            className="vm-btn-icon md:!h-11 md:!w-11 md:!rounded-xl pointer-events-auto"
             title="Privacidad y términos"
             aria-label="Privacidad y términos"
           >

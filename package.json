@@ -20,8 +20,9 @@
     "mobile:open": "pnpm --dir mobile open",
     "mobile:doctor": "pnpm --dir mobile doctor"
   },
-
   "dependencies": {
+    "@capacitor/browser": "^7.0.5",
+    "@capacitor/core": "^7.6.7",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.0",
     "@tanstack/react-query": "^5.101.2",
