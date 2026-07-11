@@ -14,6 +14,7 @@ import {
   ArrowRightLeft,
   X,
   Mic,
+  Heart,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { PlaceHit } from '@/lib/search/morelia-places';
@@ -21,12 +22,19 @@ import type { SearchField } from '@/lib/trip/home-store';
 import { cn } from '@/lib/utils/cn';
 import { toast } from '@/lib/ui/toast';
 
+/** Clave estable nombre+coords para marcar favoritos. */
+export function placeFavoriteKey(name: string, coordinates: [number, number]): string {
+  return `${name.trim().toLowerCase()}|${coordinates[0].toFixed(5)},${coordinates[1].toFixed(5)}`;
+}
+
 type Props = {
   searchExpanded: boolean;
   originInput: string;
   destinationInput: string;
   originReady: boolean;
   destinationReady: boolean;
+  originCoords?: [number, number] | null;
+  destinationCoords?: [number, number] | null;
   activeSearchField: SearchField;
   planning: boolean;
   locating: boolean;
@@ -57,6 +65,8 @@ export function SearchBar({
   destinationInput,
   originReady,
   destinationReady,
+  originCoords = null,
+  destinationCoords = null,
   activeSearchField,
   planning,
   locating,
@@ -64,6 +74,7 @@ export function SearchBar({
   tripPlanCount,
   suggestions,
   searchLoading,
+  favoriteLocationKeys,
   onExpand,
   onCollapse,
   onOriginChange,
@@ -76,6 +87,7 @@ export function SearchBar({
   onRequestLocation,
   onSeeOptions,
   onSelectSuggestion,
+  onToggleLocationFavorite,
 }: Props) {
   const [recordingField, setRecordingField] = React.useState<'origin' | 'destination' | null>(null);
 
@@ -330,7 +342,18 @@ export function SearchBar({
               <SuggestionsList
                 suggestions={suggestions}
                 loading={searchLoading}
+                favoriteLocationKeys={favoriteLocationKeys}
                 onSelect={onSelectSuggestion}
+                onToggleFavorite={onToggleLocationFavorite}
+              />
+            )}
+            {originReady && originCoords && onToggleLocationFavorite && (
+              <SavePlaceFavoriteButton
+                name={originInput.trim() || 'Origen en el mapa'}
+                description="Origen del viaje"
+                coordinates={originCoords}
+                favoriteLocationKeys={favoriteLocationKeys}
+                onToggle={onToggleLocationFavorite}
               />
             )}
           </div>
@@ -400,7 +423,18 @@ export function SearchBar({
               <SuggestionsList
                 suggestions={suggestions}
                 loading={searchLoading}
+                favoriteLocationKeys={favoriteLocationKeys}
                 onSelect={onSelectSuggestion}
+                onToggleFavorite={onToggleLocationFavorite}
+              />
+            )}
+            {destinationReady && destinationCoords && onToggleLocationFavorite && (
+              <SavePlaceFavoriteButton
+                name={destinationInput.trim() || 'Destino en el mapa'}
+                description="Destino del viaje"
+                coordinates={destinationCoords}
+                favoriteLocationKeys={favoriteLocationKeys}
+                onToggle={onToggleLocationFavorite}
               />
             )}
           </div>
@@ -409,6 +443,7 @@ export function SearchBar({
             <p className="mb-1.5 rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-[10px] font-medium text-sky-950 sm:mb-2 sm:px-2.5 sm:py-1.5 sm:text-[11px]">
               También puedes <strong>tocar el mapa</strong> para fijar el{' '}
               {activeSearchField === 'origin' ? 'origen' : 'destino'}.
+              {onToggleLocationFavorite ? ' Toca el corazón para guardar una dirección.' : ''}
             </p>
           )}
 
@@ -441,14 +476,60 @@ export function SearchBar({
   );
 }
 
+function SavePlaceFavoriteButton({
+  name,
+  description,
+  coordinates,
+  favoriteLocationKeys,
+  onToggle,
+}: {
+  name: string;
+  description?: string;
+  coordinates: [number, number];
+  favoriteLocationKeys?: Set<string>;
+  onToggle: (place: PlaceHit) => void;
+}) {
+  const key = placeFavoriteKey(name, coordinates);
+  const isFav = favoriteLocationKeys?.has(key) ?? false;
+  return (
+    <button
+      type="button"
+      data-testid="save-place-favorite"
+      onClick={() =>
+        onToggle({
+          id: `fav-${key}`,
+          name,
+          description: description || 'Dirección guardada',
+          category: 'favorite',
+          coordinates,
+          source: 'favorite',
+        })
+      }
+      className={cn(
+        'mt-1 flex w-full items-center justify-center gap-1.5 rounded-lg border py-1.5 text-[10px] font-bold cursor-pointer touch-manipulation',
+        isFav
+          ? 'border-rose-200 bg-rose-50 text-rose-800'
+          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+      )}
+    >
+      <Heart className={cn('h-3.5 w-3.5', isFav && 'fill-rose-500 text-rose-500')} aria-hidden />
+      {isFav ? 'En favoritos (tocar para quitar)' : 'Guardar dirección en favoritos'}
+    </button>
+  );
+}
+
 function SuggestionsList({
   suggestions,
   loading,
+  favoriteLocationKeys,
   onSelect,
+  onToggleFavorite,
 }: {
   suggestions: PlaceHit[];
   loading: boolean;
+  favoriteLocationKeys?: Set<string>;
   onSelect: (p: PlaceHit) => void;
+  onToggleFavorite?: (p: PlaceHit) => void;
 }) {
   if (loading && suggestions.length === 0) {
     return (
@@ -467,27 +548,50 @@ function SuggestionsList({
       className="absolute left-0 right-0 z-50 mt-1 max-h-[min(28vh,9.5rem)] overflow-y-auto overscroll-contain rounded-xl border border-slate-300 bg-white shadow-lg sm:max-h-40"
       role="listbox"
     >
-      {suggestions.map((place) => (
-        <li key={place.id} role="option" aria-selected={false}>
-          <button
-            type="button"
-            onClick={() => onSelect(place)}
-            className="flex min-h-11 w-full touch-manipulation flex-col justify-center px-2.5 py-2 text-left hover:bg-emerald-50 cursor-pointer focus-visible:bg-emerald-50 focus-visible:outline-none border-b border-slate-50 last:border-0"
-          >
-            <span className="truncate text-[12px] font-semibold leading-tight text-slate-900">
-              {place.name}
-            </span>
-            <span className="truncate text-[10px] leading-tight text-slate-600">
-              {place.description || place.category}
-              {place.source === 'geocode'
-                ? ' · mapa'
-                : place.source === 'favorite'
-                  ? ' · favorito'
-                  : ''}
-            </span>
-          </button>
-        </li>
-      ))}
+      {suggestions.map((place) => {
+        const key = placeFavoriteKey(place.name, place.coordinates);
+        const isFav = favoriteLocationKeys?.has(key) ?? place.source === 'favorite';
+        return (
+          <li key={place.id} role="option" aria-selected={false} className="flex items-stretch border-b border-slate-50 last:border-0">
+            <button
+              type="button"
+              onClick={() => onSelect(place)}
+              className="flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col justify-center px-2.5 py-2 text-left hover:bg-emerald-50 cursor-pointer focus-visible:bg-emerald-50 focus-visible:outline-none"
+            >
+              <span className="truncate text-[12px] font-semibold leading-tight text-slate-900">
+                {place.name}
+              </span>
+              <span className="truncate text-[10px] leading-tight text-slate-600">
+                {place.description || place.category}
+                {place.source === 'geocode'
+                  ? ' · mapa'
+                  : isFav
+                    ? ' · favorito'
+                    : ''}
+              </span>
+            </button>
+            {onToggleFavorite && (
+              <button
+                type="button"
+                data-testid={`fav-place-${place.id}`}
+                title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                aria-label={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleFavorite(place);
+                }}
+                className="flex w-11 shrink-0 items-center justify-center text-slate-400 hover:bg-rose-50 cursor-pointer touch-manipulation"
+              >
+                <Heart
+                  className={cn('h-4 w-4', isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-400')}
+                  aria-hidden
+                />
+              </button>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

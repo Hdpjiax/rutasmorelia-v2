@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -13,6 +13,7 @@ import {
   Minus,
   X,
   List,
+  Info,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -32,11 +33,12 @@ import { type Route } from '@/lib/supabase/client';
 // Componentes del layout
 import { MapCanvas } from '@/features/map/map-canvas';
 import { AdminGateBanner } from '@/components/home/admin-gate-banner';
-import { SearchBar } from '@/components/home/search-bar';
+import { placeFavoriteKey, SearchBar } from '@/components/home/search-bar';
 import { BottomDock } from '@/components/home/bottom-dock';
 import { ResultsSheet } from '@/components/home/results-sheet';
 import { SelectedRouteCard } from '@/components/home/selected-route-card';
 import { OfflineBanner } from '@/components/home/offline-banner';
+import { LegalLinks } from '@/components/home/legal-links';
 import { RouteExplorerList } from '@/components/home/route-explorer-list';
 import { SkipLink } from '@/components/ui/skip-link';
 import { buildTripShareUrl, shareOrCopyTripUrl, copyTextToClipboard, sortTripPlans, readTripUrlState } from '@/features/planner';
@@ -136,6 +138,15 @@ export default function HomeApp() {
   const alertedNearAlightRef = useRef(false);
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /** Claves de direcciones favoritas (localStorage → UI corazón). */
+  const favoriteLocationKeys = useMemo(() => {
+    const set = new Set<string>();
+    for (const loc of favoriteLocations) {
+      set.add(placeFavoriteKey(loc.name, loc.coordinates));
+    }
+    return set;
+  }, [favoriteLocations]);
 
   // 4. Hook para la configuración y control de MapLibre
   const mapSetup = useMaplibreSetup({
@@ -768,6 +779,7 @@ export default function HomeApp() {
           </div>
         )}
       </div>
+      <LegalLinks className="mt-2 border-t border-slate-100 pt-3" />
     </div>
   );
 
@@ -860,7 +872,7 @@ export default function HomeApp() {
           }}
         >
           <Image
-            src="/brand/icono.png"
+            src="/brand/icono_v2.png"
             alt=""
             width={64}
             height={64}
@@ -868,7 +880,7 @@ export default function HomeApp() {
             priority
           />
           <Image
-            src="/brand/nombre.png"
+            src="/brand/nombre_v2.png"
             alt="ViaMorelia"
             width={480}
             height={100}
@@ -884,6 +896,8 @@ export default function HomeApp() {
           destinationInput={destinationInput}
           originReady={Boolean(originCoords)}
           destinationReady={Boolean(destinationCoords)}
+          originCoords={originCoords}
+          destinationCoords={destinationCoords}
           activeSearchField={activeSearchField}
           planning={planning}
           locating={locating}
@@ -891,6 +905,7 @@ export default function HomeApp() {
           tripPlanCount={tripPlans.length}
           suggestions={suggestions}
           searchLoading={searchLoading}
+          favoriteLocationKeys={favoriteLocationKeys}
           onExpand={() => {
             setSearchExpanded(true);
             setActiveSearchField(originCoords ? 'destination' : 'origin');
@@ -931,6 +946,13 @@ export default function HomeApp() {
             }
           }}
           onSelectSuggestion={selectSuggestion}
+          onToggleLocationFavorite={(place) => {
+            void toggleLocationFavorite({
+              name: place.name,
+              description: place.description,
+              coordinates: place.coordinates,
+            });
+          }}
         />
 
         {/* Favoritos (este dispositivo) — arriba a la derecha */}
@@ -943,6 +965,16 @@ export default function HomeApp() {
             right: 'max(0.5rem, var(--vm-safe-right))',
           }}
         >
+          <a
+            href="/privacidad"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="vm-btn-icon md:!h-11 md:!w-11 md:!rounded-xl"
+            title="Privacidad y términos"
+            aria-label="Privacidad y términos"
+          >
+            <Info className="h-5 w-5 text-slate-600 md:h-5 md:w-5" aria-hidden />
+          </a>
           <button
             type="button"
             onClick={() => {
@@ -1171,17 +1203,17 @@ export default function HomeApp() {
             id="vm-welcome-banner"
             role="dialog"
             aria-label="Bienvenida a ViaMorelia"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, x: '-50%', y: 20 }}
+            animate={{ opacity: 1, x: '-50%', y: 0 }}
+            exit={{ opacity: 0, x: '-50%', y: 12 }}
             transition={{ type: 'spring', stiffness: 380, damping: 32 }}
             className="vm-welcome-banner"
             style={{
               position: 'fixed',
-              left: 0,
-              right: 0,
-              marginLeft: 'auto',
-              marginRight: 'auto',
+              left: '50%',
+              right: 'auto',
+              marginLeft: 0,
+              marginRight: 0,
               width: 'min(26rem, calc(100vw - 1.5rem))',
               maxWidth: 'calc(100vw - 1.5rem)',
               bottom:

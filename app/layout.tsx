@@ -40,12 +40,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/brand/icono-64.png", sizes: "64x64", type: "image/png" },
-      { url: "/brand/icono.png", sizes: "192x192", type: "image/png" },
+      { url: "/brand/favicon-32_v2.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/icono-64_v2.png", sizes: "64x64", type: "image/png" },
+      { url: "/brand/icono-192_v2.png", sizes: "192x192", type: "image/png" },
+      { url: "/brand/icono-512_v2.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/brand/icono.png", sizes: "192x192", type: "image/png" }],
-    shortcut: "/brand/favicon.ico",
+    apple: [{ url: "/brand/icono-192_v2.png", sizes: "192x192", type: "image/png" }],
+    shortcut: "/brand/favicon_v2.ico",
   },
   openGraph: {
     title: "ViaMorelia",

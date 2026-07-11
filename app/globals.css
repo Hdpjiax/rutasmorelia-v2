@@ -89,6 +89,15 @@ body {
   overscroll-behavior: none;
 }
 
+/* Páginas legales: el body suele ir overflow-hidden por el mapa */
+html:has([data-legal-page]),
+body:has([data-legal-page]) {
+  height: auto !important;
+  max-height: none !important;
+  overflow: auto !important;
+  overscroll-behavior: auto !important;
+}
+
 /* Solo el mapa recibe pellizco / pan multi-touch */
 .rm-map-canvas,
 .maplibregl-map,

@@ -1,31 +1,45 @@
 {
   "name": "ViaMorelia",
   "short_name": "ViaMorelia",
-  "description": "Rutas de transporte público en Morelia — origen a destino",
+  "description": "Rutas de transporte público en Morelia — origen a destino. Funciona con catálogo en caché sin conexión.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#047857",
   "lang": "es-MX",
   "orientation": "portrait-primary",
+  "categories": ["travel", "navigation", "utilities"],
   "icons": [
     {
-      "src": "/brand/icono-64.png",
+      "src": "/brand/icono-64_v2.png",
       "sizes": "64x64",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/brand/icono.png",
+      "src": "/brand/icono-192_v2.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/brand/icono.png",
+      "src": "/brand/icono-512_v2.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icono-192_v2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/brand/icono-512_v2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

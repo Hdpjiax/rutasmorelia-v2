@@ -203,14 +203,21 @@ export function TripResultsPanel({
           const rideSegs = plan.segments.filter((s) => s.type === 'ride');
           const xfers = transferCount(plan);
           return (
-            <motion.button
+            <motion.div
               key={idx}
-              type="button"
+              role="button"
+              tabIndex={0}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: listIdx * 0.04 }}
               onClick={() => onSelectPlan(idx)}
-              className={`vm-card vm-press w-full rounded-xl border p-2.5 text-left cursor-pointer md:rounded-xl md:p-3 ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectPlan(idx);
+                }
+              }}
+              className={`vm-card vm-press w-full rounded-xl border p-2.5 text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 md:rounded-xl md:p-3 ${
                 selectedPlanIndex === idx ? 'ring-2 ring-emerald-600/40 shadow-md' : ''
               }`}
               style={
@@ -328,7 +335,7 @@ export function TripResultsPanel({
                 Los puntos de <strong>subida y bajada</strong> son sugeridos (aprox.). En el mapa
                 se marcan con etiquetas Sube / Baja.
               </p>
-            </motion.button>
+            </motion.div>
           );
         })}
     </div>

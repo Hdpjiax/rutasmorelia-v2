@@ -1,6 +1,11 @@
 import type { Coordinate } from './planner';
 import { bboxFromOriginDest, filterShapesByBBox, type BBox } from './bbox';
 import { fetchRouteGeojsonCached } from './route-geojson-idb';
+import {
+  cacheRouteMetaList,
+  loadCachedRouteMetaList,
+  type CachedRouteMeta,
+} from '@/lib/offline/store';
 
 export type PublishedShape = {
   id: string;
@@ -76,6 +81,15 @@ function parseShapesFromGeojson(
   return out;
 }
 
+function metaFromCache(list: CachedRouteMeta[]): PublishedRouteMeta[] {
+  return list.map((r) => ({
+    id: r.id,
+    name: r.name,
+    color: r.color || '#3b82f6',
+    transportType: r.transportType,
+  }));
+}
+
 /** Solo índice — listado rápido de rutas (sin bajar geometrías). */
 export async function loadPublishedRoutes(force = false): Promise<PublishedRouteMeta[]> {
   if (
@@ -87,17 +101,39 @@ export async function loadPublishedRoutes(force = false): Promise<PublishedRoute
   }
 
   // Preferir API ISR (5 min); fallback a estático public/routes/index.json
-  let indexRes = await fetch('/api/routes/catalog', {
-    next: { revalidate: 300 },
-  } as RequestInit);
-  if (!indexRes.ok) {
-    indexRes = await fetch('/routes/index.json', {
+  let indexRes: Response | null = null;
+  try {
+    indexRes = await fetch('/api/routes/catalog', {
       next: { revalidate: 300 },
     } as RequestInit);
+  } catch {
+    indexRes = null;
+  }
+  if (!indexRes?.ok) {
+    try {
+      indexRes = await fetch('/routes/index.json', {
+        next: { revalidate: 300 },
+      } as RequestInit);
+    } catch {
+      indexRes = null;
+    }
   }
 
-  if (!indexRes.ok) {
-    return cache?.routes ?? [];
+  if (!indexRes?.ok) {
+    // Offline / red caída: memoria → localStorage del catálogo
+    if (cache?.routes?.length) return cache.routes;
+    const offlineList = loadCachedRouteMetaList();
+    if (offlineList.length) {
+      const routes = metaFromCache(offlineList);
+      cache = {
+        routes,
+        shapes: cache?.shapes ?? new Map(),
+        allShapes: null,
+        routesAt: Date.now(),
+      };
+      return routes;
+    }
+    return [];
   }
 
   const index = await indexRes.json();
@@ -123,6 +159,15 @@ export async function loadPublishedRoutes(force = false): Promise<PublishedRoute
     allShapes: null,
     routesAt: Date.now(),
   };
+  // Persistencia offline del índice (además del Service Worker)
+  cacheRouteMetaList(
+    routes.map((r) => ({
+      id: r.id,
+      name: r.name,
+      color: r.color,
+      transportType: r.transportType,
+    }))
+  );
   return routes;
 }
 

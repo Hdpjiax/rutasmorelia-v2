@@ -25,6 +25,7 @@ import { cacheRouteMetaList } from '@/lib/offline/store';
 import { mockSupabaseClient, type Route } from '@/lib/supabase/client';
 import { normalizeTransportType } from '@/lib/transport/classify';
 import { DEEP_LINK_EVENT, type DeepLinkDetail } from '@/lib/trip/deep-link';
+import { scheduleCatalogPrecache } from '@/lib/offline/precache-routes';
 
 function metaToRoute(r: {
   id: string;
@@ -89,6 +90,11 @@ export function useTripPlannerWorkflow(favorites: string[]) {
       setShapesLoading(false);
       prefetchAllShapesInBackground();
       prefetchFrequentRoutes(favorites);
+      // Service Worker: precache GeoJSON de favoritas + muestra del catálogo
+      scheduleCatalogPrecache({
+        allRouteIds: mapped.map((r) => r.id),
+        favoriteIds: favorites,
+      });
     } else if (publishedQuery.isError) {
       setShapesLoading(false);
       void mockSupabaseClient

@@ -19,6 +19,8 @@ Documento vivo del **siguiente paso** después del trabajo reciente (web móvil,
 | Flechas de ruta y calle nítidas al zoom | Bitmap HD + tamaño estable |
 | GPS en vivo (punto azul, sin recargar) | Implementado |
 | **Deep links / App Links** | Implementado (deploy + rebuild APK) |
+| **PWA / offline catálogo** | SW v2 + fallback local + iconos 192/512 |
+| **Legal** | `/privacidad` + `/terminos` + enlaces en UI |
 | Play Store / App Store | **Aún no** (explícito: después) |
 
 Guía móvil: `mobile/README.md`.
@@ -62,17 +64,21 @@ Orden sugerido:
 - [ ] Probar con `adb shell am start -d "https://viamorelia.org/?from=…&to=…"`
 - [ ] Al firmar release: añadir SHA-256 del keystore de prod al JSON
 
-### 2. PWA / offline del catálogo ← **siguiente bloque de código**
-- Service worker + cache de `public/routes/*` e `index.json`.
-- Mensaje claro offline (ya hay banner parcial).
-- Iconos PWA 192/512 coherentes con marca.
+### 2. PWA / offline del catálogo — HECHO en código
+- [x] Service Worker v2 (`public/sw.js`): índice network-first, GeoJSON cache-first
+- [x] Fallback catálogo desde localStorage si no hay red
+- [x] Precache SW de favoritas + muestra del listado
+- [x] Iconos PWA 192/512 + manifest actualizado
+- [x] Banner offline con conteo de rutas cacheadas
+- [ ] Probar en Chrome: DevTools → Application → Service Workers + Offline
 
-### 3. Legal mínimo (antes de cualquier tienda)
-- Página de **política de privacidad** (GPS, micrófono, telemetría, sin cuentas de pasajero).
-- Términos de uso breves.
-- Enlaces en la app/web (footer o ajustes).
+### 3. Legal mínimo — HECHO en código
+- [x] `/privacidad` — política (GPS, mic, favoritos locales, telemetría)
+- [x] `/terminos` — términos de uso (puntos sugeridos, limitaciones)
+- [x] Enlaces en mapa (icono ℹ️) y panel Favoritos
+- [ ] Revisar textos con un abogado si se sube a tiendas (recomendado)
 
-### 4. Hardening app (Fase 2 ligera)
+### 4. Hardening app (Fase 2 ligera) ← **siguiente bloque**
 - Splash / status bar revisados en dispositivos reales.
 - Staging URL vía `CAPACITOR_SERVER_URL`.
 - (Opcional) flavors debug/prod.
