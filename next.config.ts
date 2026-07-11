@@ -42,6 +42,27 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Micrófono (voz) y geolocalización permitidos en la app; no bloqueados por policy.
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'microphone=(self), geolocation=(self), camera=()',
+          },
+        ],
+      },
+      {
+        // Digital Asset Links (Android App Links)
+        source: '/.well-known/assetlinks.json',
+        headers: [
+          { key: 'Content-Type', value: 'application/json; charset=utf-8' },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
         source: '/routes/index.json',
         headers: [
           {

@@ -14,8 +14,13 @@
     "report:routes": "node scripts/report_bundle_routes.mjs",
     "build:routes-geojson-merge": "node scripts/merge_routes_geojson_for_tiles.mjs",
     "build:routes-pmtiles": "echo [local-only] tippecanoe no se usa en Vercel && bash scripts/build_routes_pmtiles.sh",
-    "check": "pnpm typecheck && pnpm lint && pnpm test:unit"
+    "check": "pnpm typecheck && pnpm lint && pnpm test:unit",
+    "mobile:install": "pnpm --dir mobile install",
+    "mobile:sync": "pnpm --dir mobile sync",
+    "mobile:open": "pnpm --dir mobile open",
+    "mobile:doctor": "pnpm --dir mobile doctor"
   },
+
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.0",

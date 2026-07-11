@@ -14,11 +14,17 @@ import { planTripAsync, cancelPendingPlanJobs } from '@/lib/routing/plan-trip-cl
 import { useTripUiStore } from '@/lib/trip/store';
 import { uiTelemetry } from '@/lib/telemetry/ui-events';
 import { toast } from '@/lib/ui/toast';
-import { sortTripPlans, readTripUrlState, clearTripShareParamsFromLocation } from '@/features/planner';
+import {
+  sortTripPlans,
+  readTripUrlState,
+  clearTripShareParamsFromLocation,
+  type TripUrlState,
+} from '@/features/planner';
 import { usePublishedRoutes } from '@/features/routes/use-published-routes';
 import { cacheRouteMetaList } from '@/lib/offline/store';
 import { mockSupabaseClient, type Route } from '@/lib/supabase/client';
 import { normalizeTransportType } from '@/lib/transport/classify';
+import { DEEP_LINK_EVENT, type DeepLinkDetail } from '@/lib/trip/deep-link';
 
 function metaToRoute(r: {
   id: string;
@@ -97,37 +103,56 @@ export function useTripPlannerWorkflow(favorites: string[]) {
     }
   }, [publishedQuery.data, publishedQuery.isError, publishedQuery.isLoading, favorites]);
 
-  // Carga de enlace compartido
+  /** Aplica un viaje/ruta desde URL o deep link (sin recargar la página). */
+  const applySharedTripState = useCallback((trip: TripUrlState, opts?: { notify?: boolean }) => {
+    const isSharedTrip = Boolean(trip.origin && trip.destination);
+    if (isSharedTrip) {
+      sharedTripOpenRef.current = true;
+      if (trip.planIndex != null) pendingSharePlanIndexRef.current = trip.planIndex;
+    }
+
+    if (trip.origin) {
+      setOriginCoords(trip.origin);
+      setOriginInput(
+        trip.originLabel || `${trip.origin[1].toFixed(5)}, ${trip.origin[0].toFixed(5)}`
+      );
+      prefetchShapesNearCoordinate(trip.origin);
+    }
+    if (trip.destination) {
+      setDestinationCoords(trip.destination);
+      setDestinationInput(
+        trip.destinationLabel ||
+          `${trip.destination[1].toFixed(5)}, ${trip.destination[0].toFixed(5)}`
+      );
+    }
+
+    if (trip.origin || trip.destination || trip.routeId || trip.planIndex != null) {
+      clearTripShareParamsFromLocation();
+      if (opts?.notify && isSharedTrip) {
+        toast('Viaje compartido abierto', 'success', 'ViaMorelia');
+      }
+    }
+  }, []);
+
+  // Carga inicial de enlace compartido (web / cold start WebView)
   useEffect(() => {
     try {
-      const trip = readTripUrlState();
-      const isSharedTrip = Boolean(trip.origin && trip.destination);
-      if (isSharedTrip) {
-        sharedTripOpenRef.current = true;
-        if (trip.planIndex != null) pendingSharePlanIndexRef.current = trip.planIndex;
-      }
-
-      if (trip.origin) {
-        setOriginCoords(trip.origin);
-        setOriginInput(
-          trip.originLabel || `${trip.origin[1].toFixed(5)}, ${trip.origin[0].toFixed(5)}`
-        );
-        prefetchShapesNearCoordinate(trip.origin);
-      }
-      if (trip.destination) {
-        setDestinationCoords(trip.destination);
-        setDestinationInput(
-          trip.destinationLabel || `${trip.destination[1].toFixed(5)}, ${trip.destination[0].toFixed(5)}`
-        );
-      }
-
-      if (trip.origin || trip.destination || trip.routeId || trip.planIndex != null) {
-        clearTripShareParamsFromLocation();
-      }
+      applySharedTripState(readTripUrlState());
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [applySharedTripState]);
+
+  // Deep links en caliente (App Links / viamorelia:// mientras la app ya está abierta)
+  useEffect(() => {
+    const onDeep = (ev: Event) => {
+      const detail = (ev as CustomEvent<DeepLinkDetail>).detail;
+      if (!detail?.trip) return;
+      applySharedTripState(detail.trip, { notify: true });
+    };
+    window.addEventListener(DEEP_LINK_EVENT, onDeep);
+    return () => window.removeEventListener(DEEP_LINK_EVENT, onDeep);
+  }, [applySharedTripState]);
 
   // Enriquecer segmentos de caminata con calles reales mediante el endpoint de proxy de caminata
   const enrichWalkSegments = useCallback(async (plans: TripPlan[]): Promise<TripPlan[]> => {

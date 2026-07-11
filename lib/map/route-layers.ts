@@ -1,21 +1,94 @@
 import maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 
-export const ROUTE_ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><polygon points="5,6 23,14 5,22" fill="#ffffff" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+/** SVG vectorial; se rasteriza a alta resolución al registrar el icono. */
+export const ROUTE_ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 28 28"><polygon points="5,6 23,14 5,22" fill="#ffffff" stroke="#1a1a1a" stroke-width="2.2" stroke-linejoin="round"/></svg>`;
 
 export const ROUTES_SOURCE_ID = 'routes-source';
 export const STOPS_SOURCE_ID = 'trip-stops-source';
 
-export async function ensureRouteArrowIcon(map: MapLibreMap): Promise<void> {
-  if (map.hasImage('route-arrow-icon')) return;
-  const img = new Image(28, 28);
+const ROUTE_ARROW_ICON_ID = 'route-arrow-icon';
+/** Píxeles del bitmap (con pixelRatio 2 → ~64 CSS px nítidos en retina). */
+const ROUTE_ARROW_BITMAP = 128;
+const ROUTE_ARROW_PIXEL_RATIO = 2;
+
+/**
+ * Tamaño en pantalla casi constante (~18–20 px).
+ * El bitmap es 128px con pixelRatio 2 → base lógica 64; 0.3 × 64 ≈ 19 px.
+ */
+export const ROUTE_ARROW_ICON_SIZE: maplibregl.ExpressionSpecification = [
+  'interpolate',
+  ['linear'],
+  ['zoom'],
+  10,
+  0.28,
+  13,
+  0.3,
+  16,
+  0.31,
+  19,
+  0.32,
+];
+
+/** Más separación al hacer zoom para no saturar el corredor. */
+export const ROUTE_ARROW_SPACING: maplibregl.ExpressionSpecification = [
+  'interpolate',
+  ['linear'],
+  ['zoom'],
+  10,
+  56,
+  12,
+  72,
+  14,
+  96,
+  16,
+  128,
+  18,
+  160,
+  20,
+  200,
+];
+
+async function rasterizeSvgIcon(
+  svg: string,
+  size: number
+): Promise<ImageData> {
+  const img = new Image();
   await new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = () => reject(new Error('route-arrow-icon'));
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ROUTE_ARROW_SVG);
+    img.onerror = () => reject(new Error('svg-icon-load'));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   });
-  if (!map.hasImage('route-arrow-icon')) {
-    map.addImage('route-arrow-icon', img);
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('canvas-2d');
+  ctx.clearRect(0, 0, size, size);
+  // Suavizado al escalar el SVG al bitmap HD
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, size, size);
+  return ctx.getImageData(0, 0, size, size);
+}
+
+export async function ensureRouteArrowIcon(map: MapLibreMap): Promise<void> {
+  const imageData = await rasterizeSvgIcon(ROUTE_ARROW_SVG, ROUTE_ARROW_BITMAP);
+  const opts = { pixelRatio: ROUTE_ARROW_PIXEL_RATIO };
+  if (map.hasImage(ROUTE_ARROW_ICON_ID)) {
+    try {
+      map.updateImage(ROUTE_ARROW_ICON_ID, imageData);
+      return;
+    } catch {
+      try {
+        map.removeImage(ROUTE_ARROW_ICON_ID);
+      } catch {
+        /* en uso: reintentar add con id nuevo no aplica; skip */
+      }
+    }
+  }
+  if (!map.hasImage(ROUTE_ARROW_ICON_ID)) {
+    map.addImage(ROUTE_ARROW_ICON_ID, imageData, opts);
   }
 }
 
@@ -103,7 +176,19 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
-  // Flechas: más densas en zoom bajo, más grandes en móvil/zoom medio
+  // Flechas: bitmap HD + tamaño estable al zoom (no se pixelan ni crecen al acercar)
+  const routeArrowLayout = {
+    'symbol-placement': 'line' as const,
+    'symbol-spacing': ROUTE_ARROW_SPACING,
+    'icon-image': ROUTE_ARROW_ICON_ID,
+    'icon-size': ROUTE_ARROW_ICON_SIZE,
+    'icon-rotation-alignment': 'map' as const,
+    'icon-pitch-alignment': 'viewport' as const,
+    'icon-allow-overlap': true,
+    'icon-ignore-placement': true,
+    'icon-padding': 4,
+  };
+
   if (!map.getLayer('route-arrows')) {
     map.addLayer({
       id: 'route-arrows',
@@ -123,16 +208,12 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
           ],
         ],
       ],
-      layout: {
-        'symbol-placement': 'line',
-        'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 10, 42, 12, 58, 14, 78, 18, 100],
-        'icon-image': 'route-arrow-icon',
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.42, 12, 0.5, 14, 0.58, 18, 0.72],
-        'icon-allow-overlap': true,
-        'icon-ignore-placement': true,
-        'icon-padding': 2,
-      },
+      layout: routeArrowLayout,
     });
+  } else {
+    map.setLayoutProperty('route-arrows', 'symbol-spacing', ROUTE_ARROW_SPACING);
+    map.setLayoutProperty('route-arrows', 'icon-size', ROUTE_ARROW_ICON_SIZE);
+    map.setLayoutProperty('route-arrows', 'icon-padding', 4);
   }
 
   // Etiquetas Ida / Vuelta (dual_ring o sense-label)
@@ -407,9 +488,10 @@ export function addQaPreviewLayers(map: MapLibreMap, sourceId = QA_PREVIEW_SOURC
       source: sourceId,
       layout: {
         'symbol-placement': 'line',
-        'symbol-spacing': 70,
-        'icon-image': 'route-arrow-icon',
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 12, 0.4, 16, 0.55],
+        'symbol-spacing': ROUTE_ARROW_SPACING,
+        'icon-image': ROUTE_ARROW_ICON_ID,
+        'icon-size': ROUTE_ARROW_ICON_SIZE,
+        'icon-rotation-alignment': 'map',
       },
     });
   }

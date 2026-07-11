@@ -1,6 +1,7 @@
 # Workspace monorepo (este repo es la raíz de la app)
 packages:
   - '.'
+  - 'mobile'
 
 # pnpm 10+/11: aprobar builds nativos que Next y tooling necesitan
 allowBuilds:

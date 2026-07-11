@@ -33,7 +33,16 @@
   --vm-top-bar-h: 2.5rem;
   --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.25rem);
   --vm-side: 0.5rem;
+  /* Espacio reservado para el dock inferior (bienvenida / chips encima) */
+  --vm-dock-clearance: 5rem;
   color-scheme: light;
+}
+
+/* Tablets: dock un poco más alto en la práctica */
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root {
+    --vm-dock-clearance: 5.5rem;
+  }
 }
 
 @theme inline {
@@ -446,6 +455,41 @@ textarea::placeholder {
 }
 .vm-orb-dest .vm-orb-core {
   background: #f43f5e;
+}
+
+/* GPS en vivo (seguimiento continuo) */
+.vm-live-gps {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+.vm-live-gps-dot {
+  position: absolute;
+  inset: 4px;
+  border-radius: 9999px;
+  background: #2563eb;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.55);
+  z-index: 2;
+}
+.vm-live-gps-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(37, 99, 235, 0.35);
+  animation: vm-live-gps-pulse 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  z-index: 1;
+}
+@keyframes vm-live-gps-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
 }
 
 /* Letreros Sube / Baja / Transbordo */

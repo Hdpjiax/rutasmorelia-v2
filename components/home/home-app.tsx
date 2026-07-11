@@ -24,6 +24,7 @@ import { useMaplibreSetup } from '@/hooks/use-maplibre-setup';
 import { toast } from '@/lib/ui/toast';
 import { fuzzySearchRoutesAsync } from '@/lib/search/search-client';
 import { createThrottleGate } from '@/lib/geo/throttle';
+import { getLivePositionOnce, watchLivePosition } from '@/lib/geo/watch-live-position';
 import { searchLocalPlaces, type PlaceHit } from '@/lib/search/morelia-places';
 import { mergeAndRankPlaces } from '@/lib/search/rank-places';
 import { type Route } from '@/lib/supabase/client';
@@ -117,10 +118,22 @@ export default function HomeApp() {
   // Modo Pin Drop (Selección Manual en el Mapa)
   const [pinDropMode, setPinDropMode] = useState<'origin' | 'destination' | null>(null);
 
-  // Alertas de GPS activo ("Seguir mi viaje")
+  // GPS en vivo + "Seguir mi viaje"
   const [activeTrackingIndex, setActiveTrackingIndex] = useState<number | null>(null);
-  const watchIdRef = useRef<number | null>(null);
-  const gpsThrottleRef = useRef(createThrottleGate(1750, 10));
+  const [liveUserCoords, setLiveUserCoords] = useState<Coordinate | null>(null);
+  /** true = watch continuo activo (botón GPS o seguimiento de viaje) */
+  const [gpsLiveActive, setGpsLiveActive] = useState(false);
+  const stopLiveWatchRef = useRef<(() => void) | null>(null);
+  const trackingPlanIdxRef = useRef<number | null>(null);
+  const tripPlansRef = useRef(tripPlans);
+  tripPlansRef.current = tripPlans;
+  const followCameraRef = useRef(false);
+  const syncOriginFromGpsRef = useRef(false);
+  /** Marker / estado: aceptar casi todos los ticks */
+  const markerThrottleRef = useRef(createThrottleGate(400, 2));
+  /** Cámara: menos frecuente para no marear */
+  const cameraThrottleRef = useRef(createThrottleGate(1200, 8));
+  const alertedNearAlightRef = useRef(false);
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -128,6 +141,7 @@ export default function HomeApp() {
   const mapSetup = useMaplibreSetup({
     originCoords,
     destinationCoords,
+    liveUserCoords,
     selectedRouteId,
     setSelectedRouteId,
     tripPlans,
@@ -198,52 +212,25 @@ export default function HomeApp() {
     }
 
     if (planner.sharedTripOpenRef.current) return;
-    if (!navigator.geolocation) return;
 
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
+    void getLivePositionOnce({ enableHighAccuracy: true, maximumAge: 0, timeout: 12_000 })
+      .then((pos) => {
         if (planner.sharedTripOpenRef.current) {
           setLocating(false);
           return;
         }
-        const coords: Coordinate = [pos.coords.longitude, pos.coords.latitude];
-        setOriginCoords(coords);
+        setLiveUserCoords(pos.coords);
+        setOriginCoords(pos.coords);
         setOriginInput('Mi ubicación');
         setLocating(false);
-        mapRef.current?.flyTo({ center: coords, zoom: 15, essential: true });
+        mapRef.current?.flyTo({ center: pos.coords, zoom: 15, essential: true });
         toast('Ubicación obtenida', 'success', 'ViaMorelia');
-      },
-      () => {
+      })
+      .catch(() => {
         setLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }, [styleLoaded]);
-
-  // Geolocalización a petición
-  const requestLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      toast('Tu navegador no soporta geolocalización', 'error');
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const coords: Coordinate = [pos.coords.longitude, pos.coords.latitude];
-        setOriginCoords(coords);
-        setOriginInput('Mi ubicación');
-        setLocating(false);
-        mapRef.current?.flyTo({ center: coords, zoom: 16, essential: true });
-        toast('Ubicación actualizada', 'success');
-      },
-      () => {
-        setLocating(false);
-        toast('No se pudo obtener ubicación precisa', 'error');
-      },
-      { enableHighAccuracy: true, timeout: 15000 }
-    );
-  }, [mapRef, setOriginCoords, setOriginInput]);
+      });
+  }, [styleLoaded, setOriginCoords, setOriginInput]);
 
   // Autocompletado y catalogación de búsqueda
   const runSearch = useCallback(
@@ -372,28 +359,78 @@ export default function HomeApp() {
     });
   };
 
-  // Seguimiento GPS "Seguir mi viaje"
-  const startTracking = (idx: number) => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
+  const stopLiveGpsWatch = useCallback((opts?: { clearMarker?: boolean }) => {
+    stopLiveWatchRef.current?.();
+    stopLiveWatchRef.current = null;
+    trackingPlanIdxRef.current = null;
+    followCameraRef.current = false;
+    syncOriginFromGpsRef.current = false;
+    setGpsLiveActive(false);
+    setActiveTrackingIndex(null);
+    if (opts?.clearMarker) setLiveUserCoords(null);
+  }, []);
 
-    const plan = tripPlans[idx];
-    if (!plan || !plan.alightingPoint) return;
+  /**
+   * Watch continuo: actualiza punto azul sin recargar.
+   * - followCamera: centra el mapa al moverse
+   * - syncOrigin: rellena origen = mi ubicación
+   * - planIdx: alertas de bajada ("Seguir mi viaje")
+   */
+  const startLiveGpsWatch = useCallback(
+    (opts: {
+      followCamera?: boolean;
+      syncOrigin?: boolean;
+      planIdx?: number | null;
+      toastOnStart?: string;
+    }) => {
+      stopLiveWatchRef.current?.();
+      stopLiveWatchRef.current = null;
 
-    setActiveTrackingIndex(idx);
-    gpsThrottleRef.current.reset();
-    toast('Seguimiento GPS activado. Te avisaremos antes de bajar.', 'success');
+      followCameraRef.current = opts.followCamera ?? true;
+      syncOriginFromGpsRef.current = opts.syncOrigin ?? false;
+      trackingPlanIdxRef.current = opts.planIdx ?? null;
+      markerThrottleRef.current.reset();
+      cameraThrottleRef.current.reset();
+      alertedNearAlightRef.current = false;
 
-    if (navigator.geolocation) {
-      // Throttle 1.5–2s + maximumAge: menos re-renders y menos batería
-      watchIdRef.current = navigator.geolocation.watchPosition(
+      if (opts.planIdx != null) setActiveTrackingIndex(opts.planIdx);
+      setGpsLiveActive(true);
+
+      if (opts.toastOnStart) toast(opts.toastOnStart, 'success', 'ViaMorelia');
+
+      stopLiveWatchRef.current = watchLivePosition(
         (pos) => {
-          const userCoords: Coordinate = [pos.coords.longitude, pos.coords.latitude];
-          if (!gpsThrottleRef.current.shouldAccept(userCoords)) return;
+          const userCoords = pos.coords;
 
-          const destCoords = plan.alightingPoint;
+          // Marcador en vivo: casi cada tick útil
+          if (markerThrottleRef.current.shouldAccept(userCoords)) {
+            setLiveUserCoords(userCoords);
+            if (syncOriginFromGpsRef.current) {
+              setOriginCoords(userCoords);
+              setOriginInput('Mi ubicación');
+            }
+          } else {
+            // Aun con throttle de distancia, mueve el punto si hay lectura nueva (suaviza UI)
+            setLiveUserCoords(userCoords);
+          }
+
+          if (followCameraRef.current && cameraThrottleRef.current.shouldAccept(userCoords)) {
+            const map = mapRef.current;
+            if (map) {
+              map.easeTo({
+                center: userCoords,
+                duration: 500,
+                essential: true,
+              });
+            }
+          }
+
+          const planIdx = trackingPlanIdxRef.current;
+          if (planIdx == null || alertedNearAlightRef.current) return;
+          const plan = tripPlansRef.current[planIdx];
+          const destCoords = plan?.alightingPoint;
+          if (!destCoords) return;
+
           const dLng =
             (userCoords[0] - destCoords[0]) *
             111320 *
@@ -401,17 +438,8 @@ export default function HomeApp() {
           const dLat = (userCoords[1] - destCoords[1]) * 110540;
           const distanceMeters = Math.hypot(dLng, dLat);
 
-          // Cámara suave solo en ticks throttled (ahorro de batería / GPU)
-          const map = mapRef.current;
-          if (map) {
-            map.easeTo({
-              center: userCoords,
-              duration: 600,
-              essential: true,
-            });
-          }
-
           if (distanceMeters < 150) {
+            alertedNearAlightRef.current = true;
             toast(
               '¡Llegando! Estás a menos de 150m del punto de bajada. ¡Prepárate para bajar!',
               'warning',
@@ -420,27 +448,68 @@ export default function HomeApp() {
             if (typeof navigator !== 'undefined' && navigator.vibrate) {
               navigator.vibrate([200, 100, 200, 100, 200]);
             }
-            if (watchIdRef.current !== null) {
-              navigator.geolocation.clearWatch(watchIdRef.current);
-              watchIdRef.current = null;
-            }
+            // Mantener GPS en vivo; solo termina el “seguir viaje”
+            trackingPlanIdxRef.current = null;
             setActiveTrackingIndex(null);
+            toast('Seguimiento de bajada completado. El GPS en vivo sigue activo.', 'info');
           }
         },
-        (err) => {
-          console.warn('[tracking] GPS error:', err);
+        (message, code) => {
+          console.warn('[gps] watch error:', message, code);
+          if (code === 1) {
+            toast('Permiso de ubicación denegado. Actívalo en Ajustes.', 'error');
+            stopLiveGpsWatch();
+          } else if (code === 2) {
+            toast('Ubicación no disponible. Revisa el GPS del dispositivo.', 'warning');
+          }
+          // code 3 timeout: el watch sigue intentando
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 2000 }
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 20_000 }
       );
+    },
+    [setOriginCoords, setOriginInput, stopLiveGpsWatch, mapRef]
+  );
+
+  // Geolocalización a petición: primer fix + watch continuo (sin recargar)
+  const requestLocation = useCallback(() => {
+    setLocating(true);
+    void getLivePositionOnce({ enableHighAccuracy: true, maximumAge: 0, timeout: 15_000 })
+      .then((pos) => {
+        setLiveUserCoords(pos.coords);
+        setOriginCoords(pos.coords);
+        setOriginInput('Mi ubicación');
+        setLocating(false);
+        mapRef.current?.flyTo({ center: pos.coords, zoom: 16, essential: true });
+        toast('Ubicación actualizada — seguimiento en vivo activo', 'success');
+        startLiveGpsWatch({
+          followCamera: true,
+          syncOrigin: true,
+          planIdx: trackingPlanIdxRef.current,
+        });
+      })
+      .catch((err: Error) => {
+        setLocating(false);
+        toast(err.message || 'No se pudo obtener ubicación precisa', 'error');
+      });
+  }, [mapRef, setOriginCoords, setOriginInput, startLiveGpsWatch]);
+
+  const startTracking = (idx: number) => {
+    const plan = tripPlans[idx];
+    if (!plan || !plan.alightingPoint) {
+      toast('No hay punto de bajada en este plan', 'warning');
+      return;
     }
+    startLiveGpsWatch({
+      followCamera: true,
+      syncOrigin: false,
+      planIdx: idx,
+      toastOnStart: 'Seguimiento GPS activado. Te avisaremos antes de bajar.',
+    });
   };
 
   const stopTracking = () => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
-    setActiveTrackingIndex(null);
+    // Si solo era seguimiento de viaje, apagar todo el watch
+    stopLiveGpsWatch({ clearMarker: false });
     toast('Seguimiento GPS desactivado.', 'info');
   };
 
@@ -451,9 +520,8 @@ export default function HomeApp() {
 
   useEffect(() => {
     return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      stopLiveWatchRef.current?.();
+      stopLiveWatchRef.current = null;
     };
   }, []);
 
@@ -502,7 +570,7 @@ export default function HomeApp() {
     setSelectedPlanIndex(0);
     setPlanningError(null);
     setRouteQuery('');
-    stopTracking();
+    stopLiveGpsWatch({ clearMarker: true });
     clearMap();
     toast('Mapa limpio. Comienza de nuevo.', 'info');
   };
@@ -995,80 +1063,6 @@ export default function HomeApp() {
           )}
         </AnimatePresence>
 
-        {/* Banner de Bienvenida */}
-        <AnimatePresence>
-          {hasMounted && showWelcome && !resultsOpen && !searchExpanded && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              className="pointer-events-auto absolute z-30 sm:left-1/2 sm:right-auto sm:w-[min(92vw,400px)] sm:-translate-x-1/2 md:w-[min(92vw,440px)]"
-              style={{
-                left: 'max(0.75rem, var(--vm-safe-left))',
-                right: 'max(0.75rem, var(--vm-safe-right))',
-                bottom: 'calc(var(--vm-dock-clearance, 4.75rem) + var(--vm-safe-bottom))',
-              }}
-            >
-              <div className="vm-panel rounded-2xl border p-3.5 shadow-2xl md:p-4">
-                <div className="mb-2 flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-bold text-slate-900 md:text-base">
-                      Bienvenido a ViaMorelia
-                    </p>
-                    <p className="mt-0.5 text-[12px] font-medium leading-snug text-slate-600 md:text-sm">
-                      Consulta rutas y planifica viajes. Elige cómo empezar:
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={dismissWelcome}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 cursor-pointer"
-                    aria-label="Cerrar bienvenida"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchExpanded(true);
-                      setActiveSearchField(originCoords ? 'destination' : 'origin');
-                      openResultsPanel('results');
-                      dismissWelcome();
-                    }}
-                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-left text-xs font-bold text-white cursor-pointer hover:bg-emerald-700 md:px-3.5 md:py-3 md:text-sm"
-                  >
-                    <Navigation className="h-4 w-4 shrink-0 animate-pulse md:h-5 md:w-5" />
-                    <span>
-                      Planear un viaje
-                      <span className="mt-0.5 block text-[10px] font-medium text-emerald-100 md:text-[11px]">
-                        Ingresa origen → destino para saber qué combi tomar
-                      </span>
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openResultsPanel('routes');
-                      dismissWelcome();
-                    }}
-                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:px-3.5 md:py-3 md:text-sm"
-                  >
-                    <List className="h-4 w-4 shrink-0 text-slate-600 md:h-5 md:w-5" />
-                    <span>
-                      Explorar rutas
-                      <span className="mt-0.5 block text-[10px] font-medium text-slate-500 md:text-[11px]">
-                        Ver el recorrido completo de cualquier ruta
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Panel de Resultados y Listas (Bottom Sheet en Móvil, Panel en Desktop) */}
         <ResultsSheet
           open={resultsOpen}
@@ -1147,6 +1141,7 @@ export default function HomeApp() {
         {!resultsOpen && (
           <BottomDock
             locating={locating}
+            gpsLive={gpsLiveActive}
             hasMapContent={hasMapContent}
             routeCount={routes.length}
             onPlan={() => {
@@ -1164,6 +1159,95 @@ export default function HomeApp() {
           />
         )}
       </main>
+
+      {/*
+        Bienvenida FUERA de #main-content, fixed al viewport.
+        En tablet/WebView el absolute interno se iba a la izquierda.
+      */}
+      <AnimatePresence>
+        {hasMounted && showWelcome && !resultsOpen && !searchExpanded && (
+          <motion.div
+            key="vm-welcome"
+            id="vm-welcome-banner"
+            role="dialog"
+            aria-label="Bienvenida a ViaMorelia"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            className="vm-welcome-banner"
+            style={{
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              width: 'min(26rem, calc(100vw - 1.5rem))',
+              maxWidth: 'calc(100vw - 1.5rem)',
+              bottom:
+                'calc(var(--vm-dock-clearance, 5rem) + env(safe-area-inset-bottom, 0px) + 0.5rem)',
+              zIndex: 45,
+            }}
+          >
+            <div className="vm-panel w-full rounded-2xl border p-3.5 shadow-2xl md:p-4">
+              <div className="mb-2 flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="text-sm font-bold text-slate-900 md:text-base">
+                    Bienvenido a ViaMorelia
+                  </p>
+                  <p className="mt-0.5 text-[12px] font-medium leading-snug text-slate-600 md:text-sm">
+                    Consulta rutas y planifica viajes. Elige cómo empezar:
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={dismissWelcome}
+                  className="shrink-0 rounded-lg p-1 text-slate-400 hover:bg-slate-100 cursor-pointer"
+                  aria-label="Cerrar bienvenida"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchExpanded(true);
+                    setActiveSearchField(originCoords ? 'destination' : 'origin');
+                    openResultsPanel('results');
+                    dismissWelcome();
+                  }}
+                  className="flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-left text-xs font-bold text-white cursor-pointer hover:bg-emerald-700 md:px-3.5 md:py-3 md:text-sm"
+                >
+                  <Navigation className="h-4 w-4 shrink-0 animate-pulse md:h-5 md:w-5" />
+                  <span>
+                    Planear un viaje
+                    <span className="mt-0.5 block text-[10px] font-medium text-emerald-100 md:text-[11px]">
+                      Ingresa origen → destino para saber qué combi tomar
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    openResultsPanel('routes');
+                    dismissWelcome();
+                  }}
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-bold text-slate-800 cursor-pointer hover:bg-slate-50 md:px-3.5 md:py-3 md:text-sm"
+                >
+                  <List className="h-4 w-4 shrink-0 text-slate-600 md:h-5 md:w-5" />
+                  <span>
+                    Explorar rutas
+                    <span className="mt-0.5 block text-[10px] font-medium text-slate-500 md:text-[11px]">
+                      Ver el recorrido completo de cualquier ruta
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

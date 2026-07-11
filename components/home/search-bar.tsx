@@ -79,7 +79,7 @@ export function SearchBar({
 }: Props) {
   const [recordingField, setRecordingField] = React.useState<'origin' | 'destination' | null>(null);
 
-  const startSpeechRecognition = (field: 'origin' | 'destination') => {
+  const startSpeechRecognition = async (field: 'origin' | 'destination') => {
     if (typeof window === 'undefined') return;
 
     const SpeechRecognition =
@@ -87,6 +87,29 @@ export function SearchBar({
 
     if (!SpeechRecognition) {
       toast('Tu navegador no soporta reconocimiento de voz', 'error');
+      return;
+    }
+
+    // Pedir permiso de micrófono de forma explícita (WebView Android / Chrome / tablet).
+    // Luego liberamos el stream para que SpeechRecognition pueda usar el mic.
+    try {
+      if (navigator.mediaDevices?.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+      }
+    } catch (err) {
+      const name = err instanceof DOMException ? err.name : '';
+      if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+        toast(
+          'Necesitamos permiso de micrófono para buscar por voz. Actívalo en Ajustes del navegador o de la app.',
+          'error'
+        );
+      } else if (name === 'NotFoundError') {
+        toast('No se encontró un micrófono en este dispositivo', 'error');
+      } else {
+        toast('No se pudo acceder al micrófono', 'error');
+      }
+      setRecordingField(null);
       return;
     }
 
@@ -98,7 +121,7 @@ export function SearchBar({
     recognition.onstart = () => {
       setRecordingField(field);
       toast(
-        `Escuchando... Di el punto de ${field === 'origin' ? 'origen' : 'destino'}`,
+        `Escuchando… Di el punto de ${field === 'origin' ? 'origen' : 'destino'}`,
         'info',
         'ViaMorelia'
       );
@@ -131,10 +154,15 @@ export function SearchBar({
     recognition.onerror = (event: any) => {
       console.error('[speech] Error:', event.error);
       if (event.error === 'not-allowed') {
-        toast('Permiso de micrófono denegado', 'error');
+        toast(
+          'Permiso de micrófono denegado. Revisa los permisos del sitio o de la app.',
+          'error'
+        );
       } else if (event.error === 'no-speech') {
-        // Ignorar o toast silencioso
-      } else {
+        toast('No se detectó voz. Intenta de nuevo.', 'warning');
+      } else if (event.error === 'audio-capture') {
+        toast('No se pudo capturar audio del micrófono', 'error');
+      } else if (event.error !== 'aborted') {
         toast('No se escuchó con claridad. Intenta de nuevo.', 'warning');
       }
       setRecordingField(null);
@@ -144,7 +172,13 @@ export function SearchBar({
       setRecordingField(null);
     };
 
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (e) {
+      console.error('[speech] start failed', e);
+      setRecordingField(null);
+      toast('No se pudo iniciar el reconocimiento de voz', 'error');
+    }
   };
   return (
     <motion.div

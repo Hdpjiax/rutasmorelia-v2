@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils/cn';
 
 type Props = {
   locating?: boolean;
+  /** GPS en vivo activo (punto azul moviéndose) */
+  gpsLive?: boolean;
   hasMapContent?: boolean;
   routeCount?: number;
   onPlan: () => void;
@@ -18,6 +20,7 @@ type Props = {
 /** Dock inferior pegado al borde real del viewport (safe-area iPhone). */
 export function BottomDock({
   locating,
+  gpsLive,
   hasMapContent,
   routeCount,
   onPlan,
@@ -50,11 +53,12 @@ export function BottomDock({
         />
         <DockBtn
           onClick={onLocation}
-          label="GPS"
+          label={gpsLive ? 'En vivo' : 'GPS'}
           icon={locating ? Loader2 : LocateFixed}
           tone="emerald"
           spinning={locating}
           disabled={locating}
+          active={gpsLive}
         />
         <DockBtn
           onClick={onClear}
@@ -77,6 +81,7 @@ function DockBtn({
   spinning,
   disabled,
   testId,
+  active,
 }: {
   onClick: () => void;
   label: string;
@@ -85,6 +90,7 @@ function DockBtn({
   spinning?: boolean;
   disabled?: boolean;
   testId?: string;
+  active?: boolean;
 }) {
   const color =
     tone === 'emerald' ? 'text-emerald-700' : tone === 'sky' ? 'text-sky-700' : 'text-rose-600';
@@ -98,20 +104,23 @@ function DockBtn({
     <button
       type="button"
       data-testid={testId}
+      aria-pressed={active || undefined}
       onClick={onClick}
       disabled={disabled}
       className={cn(
         // Móvil compacto; escritorio solo un poco más grande
         'flex min-h-11 min-w-0 flex-1 touch-manipulation flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1 text-slate-800 transition cursor-pointer disabled:opacity-40 sm:min-h-11 sm:gap-0.5 sm:rounded-xl sm:px-1 sm:py-1.5 md:min-h-12 md:py-2',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700',
-        hover
+        hover,
+        active && 'bg-emerald-50 ring-1 ring-emerald-300'
       )}
     >
       <Icon
         className={cn(
           'h-5 w-5 shrink-0 sm:h-5 sm:w-5 md:h-6 md:w-6',
           color,
-          spinning && 'animate-spin'
+          spinning && 'animate-spin',
+          active && 'text-emerald-600'
         )}
         aria-hidden
       />

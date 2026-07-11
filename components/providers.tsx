@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from '@/components/ui/toast-provider';
 import { PwaRegister } from '@/components/pwa-register';
+import { DeepLinkBridge } from '@/components/deep-link-bridge';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,6 +26,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {children}
       <ToastProvider />
       <PwaRegister />
+      <DeepLinkBridge />
     </QueryClientProvider>
   );
 }

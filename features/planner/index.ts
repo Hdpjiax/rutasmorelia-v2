@@ -35,3 +35,11 @@ export {
   copyTextToClipboard,
   type TripUrlState,
 } from '@/lib/trip/url-state';
+export {
+  applyDeepLink,
+  normalizeDeepLinkToPath,
+  parseDeepLink,
+  subscribeNativeDeepLinks,
+  DEEP_LINK_EVENT,
+  type DeepLinkDetail,
+} from '@/lib/trip/deep-link';

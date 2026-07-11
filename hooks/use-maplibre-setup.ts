@@ -6,7 +6,7 @@ import type { Map as MapLibreMap, Marker, GeoJSONSource } from 'maplibre-gl';
 import type { Coordinate, TripPlan } from '@/lib/routing/planner';
 import type { PublishedShape } from '@/lib/routing/load-published-shapes';
 import { ROUTES_SOURCE_ID, setTripStopsData } from '@/lib/map/route-layers';
-import { createOrbElement } from '@/components/home/map-markers';
+import { createLiveGpsElement, createOrbElement } from '@/components/home/map-markers';
 import { loadShapesForRouteIds } from '@/lib/routing/load-published-shapes';
 import { mockDb, type Route } from '@/lib/supabase/client';
 import { parseRouteDisplay } from '@/lib/routes/route-display';
@@ -35,6 +35,8 @@ function createTransferOrbElement(color1: string, color2: string) {
 type SetupProps = {
   originCoords: Coordinate | null;
   destinationCoords: Coordinate | null;
+  /** Posición GPS en vivo (punto azul). Se mueve con setLngLat sin recrear el DOM. */
+  liveUserCoords?: Coordinate | null;
   selectedRouteId: string | null;
   setSelectedRouteId: (id: string | null) => void;
   tripPlans: TripPlan[];
@@ -51,6 +53,7 @@ type SetupProps = {
 export function useMaplibreSetup({
   originCoords,
   destinationCoords,
+  liveUserCoords = null,
   selectedRouteId,
   setSelectedRouteId,
   tripPlans,
@@ -124,7 +127,7 @@ export function useMaplibreSetup({
     }
   }, [pinDropMode, activeSearchField, styleLoaded]);
 
-  // Marcadores de origen y destino (Orbes)
+  // Marcadores de origen y destino (Orbes) — recrear solo si cambian de existencia
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !styleLoaded) return;
@@ -137,35 +140,30 @@ export function useMaplibreSetup({
       if (cancelled || !mapRef.current) return;
       const { Marker } = mlRef.current;
 
-      // Limpiar marcadores viejos
-      if (markersRef.current.origin) {
-        markersRef.current.origin.remove();
-        delete markersRef.current.origin;
-      }
-      if (markersRef.current.destination) {
-        markersRef.current.destination.remove();
-        delete markersRef.current.destination;
-      }
-
-      const ok = (c: Coordinate | null) =>
+      const ok = (c: Coordinate | null | undefined): c is Coordinate =>
         !!c && Number.isFinite(c[0]) && Number.isFinite(c[1]) && Math.abs(c[0]) > 0.01;
 
-      if (ok(originCoords)) {
-        markersRef.current.origin = new Marker({
-          element: createOrbElement('origin'),
+      const upsert = (key: 'origin' | 'destination', coords: Coordinate | null, kind: 'origin' | 'dest') => {
+        if (!ok(coords)) {
+          markersRef.current[key]?.remove();
+          delete markersRef.current[key];
+          return;
+        }
+        const existing = markersRef.current[key];
+        if (existing) {
+          existing.setLngLat(coords);
+          return;
+        }
+        markersRef.current[key] = new Marker({
+          element: createOrbElement(kind),
           anchor: 'center',
         })
-          .setLngLat(originCoords!)
+          .setLngLat(coords)
           .addTo(map);
-      }
-      if (ok(destinationCoords)) {
-        markersRef.current.destination = new Marker({
-          element: createOrbElement('dest'),
-          anchor: 'center',
-        })
-          .setLngLat(destinationCoords!)
-          .addTo(map);
-      }
+      };
+
+      upsert('origin', originCoords, 'origin');
+      upsert('destination', destinationCoords, 'dest');
     };
     void run();
 
@@ -173,6 +171,50 @@ export function useMaplibreSetup({
       cancelled = true;
     };
   }, [originCoords, destinationCoords, styleLoaded]);
+
+  // Punto GPS en vivo: actualizar posición sin destruir el marcador (smooth)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !styleLoaded) return;
+    let cancelled = false;
+
+    const run = async () => {
+      if (!mlRef.current) {
+        mlRef.current = await import('maplibre-gl');
+      }
+      if (cancelled || !mapRef.current) return;
+      const { Marker } = mlRef.current;
+
+      const ok =
+        !!liveUserCoords &&
+        Number.isFinite(liveUserCoords[0]) &&
+        Number.isFinite(liveUserCoords[1]) &&
+        Math.abs(liveUserCoords[0]) > 0.01;
+
+      if (!ok) {
+        markersRef.current.live?.remove();
+        delete markersRef.current.live;
+        return;
+      }
+
+      const existing = markersRef.current.live;
+      if (existing) {
+        existing.setLngLat(liveUserCoords!);
+        return;
+      }
+      markersRef.current.live = new Marker({
+        element: createLiveGpsElement(),
+        anchor: 'center',
+      })
+        .setLngLat(liveUserCoords!)
+        .addTo(map);
+    };
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [liveUserCoords, styleLoaded]);
 
   // Dibujar ruta explorada
   useEffect(() => {

@@ -1,30 +1,51 @@
 /*
- * El mensaje de bienvenida recibe left/right inline para móvil.
- * En escritorio esos valores anulaban las clases responsivas y lo desplazaban
- * fuera del viewport. Se corrige solo en desktop, conservando la animación de Motion.
+ * Bienvenida: fixed al viewport, centrada, justo encima del dock.
+ * NO usar absolute dentro de #main-content (en tablet/WebView se iba a la izq.).
+ * Centrado con left+right + margin auto + max-width (no translateX:
+ * Motion anima `y` con transform).
  */
-@media (min-width: 640px) {
-  #main-content > [class*="sm:w-[min(92vw,380px)]"] {
-    left: 50% !important;
-    right: auto !important;
-    width: min(92vw, 380px) !important;
-    translate: -50% 0;
-    bottom: calc(4.75rem + var(--vm-safe-bottom)) !important;
+#vm-welcome-banner.vm-welcome-banner,
+#vm-welcome-banner,
+.vm-welcome-banner {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  width: min(26rem, calc(100vw - 1.5rem)) !important;
+  max-width: calc(100vw - 1.5rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  bottom: calc(
+    var(--vm-dock-clearance, 5rem) + env(safe-area-inset-bottom, 0px) + 0.5rem
+  ) !important;
+  z-index: 45 !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+}
+
+/* Tablet / landscape mediano */
+@media (min-width: 640px) and (max-width: 1024px) {
+  #vm-welcome-banner.vm-welcome-banner,
+  #vm-welcome-banner,
+  .vm-welcome-banner {
+    width: min(24rem, calc(100vw - 2rem)) !important;
+    max-width: calc(100vw - 2rem) !important;
+    bottom: calc(
+      var(--vm-dock-clearance, 5.5rem) + env(safe-area-inset-bottom, 0px) + 0.65rem
+    ) !important;
   }
 }
 
 /*
- * En móvil el mapa es la interfaz principal. La ficha completa de la ruta
- * seleccionada (sentido, compartir y detalles) ocupaba demasiado espacio.
- * Se oculta solo en pantallas pequeñas; el Dock permanece disponible para
- * volver a Rutas y consultar detalles cuando el usuario lo necesite.
+ * En móvil estrecho el mapa es la interfaz principal.
+ * Ocultar ficha de ruta seleccionada (no la bienvenida).
  */
 @media (max-width: 767px) {
   #main-content > .pointer-events-auto.absolute.z-30.flex.justify-center {
     display: none !important;
   }
 
-  /* Ocultar el aviso y el botón de reencuadre de ruta en móvil. */
   #main-content button[aria-label="Centrar ruta seleccionada"] {
     display: none !important;
   }

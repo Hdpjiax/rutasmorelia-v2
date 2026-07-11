@@ -1,0 +1,17 @@
+node_modules/
+.DS_Store
+*.log
+.idea/
+*.iml
+
+# Capacitor / Android locales
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/captures/
+android/.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex

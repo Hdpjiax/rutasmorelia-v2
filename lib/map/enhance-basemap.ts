@@ -99,8 +99,10 @@ const STREET_ARROW_ICON = 'street-arrow-chevron';
 /** Detalle de calle: zoom 16–19 */
 const STREET_ARROW_MIN_ZOOM = 16;
 
-/** Chevron cuadrado tipo Google Maps: no se alarga sobre el eje vial */
-const STREET_ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"><path d="M6 5L16 11L6 17Z" fill="#75726d" stroke="#f4f3f0" stroke-width="1.35" stroke-linejoin="round"/></svg>`;
+/** Chevron vectorial; se rasteriza a 96px + pixelRatio 2 (nítido al acercar). */
+const STREET_ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 22 22"><path d="M6 5L16 11L6 17Z" fill="#75726d" stroke="#f4f3f0" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+const STREET_ARROW_BITMAP = 96;
+const STREET_ARROW_PIXEL_RATIO = 2;
 
 /** Calles transitables: mismas clases que Carto Positron (superficie, puente y túnel). */
 const STREET_ARROW_LAYERS: Array<{
@@ -122,33 +124,38 @@ const STREET_ARROW_LAYERS: Array<{
 ];
 
 function streetArrowSpacing(scale: number): ExpressionSpecification {
+  // Más separación al acercar para no llenar el mapa de chevrones
   return [
     'interpolate',
     ['linear'],
     ['zoom'],
     16,
-    420 * scale,
+    480 * scale,
     17,
-    380 * scale,
+    520 * scale,
     18,
-    340 * scale,
+    580 * scale,
     19,
-    300 * scale,
+    640 * scale,
   ];
 }
 
+/**
+ * Tamaño estable (~14–16 px en pantalla).
+ * Bitmap 96 + pixelRatio 2 → base 48; 0.32 × 48 ≈ 15 px.
+ */
 const STREET_ARROW_ICON_SIZE: ExpressionSpecification = [
   'interpolate',
   ['linear'],
   ['zoom'],
   16,
-  0.78,
+  0.3,
   17,
-  0.86,
+  0.31,
   18,
-  0.94,
+  0.32,
   19,
-  1.02,
+  0.33,
 ];
 
 const STREET_ARROW_ICON_OPACITY: ExpressionSpecification = [
@@ -166,7 +173,37 @@ const STREET_ARROW_ICON_OPACITY: ExpressionSpecification = [
 ];
 
 async function ensureStreetArrowIcon(map: MapLibreMap): Promise<void> {
-  for (const legacyId of ['street-arrow-icon', 'street-arrow-long', STREET_ARROW_ICON]) {
+  const img = new Image();
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(STREET_ARROW_ICON));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(STREET_ARROW_SVG);
+  });
+  const canvas = document.createElement('canvas');
+  canvas.width = STREET_ARROW_BITMAP;
+  canvas.height = STREET_ARROW_BITMAP;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.clearRect(0, 0, STREET_ARROW_BITMAP, STREET_ARROW_BITMAP);
+  ctx.drawImage(img, 0, 0, STREET_ARROW_BITMAP, STREET_ARROW_BITMAP);
+  const imageData = ctx.getImageData(0, 0, STREET_ARROW_BITMAP, STREET_ARROW_BITMAP);
+  const opts = { pixelRatio: STREET_ARROW_PIXEL_RATIO };
+
+  if (map.hasImage(STREET_ARROW_ICON)) {
+    try {
+      map.updateImage(STREET_ARROW_ICON, imageData);
+      return;
+    } catch {
+      try {
+        map.removeImage(STREET_ARROW_ICON);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  for (const legacyId of ['street-arrow-icon', 'street-arrow-long']) {
     if (map.hasImage(legacyId)) {
       try {
         map.removeImage(legacyId);
@@ -175,14 +212,8 @@ async function ensureStreetArrowIcon(map: MapLibreMap): Promise<void> {
       }
     }
   }
-  const img = new Image(22, 22);
-  await new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error(STREET_ARROW_ICON));
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(STREET_ARROW_SVG);
-  });
   if (!map.hasImage(STREET_ARROW_ICON)) {
-    map.addImage(STREET_ARROW_ICON, img);
+    map.addImage(STREET_ARROW_ICON, imageData, opts);
   }
 }
 
