@@ -36,7 +36,46 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
     });
   }
 
-  // Halo suave detrás (más visible a distancia)
+  // Orbes: compactos en zoom móvil (11–14), un poco más grandes al acercar
+  const flowGlowRadius: maplibregl.ExpressionSpecification = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    10,
+    4.5,
+    13,
+    5.5,
+    16,
+    7.5,
+    18,
+    9,
+  ];
+  const flowCoreRadius: maplibregl.ExpressionSpecification = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    10,
+    3,
+    13,
+    3.75,
+    16,
+    5.25,
+    18,
+    6.5,
+  ];
+  const flowStrokeWidth: maplibregl.ExpressionSpecification = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    10,
+    1,
+    14,
+    1.4,
+    18,
+    1.8,
+  ];
+
+  // Halo suave detrás
   if (!map.getLayer('route-flow-particles-glow')) {
     map.addLayer({
       id: 'route-flow-particles-glow',
@@ -44,39 +83,19 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
       source: 'routes-flow-source',
       paint: {
         'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
-        'circle-radius': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          10,
-          7,
-          14,
-          11,
-          18,
-          16,
-        ],
-        'circle-blur': 0.75,
-        'circle-opacity': 0.45,
+        'circle-radius': flowGlowRadius,
+        'circle-blur': 0.7,
+        'circle-opacity': 0.38,
         'circle-stroke-width': 0,
       },
     });
   } else {
-    map.setPaintProperty('route-flow-particles-glow', 'circle-radius', [
-      'interpolate',
-      ['linear'],
-      ['zoom'],
-      10,
-      7,
-      14,
-      11,
-      18,
-      16,
-    ]);
-    map.setPaintProperty('route-flow-particles-glow', 'circle-blur', 0.75);
-    map.setPaintProperty('route-flow-particles-glow', 'circle-opacity', 0.45);
+    map.setPaintProperty('route-flow-particles-glow', 'circle-radius', flowGlowRadius);
+    map.setPaintProperty('route-flow-particles-glow', 'circle-blur', 0.7);
+    map.setPaintProperty('route-flow-particles-glow', 'circle-opacity', 0.38);
   }
 
-  // Núcleo del orbe (opaco, borde blanco para contraste sobre el trazo)
+  // Núcleo del orbe (opaco, borde blanco)
   if (!map.getLayer('route-flow-particles')) {
     map.addLayer({
       id: 'route-flow-particles',
@@ -84,59 +103,19 @@ export function addRouteLayers(map: MapLibreMap, options?: { includeWalk?: boole
       source: 'routes-flow-source',
       paint: {
         'circle-color': ['coalesce', ['get', 'color'], '#ffffff'],
-        'circle-radius': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          10,
-          4.5,
-          14,
-          7.5,
-          18,
-          11,
-        ],
+        'circle-radius': flowCoreRadius,
         'circle-blur': 0.05,
         'circle-opacity': 1,
-        'circle-stroke-width': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          10,
-          1.5,
-          14,
-          2.25,
-          18,
-          3,
-        ],
+        'circle-stroke-width': flowStrokeWidth,
         'circle-stroke-color': '#ffffff',
         'circle-stroke-opacity': 0.95,
       },
     });
   } else {
-    map.setPaintProperty('route-flow-particles', 'circle-radius', [
-      'interpolate',
-      ['linear'],
-      ['zoom'],
-      10,
-      4.5,
-      14,
-      7.5,
-      18,
-      11,
-    ]);
+    map.setPaintProperty('route-flow-particles', 'circle-radius', flowCoreRadius);
     map.setPaintProperty('route-flow-particles', 'circle-blur', 0.05);
     map.setPaintProperty('route-flow-particles', 'circle-opacity', 1);
-    map.setPaintProperty('route-flow-particles', 'circle-stroke-width', [
-      'interpolate',
-      ['linear'],
-      ['zoom'],
-      10,
-      1.5,
-      14,
-      2.25,
-      18,
-      3,
-    ]);
+    map.setPaintProperty('route-flow-particles', 'circle-stroke-width', flowStrokeWidth);
     map.setPaintProperty('route-flow-particles', 'circle-stroke-color', '#ffffff');
     map.setPaintProperty('route-flow-particles', 'circle-stroke-opacity', 0.95);
   }
