@@ -30,9 +30,9 @@
   --vm-safe-bottom: env(safe-area-inset-bottom, 0px);
   --vm-safe-left: env(safe-area-inset-left, 0px);
   --vm-safe-right: env(safe-area-inset-right, 0px);
-  --vm-top-bar-h: 2.75rem;
-  --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.4rem);
-  --vm-side: 0.75rem;
+  --vm-top-bar-h: 2.5rem;
+  --vm-search-top: calc(var(--vm-safe-top) + var(--vm-top-bar-h) + 0.25rem);
+  --vm-side: 0.5rem;
   color-scheme: light;
 }
 

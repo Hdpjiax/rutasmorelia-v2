@@ -82,28 +82,28 @@ export function SearchBar({
       className="pointer-events-auto absolute z-40 w-auto sm:max-w-[min(92vw,22rem)]"
       style={{
         top: 'var(--vm-search-top)',
-        left: 'max(0.75rem, var(--vm-safe-left))',
-        right: 'max(0.75rem, var(--vm-safe-right))',
+        left: 'max(0.5rem, var(--vm-safe-left))',
+        right: 'max(0.5rem, var(--vm-safe-right))',
       }}
     >
       {!searchExpanded && (
         <button
           type="button"
           onClick={onExpand}
-          className="vm-panel vm-press flex w-full items-center gap-2.5 rounded-2xl border px-3.5 py-3 text-left cursor-pointer shadow-xl"
+          className="vm-panel vm-press flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left cursor-pointer shadow-lg sm:gap-2.5 sm:rounded-2xl sm:px-3.5 sm:py-3 sm:shadow-xl"
           aria-expanded={false}
           aria-controls="trip-search-fields"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-            <Search className="h-4 w-4 text-emerald-700" aria-hidden />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 sm:h-9 sm:w-9 sm:rounded-xl">
+            <Search className="h-3.5 w-3.5 text-emerald-700 sm:h-4 sm:w-4" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-slate-900">
+            <p className="truncate text-[13px] font-bold leading-tight text-slate-900 sm:text-sm">
               {originInput || destinationInput
                 ? `${originInput || 'Origen'} → ${destinationInput || 'Destino'}`
                 : '¿A dónde vas?'}
             </p>
-            <p className="text-[11px] font-medium text-slate-600">
+            <p className="truncate text-[10px] font-medium leading-tight text-slate-600 sm:text-[11px]">
               {originReady && destinationReady
                 ? planning
                   ? 'Calculando viaje…'
@@ -114,23 +114,23 @@ export function SearchBar({
             </p>
           </div>
           {(planning || locating) && (
-            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-emerald-700" aria-hidden />
+            <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-emerald-700 sm:h-4 sm:w-4" aria-hidden />
           )}
-          <ChevronDown className="h-4 w-4 shrink-0 text-slate-600" aria-hidden />
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-600 sm:h-4 sm:w-4" aria-hidden />
         </button>
       )}
 
       {searchExpanded && (
         <div
           id="trip-search-fields"
-          className="vm-panel w-full rounded-2xl border p-3 shadow-xl"
+          className="vm-panel w-full rounded-xl border p-2.5 shadow-lg sm:rounded-2xl sm:p-3 sm:shadow-xl"
           role="search"
           aria-label="Planear viaje"
         >
-          <div className="mb-2.5 flex items-center justify-between gap-2">
+          <div className="mb-2 flex items-center justify-between gap-2 sm:mb-2.5">
             <div>
-              <p className="text-sm font-bold text-slate-900">Planear viaje</p>
-              <p className="text-[10px] text-slate-600">
+              <p className="text-[13px] font-bold text-slate-900 sm:text-sm">Planear viaje</p>
+              <p className="text-[9px] text-slate-600 sm:text-[10px]">
                 Escribe o toca el mapa para marcar punto
               </p>
             </div>
@@ -141,7 +141,7 @@ export function SearchBar({
               <button
                 type="button"
                 onClick={onCollapse}
-                className="flex items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-bold text-slate-700 transition hover:bg-slate-100 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-700"
+                className="flex min-h-8 items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-bold text-slate-700 transition hover:bg-slate-100 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-700"
               >
                 Listo
                 <ChevronUp className="h-3.5 w-3.5" aria-hidden />
@@ -149,16 +149,16 @@ export function SearchBar({
             </div>
           </div>
 
-          <div className="relative mb-2">
+          <div className="relative mb-1.5 sm:mb-2">
             <label
               htmlFor="search-origin"
-              className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-800"
+              className="mb-0.5 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-emerald-800 sm:text-[10px]"
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-600" aria-hidden />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-600 sm:h-2 sm:w-2" aria-hidden />
               1. Origen (sale de)
             </label>
             <div className="relative">
-              <MapPin className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-emerald-600" aria-hidden />
+              <MapPin className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 text-emerald-600 sm:left-2.5 sm:top-2.5 sm:h-4 sm:w-4" aria-hidden />
               <input
                 id="search-origin"
                 data-testid="search-origin"
@@ -169,7 +169,7 @@ export function SearchBar({
                 onFocus={onOriginFocus}
                 autoComplete="off"
                 className={cn(
-                  'w-full rounded-xl border bg-white py-2.5 pl-9 pr-8 text-sm text-slate-900 placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-emerald-700/35',
+                  'w-full rounded-lg border bg-white py-2 pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-emerald-700/35 sm:rounded-xl sm:py-2.5 sm:pl-9 sm:pr-8 sm:text-sm',
                   activeSearchField === 'origin'
                     ? 'border-emerald-600 ring-2 ring-emerald-700/20'
                     : 'border-slate-300'
@@ -179,10 +179,10 @@ export function SearchBar({
                 <button
                   type="button"
                   onClick={onClearOrigin}
-                  className="absolute right-2 top-2.5 text-slate-500 hover:text-slate-800 cursor-pointer"
+                  className="absolute right-1.5 top-2 text-slate-500 hover:text-slate-800 cursor-pointer sm:right-2 sm:top-2.5"
                   aria-label="Borrar origen"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               )}
             </div>
@@ -195,28 +195,28 @@ export function SearchBar({
             )}
           </div>
 
-          <div className="mb-2 flex justify-center">
+          <div className="mb-1.5 flex justify-center sm:mb-2">
             <button
               type="button"
               onClick={onSwap}
-              className="flex items-center gap-1 rounded-full border border-slate-300 bg-white px-3 py-1 text-[10px] font-bold text-slate-800 shadow-sm cursor-pointer hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-700"
+              className="flex min-h-7 items-center gap-1 rounded-full border border-slate-300 bg-white px-2.5 py-0.5 text-[9px] font-bold text-slate-800 shadow-sm cursor-pointer hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-700 sm:min-h-8 sm:px-3 sm:py-1 sm:text-[10px]"
               title="Intercambiar origen y destino"
             >
-              <ArrowUpDown className="h-3.5 w-3.5" aria-hidden />
+              <ArrowUpDown className="h-3 w-3 sm:h-3.5 sm:w-3.5" aria-hidden />
               Intercambiar
             </button>
           </div>
 
-          <div className="relative mb-3">
+          <div className="relative mb-2 sm:mb-3">
             <label
               htmlFor="search-destination"
-              className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-rose-800"
+              className="mb-0.5 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-rose-800 sm:text-[10px]"
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-rose-600" aria-hidden />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-600 sm:h-2 sm:w-2" aria-hidden />
               2. Destino (vas a)
             </label>
             <div className="relative">
-              <Navigation className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-rose-600" aria-hidden />
+              <Navigation className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 text-rose-600 sm:left-2.5 sm:top-2.5 sm:h-4 sm:w-4" aria-hidden />
               <input
                 id="search-destination"
                 data-testid="search-destination"
@@ -227,7 +227,7 @@ export function SearchBar({
                 onFocus={onDestinationFocus}
                 autoComplete="off"
                 className={cn(
-                  'w-full rounded-xl border bg-white py-2.5 pl-9 pr-8 text-sm text-slate-900 placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-rose-700/35',
+                  'w-full rounded-lg border bg-white py-2 pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-rose-700/35 sm:rounded-xl sm:py-2.5 sm:pl-9 sm:pr-8 sm:text-sm',
                   activeSearchField === 'destination'
                     ? 'border-rose-600 ring-2 ring-rose-700/20'
                     : 'border-slate-300'
@@ -237,10 +237,10 @@ export function SearchBar({
                 <button
                   type="button"
                   onClick={onClearDestination}
-                  className="absolute right-2 top-2.5 text-slate-500 hover:text-slate-800 cursor-pointer"
+                  className="absolute right-1.5 top-2 text-slate-500 hover:text-slate-800 cursor-pointer sm:right-2 sm:top-2.5"
                   aria-label="Borrar destino"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               )}
             </div>
@@ -254,18 +254,18 @@ export function SearchBar({
           </div>
 
           {activeSearchField && (
-            <p className="mb-2 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1.5 text-[11px] font-medium text-sky-950">
+            <p className="mb-1.5 rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-[10px] font-medium text-sky-950 sm:mb-2 sm:px-2.5 sm:py-1.5 sm:text-[11px]">
               También puedes <strong>tocar el mapa</strong> para fijar el{' '}
               {activeSearchField === 'origin' ? 'origen' : 'destino'}.
             </p>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={onRequestLocation}
               disabled={locating}
-              className="flex min-h-11 flex-1 touch-manipulation items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 py-2.5 text-[11px] font-bold text-emerald-950 cursor-pointer disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-emerald-700"
+              className="flex min-h-9 flex-1 touch-manipulation items-center justify-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50 py-2 text-[10px] font-bold text-emerald-950 cursor-pointer disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-emerald-700 sm:min-h-11 sm:gap-1.5 sm:rounded-xl sm:py-2.5 sm:text-[11px]"
             >
               {locating ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
@@ -278,7 +278,7 @@ export function SearchBar({
               type="button"
               onClick={onSeeOptions}
               disabled={!originReady || !destinationReady}
-              className="flex min-h-11 flex-1 touch-manipulation items-center justify-center gap-1 rounded-xl bg-slate-900 py-2.5 text-[11px] font-bold text-white cursor-pointer disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-emerald-700"
+              className="flex min-h-9 flex-1 touch-manipulation items-center justify-center gap-1 rounded-lg bg-slate-900 py-2 text-[10px] font-bold text-white cursor-pointer disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-emerald-700 sm:min-h-11 sm:rounded-xl sm:py-2.5 sm:text-[11px]"
             >
               {planning ? 'Buscando…' : 'Ver opciones'}
             </button>
