@@ -10,6 +10,7 @@ import {
   Loader2,
   LocateFixed,
   ArrowUpDown,
+  ArrowRightLeft,
   X,
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -87,37 +88,67 @@ export function SearchBar({
       }}
     >
       {!searchExpanded && (
-        <button
-          type="button"
-          onClick={onExpand}
-          className="vm-panel vm-press flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left cursor-pointer shadow-lg sm:gap-2.5 sm:rounded-2xl sm:px-3.5 sm:py-3 sm:shadow-xl"
-          aria-expanded={false}
-          aria-controls="trip-search-fields"
+        <div
+          className="vm-panel flex w-full items-center gap-2 rounded-xl border p-1.5 shadow-lg sm:gap-2.5 sm:rounded-2xl sm:p-2 sm:shadow-xl"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 sm:h-9 sm:w-9 sm:rounded-xl">
-            <Search className="h-3.5 w-3.5 text-emerald-700 sm:h-4 sm:w-4" aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-bold leading-tight text-slate-900 sm:text-sm">
-              {originInput || destinationInput
-                ? `${originInput || 'Origen'} → ${destinationInput || 'Destino'}`
-                : '¿A dónde vas?'}
-            </p>
-            <p className="truncate text-[10px] font-medium leading-tight text-slate-600 sm:text-[11px]">
-              {originReady && destinationReady
-                ? planning
-                  ? 'Calculando viaje…'
-                  : tripPlanCount
-                    ? `${tripPlanCount} opción(es) · toca para editar`
-                    : 'Toca para editar origen o destino'
-                : 'Escribe un lugar o toca el mapa'}
-            </p>
-          </div>
+          {/* Botón principal para expandir la búsqueda */}
+          <button
+            type="button"
+            onClick={onExpand}
+            className="flex flex-1 items-center gap-2 text-left cursor-pointer focus:outline-none min-w-0"
+            aria-expanded={false}
+            aria-controls="trip-search-fields"
+          >
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 sm:h-9 sm:w-9 sm:rounded-xl">
+              <Search className="h-3.5 w-3.5 text-emerald-700 sm:h-4 sm:w-4" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-bold leading-tight text-slate-900 sm:text-sm">
+                {originInput || destinationInput
+                  ? `${originInput || 'Origen'} → ${destinationInput || 'Destino'}`
+                  : '¿A dónde vas?'}
+              </p>
+              <p className="truncate text-[10px] font-medium leading-tight text-slate-600 sm:text-[11px]">
+                {originReady && destinationReady
+                  ? planning
+                    ? 'Calculando viaje…'
+                    : tripPlanCount
+                      ? `${tripPlanCount} opción(es) · toca para editar`
+                      : 'Toca para editar origen o destino'
+                  : 'Escribe un lugar o toca el mapa'}
+              </p>
+            </div>
+          </button>
+
+          {/* Botón de Swap directo (solo si hay origen y destino listos) */}
+          {originReady && destinationReady && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSwap();
+              }}
+              title="Invertir origen y destino"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-700 shadow-sm"
+            >
+              <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          )}
+
           {(planning || locating) && (
             <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-emerald-700 sm:h-4 sm:w-4" aria-hidden />
           )}
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-600 sm:h-4 sm:w-4" aria-hidden />
-        </button>
+
+          {/* Botón secundario para expandir (chevron) */}
+          <button
+            type="button"
+            onClick={onExpand}
+            className="flex h-7 w-7 shrink-0 items-center justify-center text-slate-600 hover:text-slate-800 cursor-pointer"
+            aria-label="Desplegar campos"
+          >
+            <ChevronDown className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
       )}
 
       {searchExpanded && (

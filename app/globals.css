@@ -166,11 +166,11 @@ textarea::placeholder {
 
 /* ——— Superficies premium ——— */
 .vm-panel {
-  background: var(--vm-panel);
-  border-color: var(--vm-panel-border);
-  box-shadow: var(--vm-shadow);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.76); /* Glassmorphism claro premium */
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   color: var(--vm-text);
   transition:
     background-color var(--vm-transition),
@@ -203,15 +203,15 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid var(--vm-btn-icon-border);
-  background: var(--vm-btn-icon-bg);
-  box-shadow: 0 8px 18px -10px rgba(15, 23, 42, 0.28);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 10px 24px -10px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: var(--vm-text);
   cursor: pointer;
   transition:
-    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
     background-color var(--vm-transition),
     border-color var(--vm-transition),
     box-shadow var(--vm-transition);
@@ -345,7 +345,7 @@ textarea::placeholder {
   border-radius: 9999px;
   border: 2px solid currentColor;
   opacity: 0.55;
-  animation: vm-orb-ring 1.8s ease-out infinite;
+  animation: vm-orb-ring 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   z-index: 1;
 }
 
@@ -356,11 +356,29 @@ textarea::placeholder {
 @keyframes vm-orb-ring {
   0% {
     transform: scale(0.55);
-    opacity: 0.7;
+    opacity: 0.8;
   }
   100% {
-    transform: scale(2.4);
+    transform: scale(2.6);
     opacity: 0;
+  }
+}
+
+/* Huellas de caminata activas con sutil vaivén */
+.vm-walk-active {
+  animation: vm-footprints-sway 1.6s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes vm-footprints-sway {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.06);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.06);
   }
 }
 

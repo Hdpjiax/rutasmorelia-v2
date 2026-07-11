@@ -9,6 +9,7 @@ import {
   Loader2,
   Share2,
   Link2,
+  LocateFixed,
 } from 'lucide-react';
 import type { TripPlan } from '@/lib/routing/planner';
 import {
@@ -33,6 +34,8 @@ type Props = {
   transferCountPlans: number;
   originCoords: boolean;
   geocodeDegraded?: boolean;
+  activeTrackingIndex?: number | null;
+  onToggleTracking?: (idx: number) => void;
   onSelectPlan: (idx: number) => void;
   onPlanTypeFilter: (f: 'all' | 'direct' | 'transfer') => void;
   onPlanSort: (s: PlanSortMode) => void;
@@ -55,6 +58,8 @@ export function TripResultsPanel({
   transferCountPlans,
   originCoords,
   geocodeDegraded,
+  activeTrackingIndex = null,
+  onToggleTracking,
   onSelectPlan,
   onPlanTypeFilter,
   onPlanSort,
@@ -258,7 +263,7 @@ export function TripResultsPanel({
 
               {firstWalk && firstWalk.distance > 0 && (
                 <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-sky-800">
-                  <Footprints className="h-3.5 w-3.5" aria-hidden />
+                  <Footprints className={`h-3.5 w-3.5 ${selectedPlanIndex === idx ? 'vm-walk-active' : ''}`} aria-hidden />
                   Camina {formatWalkMeters(firstWalk.distance)} hasta el punto de subida
                 </p>
               )}
@@ -288,6 +293,37 @@ export function TripResultsPanel({
                   </div>
                 ))}
               </div>
+
+              {/* Botón de Seguimiento GPS (Seguir mi viaje) */}
+              {selectedPlanIndex === idx && onToggleTracking && (
+                <div className="mt-3 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleTracking(idx);
+                    }}
+                    className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition shadow-md cursor-pointer touch-manipulation ${
+                      activeTrackingIndex === idx
+                        ? 'bg-rose-600 text-white hover:bg-rose-700 animate-pulse'
+                        : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    }`}
+                  >
+                    {activeTrackingIndex === idx ? (
+                      <>
+                        <span className="h-2.5 w-2.5 rounded-full bg-white animate-ping" />
+                        Detener seguimiento GPS activo
+                      </>
+                    ) : (
+                      <>
+                        <LocateFixed className="h-4 w-4" />
+                        Seguir mi viaje (Alertas GPS)
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
               <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-[9px] font-medium leading-relaxed text-amber-950">
                 Los puntos de <strong>subida y bajada</strong> son sugeridos (aprox.). En el mapa
                 se marcan con etiquetas Sube / Baja.
