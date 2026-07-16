@@ -1,11 +1,11 @@
 {
-    "name": "viamoreliaapp",
-    "short_name": "viamoreliaapp",
+    "name": "Vía Morelia",
+    "short_name": "Vía Morelia",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FAF9F6",
+    "theme_color": "#034A44",
+    "description": "Transporte público de Morelia — origen y destino, ida y vuelta.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
