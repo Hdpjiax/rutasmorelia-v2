@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-campestre-mision-del-valle.geojson",
+  "file": "data/processed/matched/ruta-campestre-mision-del-valle.geojson",
   "route_id": "ruta-campestre-mision-del-valle",
   "route_name": "Ruta Campestre Mision Del Valle",
   "status": "approved",
@@ -9,7 +9,7 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 8.71,
       "max_snap_m": 73.69,
       "confidence": 0.961,
@@ -18,7 +18,7 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 8.71,
       "max_snap_m": 73.69,
       "confidence": 0.961,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:46.481346+00:00"
+  "validated_at": "2026-07-16T19:36:27.825Z",
+  "transport_type": "combi"
 }

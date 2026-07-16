@@ -3,13 +3,14 @@ import { AdminLoginClient } from './admin-login-client';
 
 export const metadata: Metadata = {
   title: 'Admin · ViaMorelia',
-  description: 'Acceso restringido al panel de administración',
+  description: 'Panel QA solo en desarrollo local',
   robots: { index: false, follow: false },
 };
 
 /**
- * Login oculto solo para administradores (ADMIN_EMAILS).
- * No hay enlace en la UI pública; la URL se comparte al equipo.
+ * Ya no hay login por correo.
+ * En `pnpm dev` el middleware redirige a /admin/qa.
+ * Esta página solo explica el acceso local.
  */
 export default function AdminLoginPage() {
   return <AdminLoginClient />;

@@ -7,6 +7,7 @@ import '../../core/theme/via_theme.dart';
 import '../../state/app_controller.dart';
 import '../map/via_map_canvas.dart';
 import '../micro/via_panel.dart';
+import '../micro/via_toast.dart';
 import '../panels/favorites_panel.dart';
 import '../panels/legal_panel.dart';
 import '../panels/od_search_bar.dart';
@@ -58,17 +59,42 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     });
     ref.listen(appControllerProvider.select((s) => s.nearAlight), (prev, next) {
       if (next == true && prev != true && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Te acercas al punto de bajada sugerido (~150 m).'),
-            backgroundColor: ViaColors.amber,
-          ),
+        ViaToast.warn(
+          context,
+          'Te acercas al punto de bajada sugerido (~150 m). Prepárate para bajar.',
+          title: 'Casi llegas',
         );
       }
     });
     ref.listen(appControllerProvider.select((s) => s.gpsMessage), (prev, next) {
       if (next != null && next != prev && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(next)));
+        ViaToast.show(context, message: next, kind: ViaToastKind.gps, title: 'GPS');
+      }
+    });
+    ref.listen(appControllerProvider.select((s) => s.online), (prev, next) {
+      if (prev == true && next == false && mounted) {
+        ViaToast.show(
+          context,
+          message: 'Catálogo local activo. Algunas búsquedas pueden limitarse.',
+          kind: ViaToastKind.offline,
+        );
+      } else if (prev == false && next == true && mounted) {
+        ViaToast.success(context, 'Conexión restaurada.', title: 'En línea');
+      }
+    });
+    ref.listen(appControllerProvider.select((s) => (s.bannerMessage, s.online)), (prev, next) {
+      final msg = next.$1;
+      if (msg != null && msg != prev?.$1 && next.$2 && mounted) {
+        ViaToast.warn(context, msg, title: 'Aviso');
+      }
+    });
+    ref.listen(appControllerProvider.select((s) => s.plans.length), (prev, next) {
+      if ((prev ?? 0) == 0 && next > 0 && mounted) {
+        ViaToast.success(
+          context,
+          next == 1 ? 'Encontramos 1 opción de viaje.' : 'Encontramos $next opciones de viaje.',
+          title: 'Rutas listas',
+        );
       }
     });
 
@@ -96,14 +122,13 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                   ? (p) {
                       final mode = state.pinDropMode;
                       ctrl.applyPinDrop(p);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            mode == PinDropMode.origin
-                                ? 'Origen fijado en el mapa'
-                                : 'Destino fijado en el mapa',
-                          ),
-                        ),
+                      ViaToast.show(
+                        context,
+                        message: mode == PinDropMode.origin
+                            ? 'Origen fijado en el mapa'
+                            : 'Destino fijado en el mapa',
+                        kind: ViaToastKind.pin,
+                        title: mode == PinDropMode.origin ? 'Origen' : 'Destino',
                       );
                     }
                   : null,
@@ -111,11 +136,12 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             ),
           ),
 
+          // Velo suave (no bloque sólido) para legibilidad del status bar
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: 110,
+            height: 72,
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -123,7 +149,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      ViaColors.paper.withValues(alpha: 0.88),
+                      ViaColors.paper.withValues(alpha: 0.42),
                       ViaColors.paper.withValues(alpha: 0),
                     ],
                   ),
@@ -166,18 +192,19 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ViaPanel(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                // Logo + nombre transparentes (sin ViaPanel / bloque blanco)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, right: 2),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
                         'assets/brand/icono-sin-fondo.png',
-                        width: 30,
-                        height: 30,
+                        width: 36,
+                        height: 36,
                         errorBuilder: (_, _, _) => Container(
-                          width: 30,
-                          height: 30,
+                          width: 36,
+                          height: 36,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             gradient: const LinearGradient(
@@ -186,19 +213,36 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                           ),
                           child: const Icon(Icons.route_rounded, size: 16, color: Colors.white),
                         ),
-                      ),
-                      const SizedBox(width: 8),
+                      )
+                          .animate(onPlay: (c) => c.repeat(reverse: true))
+                          .scale(
+                            begin: const Offset(0.96, 0.96),
+                            end: const Offset(1.05, 1.05),
+                            duration: 1600.ms,
+                            curve: Curves.easeInOut,
+                          ),
+                      const SizedBox(width: 6),
                       Image.asset(
                         'assets/brand/nombre-sin-fondo.png',
-                        height: 18,
-                        errorBuilder: (_, _, _) => const Text(
+                        height: 22,
+                        errorBuilder: (_, _, _) => Text(
                           'Vía Morelia',
-                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13.5),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                            color: ViaColors.ink,
+                            shadows: [
+                              Shadow(
+                                color: Colors.white.withValues(alpha: 0.95),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.06, end: 0),
+                ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.08, end: 0, curve: Curves.easeOutBack),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Align(

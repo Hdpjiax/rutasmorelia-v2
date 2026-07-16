@@ -511,8 +511,10 @@ class RoutingEngine {
     required LatLng origin,
     required LatLng destination,
     required List<RouteShapeModel> shapes,
-    double maxWalkDistanceMeters = 900.0,
+    double maxWalkDistanceMeters = 1100.0,
     bool allowTransfers = true,
+    int maxDirectPlans = 12,
+    int maxTransferPlans = 8,
   }) {
     if (origin.latitude == destination.latitude &&
         origin.longitude == destination.longitude) {
@@ -552,8 +554,9 @@ class RoutingEngine {
         maxWalkDistanceMeters,
       );
       if (pair == null) continue;
-      if (pair.rideM < 250) continue;
-      if (pair.walkTotal > maxWalkDistanceMeters * 2) continue;
+      if (pair.rideM < 200) continue;
+      // Caminata total generosa: más directos viables en Morelia
+      if (pair.walkTotal > maxWalkDistanceMeters * 1.85) continue;
 
       final boardPt = asValidCoord(pair.board.point);
       final alightPt = asValidCoord(pair.alight.point);
@@ -618,7 +621,7 @@ class RoutingEngine {
       return a.totalDuration.compareTo(b.totalDuration);
     });
 
-    final goodDirects = _dedupePlans(directs).take(6).toList();
+    final goodDirects = _dedupePlans(directs).take(maxDirectPlans).toList();
 
     // 2) Compute Transfer Plans (if allowed)
     final transfers = <TripPlanModel>[];
@@ -756,7 +759,7 @@ class RoutingEngine {
       return a.totalDuration.compareTo(b.totalDuration);
     });
 
-    final goodTransfers = _dedupePlans(transfers).take(6).toList();
+    final goodTransfers = _dedupePlans(transfers).take(maxTransferPlans).toList();
 
     return [...goodDirects, ...goodTransfers];
   }

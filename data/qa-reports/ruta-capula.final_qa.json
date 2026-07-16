@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-capula.geojson",
+  "file": "data/processed/matched/ruta-capula.geojson",
   "route_id": "ruta-capula",
   "route_name": "Ruta Capula",
   "status": "approved",
@@ -18,13 +18,14 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 11.68,
-      "max_snap_m": 36.89,
-      "confidence": 0.948,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:46.509646+00:00"
+  "validated_at": "2026-07-16T19:54:27.843Z",
+  "transport_type": "combi"
 }

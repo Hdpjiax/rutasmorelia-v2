@@ -77,10 +77,28 @@ class ViaOrb extends StatelessWidget {
 
 class ViaUserDot extends StatelessWidget {
   final double size;
-  const ViaUserDot({super.key, this.size = 28});
+  final bool pulse;
+  const ViaUserDot({super.key, this.size = 28, this.pulse = true});
 
   @override
   Widget build(BuildContext context) {
+    final core = Container(
+      width: size * 0.55,
+      height: size * 0.55,
+      decoration: BoxDecoration(
+        color: ViaColors.mint,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2.5),
+        boxShadow: [
+          BoxShadow(color: ViaColors.mint.withValues(alpha: 0.45), blurRadius: 6),
+        ],
+      ),
+    );
+
+    if (!pulse) {
+      return SizedBox(width: size, height: size, child: Center(child: core));
+    }
+
     return SizedBox(
       width: size,
       height: size,
@@ -98,18 +116,7 @@ class ViaUserDot extends StatelessWidget {
               .animate(onPlay: (c) => c.repeat(reverse: true))
               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.35, 1.35), duration: 1100.ms)
               .fade(begin: 0.7, end: 0.15),
-          Container(
-            width: size * 0.55,
-            height: size * 0.55,
-            decoration: BoxDecoration(
-              color: ViaColors.mint,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2.5),
-              boxShadow: [
-                BoxShadow(color: ViaColors.mint.withValues(alpha: 0.5), blurRadius: 8),
-              ],
-            ),
-          ),
+          core,
         ],
       ),
     );

@@ -159,6 +159,24 @@
       "created_at": "2026-07-10T03:08:23.350Z",
       "updated_at": "2026-07-10T03:08:23.350Z",
       "flags": []
+    },
+    {
+      "route_id": "ruta-campestre-mision-del-valle",
+      "route_name": "Ruta Campestre Mision Del Valle",
+      "note": "Borrador guardado (ida)",
+      "status": "note",
+      "created_at": "2026-07-16T19:32:47.583Z",
+      "updated_at": "2026-07-16T19:36:24.902Z",
+      "flags": []
+    },
+    {
+      "route_id": "ruta-campestre-posta-trebol-monarca",
+      "route_name": "Ruta Campestre Posta Trebol Monarca",
+      "note": "Borrador guardado (ida)",
+      "status": "note",
+      "created_at": "2026-07-16T19:50:26.743Z",
+      "updated_at": "2026-07-16T19:52:34.877Z",
+      "flags": []
     }
   ]
 }

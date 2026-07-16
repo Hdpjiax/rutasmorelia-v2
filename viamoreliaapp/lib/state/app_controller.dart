@@ -305,6 +305,8 @@ class AppController extends StateNotifier<AppUiState> {
   StreamSubscription<TripDeepLink>? _linkSub;
   int _planToken = 0;
   DateTime _lastCameraMove = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastGpsUiPush = DateTime.fromMillisecondsSinceEpoch(0);
+  LatLng? _pendingGps;
 
   ShapeIndexService get _index => _ref.read(shapeIndexProvider);
   LocationService get _location => _ref.read(locationServiceProvider);
@@ -493,24 +495,29 @@ class AppController extends StateNotifier<AppUiState> {
   void startLiveGps() {
     _gpsSub?.cancel();
     state = state.copyWith(gpsLive: true);
+    // Throttle: el stream de GPS puede llegar a 1 Hz+, pero no hace falta
+    // reconstruir toda la UI en cada tick.
     _gpsSub = _location.getPositionStream().listen((pos) {
       final now = DateTime.now();
-      state = state.copyWith(userPosition: pos);
+      _pendingGps = pos;
 
-      // Sync origin while tracking optional
-      if (state.tracking && state.followCamera) {
-        // camera handled in UI with throttle
+      final minMs = state.tracking ? 700 : 1200;
+      if (now.difference(_lastGpsUiPush).inMilliseconds < minMs) {
+        return;
       }
+      _lastGpsUiPush = now;
+      final p = _pendingGps ?? pos;
 
       if (state.tracking && state.selectedPlan != null) {
-        _updateTrackingProgress(pos, state.selectedPlan!);
+        _updateTrackingProgress(p, state.selectedPlan!);
+      } else {
+        state = state.copyWith(userPosition: p);
       }
 
       if (state.tracking &&
           state.followCamera &&
           now.difference(_lastCameraMove).inMilliseconds > 1200) {
         _lastCameraMove = now;
-        // UI listens to userPosition + tracking
       }
     });
   }

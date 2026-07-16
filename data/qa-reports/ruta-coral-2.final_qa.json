@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-coral-2.geojson",
+  "file": "data/processed/matched/ruta-coral-2.geojson",
   "route_id": "ruta-coral-2",
   "route_name": "Coral 2",
   "status": "approved",
@@ -11,20 +11,21 @@
       "qa_status": "approved",
       "validator": "valhalla+osrm",
       "avg_snap_m": 1.7,
-      "max_snap_m": 14.0,
+      "max_snap_m": 14,
       "confidence": 0.992,
       "issues": []
     },
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 1.95,
-      "max_snap_m": 8.68,
-      "confidence": 0.991,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:46.887115+00:00"
+  "validated_at": "2026-07-16T20:00:20.647Z",
+  "transport_type": "combi"
 }

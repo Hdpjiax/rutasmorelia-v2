@@ -1,0 +1,9 @@
+# Copia este archivo a key.properties y rellena con tus contraseñas.
+# key.properties NO se sube a git (está en .gitignore).
+#
+#   copy key.properties.example key.properties
+#
+storePassword=delta1212
+keyPassword=delta1212
+keyAlias=upload
+storeFile=upload-keystore.jks

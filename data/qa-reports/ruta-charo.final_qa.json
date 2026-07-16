@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-charo.geojson",
+  "file": "data/processed/matched/ruta-charo.geojson",
   "route_id": "ruta-charo",
   "route_name": "Charo",
   "status": "approved",
@@ -9,10 +9,10 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 5.76,
-      "max_snap_m": 30.24,
-      "confidence": 0.974,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     },
     {
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:46.585710+00:00"
+  "validated_at": "2026-07-16T19:56:40.348Z",
+  "transport_type": "foraneo"
 }

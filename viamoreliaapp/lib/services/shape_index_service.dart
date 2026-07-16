@@ -8,7 +8,7 @@ import '../models/route_model.dart';
 import 'api_client.dart';
 import 'local_db_service.dart';
 
-/// Índice de shapes: catálogo rápido + carga bajo demanda (bbox) + cache disco.
+/// ├ìndice de shapes: cat├ílogo r├ípido + carga bajo demanda (bbox) + cache disco.
 /// No bloquea el arranque cargando las 101 rutas.
 class ShapeIndexService {
   ShapeIndexService({
@@ -40,7 +40,7 @@ class ShapeIndexService {
     _error = null;
     onProgress?.call(0.1);
 
-    // Catálogo remoto → cache → assets (rápido; no shapes aún)
+    // Cat├ílogo remoto ÔåÆ cache ÔåÆ assets (r├ípido; no shapes a├║n)
     var list = await _api.fetchCatalog();
     if (list.isEmpty) {
       try {
@@ -48,7 +48,7 @@ class ShapeIndexService {
         list = _parseCatalog(asset);
         await _localDb.cacheRouteMetaList(asset);
       } catch (e) {
-        _error = 'No se pudo cargar catálogo: $e';
+        _error = 'No se pudo cargar cat├ílogo: $e';
       }
     }
 
@@ -56,7 +56,7 @@ class ShapeIndexService {
     _catalogReady = _catalog.isNotEmpty;
     onProgress?.call(1);
     if (!_catalogReady) {
-      _error ??= 'Catálogo vacío';
+      _error ??= 'Cat├ílogo vac├¡o';
     }
   }
 
@@ -88,45 +88,42 @@ class ShapeIndexService {
     return parsed;
   }
 
-  /// Carga shapes cercanas al OD (como loadShapesNearTrip de la web).
+  /// Carga shapes para planificar OD.
+  /// Evalua TODO el catalogo en lotes paralelos (no solo las primeras N)
+  /// y filtra por bbox del viaje para no perder directos.
   Future<List<RouteShapeModel>> loadShapesNearTrip(
     LatLng origin,
     LatLng destination, {
     void Function(double p)? onProgress,
   }) async {
-    // Ampliar pad hasta tener suficientes
-    for (final pad in [0.028, 0.05, 0.09, 0.14]) {
-      final candidates = _catalogNearBbox(origin, destination, pad);
-      if (candidates.isEmpty) continue;
+    if (_catalog.isEmpty) return const [];
 
-      final out = <RouteShapeModel>[];
-      for (var i = 0; i < candidates.length; i++) {
-        final shapes = await ensureShapesForRoute(candidates[i].id);
-        out.addAll(shapes);
-        onProgress?.call((i + 1) / candidates.length);
+    final all = <RouteShapeModel>[];
+    final list = List<RouteMetaModel>.from(_catalog);
+    const batch = 10;
+
+    for (var i = 0; i < list.length; i += batch) {
+      final slice = list.skip(i).take(batch).toList();
+      final results = await Future.wait(
+        slice.map((m) => ensureShapesForRoute(m.id)),
+      );
+      for (final shapes in results) {
+        all.addAll(shapes);
       }
+      onProgress?.call(((i + slice.length) / list.length * 0.9).clamp(0.0, 0.9));
+    }
 
-      // Filtrar por intersección real con bbox expandido
-      final filtered = _filterShapesByBbox(out, origin, destination, pad);
-      if (filtered.length >= 6 || pad >= 0.14) {
-        return filtered.isEmpty ? out : filtered;
+    for (final pad in [0.05, 0.09, 0.15, 0.24]) {
+      final filtered = _filterShapesByBbox(all, origin, destination, pad);
+      if (filtered.length >= 14 || pad >= 0.24) {
+        onProgress?.call(1);
+        if (filtered.isEmpty) return all;
+        return filtered;
       }
     }
-    // Fallback: cargar una muestra amplia
-    final sample = _catalog.take(24).toList();
-    final out = <RouteShapeModel>[];
-    for (final m in sample) {
-      out.addAll(await ensureShapesForRoute(m.id));
-    }
-    return out;
-  }
 
-  List<RouteMetaModel> _catalogNearBbox(LatLng o, LatLng d, double pad) {
-    // Sin geometría aún: devolver catálogo completo acotado por tamaño
-    // (shapes se filtran después de cargar). Priorizamos todas y limitamos.
-    if (_catalog.length <= 40) return List.from(_catalog);
-    // Heurística: preferir combis si viaje urbano
-    return List.from(_catalog);
+    onProgress?.call(1);
+    return all;
   }
 
   List<RouteShapeModel> _filterShapesByBbox(
@@ -143,19 +140,16 @@ class ShapeIndexService {
     final out = <RouteShapeModel>[];
     for (final s in shapes) {
       if (s.coordinates.isEmpty) continue;
-      var hits = 0;
-      final step = (s.coordinates.length / 14).ceil().clamp(1, 50);
+      // 1 hit basta: rutas largas pueden rozar el bbox en pocos puntos
+      final step = (s.coordinates.length / 20).ceil().clamp(1, 40);
       for (var i = 0; i < s.coordinates.length; i += step) {
         final p = s.coordinates[i];
         if (p.latitude >= minLat &&
             p.latitude <= maxLat &&
             p.longitude >= minLng &&
             p.longitude <= maxLng) {
-          hits++;
-          if (hits >= 2) {
-            out.add(s);
-            break;
-          }
+          out.add(s);
+          break;
         }
       }
     }

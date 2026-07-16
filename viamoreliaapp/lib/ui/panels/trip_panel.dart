@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/via_theme.dart';
 import '../../models/trip_plan_model.dart';
@@ -138,7 +139,23 @@ class TripPanel extends ConsumerWidget {
                       ctrl.startTracking();
                     },
                     onStopTrack: ctrl.stopTracking,
-                  );
+                  )
+                      .animate()
+                      .fadeIn(duration: 280.ms, delay: (45 * i).ms)
+                      .slideY(
+                        begin: 0.1,
+                        end: 0,
+                        duration: 340.ms,
+                        delay: (45 * i).ms,
+                        curve: Curves.easeOutCubic,
+                      )
+                      .scale(
+                        begin: const Offset(0.97, 0.97),
+                        end: const Offset(1, 1),
+                        duration: 320.ms,
+                        delay: (45 * i).ms,
+                        curve: Curves.easeOutBack,
+                      );
                 },
               ),
             ),

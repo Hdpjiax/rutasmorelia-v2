@@ -2,20 +2,50 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:maplibre/maplibre.dart';
 
-/// Aplica tintes tipo web (`enhance-basemap.ts`) + Periférico República.
+/// Ajustes sobre Carto Positron (mapa **blanco/papel**).
 ///
-/// - Parques/verde, agua, vías férreas (sobre capas Carto Positron)
-/// - Circuito Periférico Paseo de la República (GeoJSON OSM real)
+/// Importante: NO pintar landuse/landcover completo en verde (eso tiñe
+/// toda la ciudad). Solo realzar zonas puntuales, como en la web:
+/// - parques / césped / bosque (filtrados por `class`)
+/// - agua
+/// - ferrocarril tenue
+/// - Periférico República (GeoJSON)
 Future<void> enhanceBasemapLikeWeb(StyleController style) async {
-  // ---- Verde / parques (sobre landcover existente) ----
+  // Clases verdes reales (OpenMapTiles). Excluye residential/commercial/etc.
+  final greenClasses = [
+    'grass',
+    'wood',
+    'forest',
+    'park',
+    'garden',
+    'cemetery',
+    'pitch',
+    'golf_course',
+    'recreation_ground',
+    'allotments',
+    'village_green',
+    'scrub',
+    'wetland',
+    'national_park',
+    'nature_reserve',
+  ];
+
+  final greenFilter = <Object>[
+    'in',
+    ['get', 'class'],
+    ['literal', greenClasses],
+  ];
+
+  // Parques / áreas verdes (sutiles; mapa base se mantiene claro)
   await _tryAddFill(
     style,
     id: 'rm-green-landcover',
     sourceId: 'carto',
     sourceLayerId: 'landcover',
+    filter: greenFilter,
     paint: {
       'fill-color': '#cfe8c8',
-      'fill-opacity': 0.55,
+      'fill-opacity': 0.42,
     },
   );
   await _tryAddFill(
@@ -25,21 +55,23 @@ Future<void> enhanceBasemapLikeWeb(StyleController style) async {
     sourceLayerId: 'park',
     paint: {
       'fill-color': '#cfe8c8',
-      'fill-opacity': 0.62,
+      'fill-opacity': 0.48,
     },
   );
+  // Solo landuse de tipo parque/recreo — NUNCA todo el landuse
   await _tryAddFill(
     style,
     id: 'rm-green-landuse',
     sourceId: 'carto',
     sourceLayerId: 'landuse',
+    filter: greenFilter,
     paint: {
       'fill-color': '#d4ebc9',
-      'fill-opacity': 0.35,
+      'fill-opacity': 0.36,
     },
   );
 
-  // ---- Agua ----
+  // Agua (como en web)
   await _tryAddFill(
     style,
     id: 'rm-water-boost',
@@ -62,25 +94,9 @@ Future<void> enhanceBasemapLikeWeb(StyleController style) async {
     },
   );
 
-  // ---- Ferrocarril (tenue, como web) ----
-  await _tryAddLine(
-    style,
-    id: 'rm-rail-boost',
-    sourceId: 'carto',
-    sourceLayerId: 'transportation',
-    filter: [
-      'in',
-      ['get', 'class'],
-      ['literal', ['rail', 'transit']],
-    ],
-    paint: {
-      'line-color': '#c2b8b0',
-      'line-opacity': 0.32,
-      'line-width': 1.4,
-    },
-  );
+  // (rail omitido a propósito: poco valor visual vs costo de capa extra)
 
-  // ---- Periférico República (asset) ----
+  // Periférico República (asset local)
   try {
     final geo = await rootBundle.loadString('assets/map/periferico-republica.geojson');
     await style.addSource(
@@ -93,7 +109,7 @@ Future<void> enhanceBasemapLikeWeb(StyleController style) async {
         paint: {
           'line-color': '#f3e8b8',
           'line-width': 9.0,
-          'line-opacity': 0.18,
+          'line-opacity': 0.16,
           'line-blur': 0.8,
         },
         layout: {
@@ -109,7 +125,7 @@ Future<void> enhanceBasemapLikeWeb(StyleController style) async {
         paint: {
           'line-color': '#f5e9b0',
           'line-width': 4.5,
-          'line-opacity': 0.38,
+          'line-opacity': 0.34,
         },
         layout: {
           'line-cap': 'round',
@@ -117,7 +133,6 @@ Future<void> enhanceBasemapLikeWeb(StyleController style) async {
         },
       ),
     );
-    // Etiqueta a lo largo del eje (si el runtime lo soporta)
     await style.addLayer(
       SymbolStyleLayer(
         id: 'rm-periferico-label',

@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-campestre-posta-trebol-monarca.geojson",
+  "file": "data/processed/matched/ruta-campestre-posta-trebol-monarca.geojson",
   "route_id": "ruta-campestre-posta-trebol-monarca",
   "route_name": "Ruta Campestre Posta Trebol Monarca",
   "status": "approved",
@@ -9,7 +9,7 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 8.16,
       "max_snap_m": 206.59,
       "confidence": 0.964,
@@ -18,7 +18,7 @@
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 8.16,
       "max_snap_m": 206.59,
       "confidence": 0.964,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:46.496525+00:00"
+  "validated_at": "2026-07-16T19:53:48.117Z",
+  "transport_type": "combi"
 }

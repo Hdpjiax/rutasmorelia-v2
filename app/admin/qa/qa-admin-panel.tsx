@@ -1637,10 +1637,10 @@ export default function QaAdminPanel({ initialSummary, initialReports }: Props) 
           role="status"
         >
           <strong className="font-semibold">Flujo oficial:</strong> edita y guarda en{' '}
-          <code className="rounded bg-amber-100 px-1">localhost</code>, luego publica con{' '}
-          <code className="rounded bg-amber-100 px-1">git push</code> + seed a Supabase. En Vercel las
-          APIs de match/save/delete responden 501 (disco efímero). Acceso: sesión con email en{' '}
-          <code className="rounded bg-amber-100 px-1">ADMIN_EMAILS</code>.
+          <code className="rounded bg-amber-100 px-1">pnpm dev</code> (
+          <code className="rounded bg-amber-100 px-1">/admin/qa</code>, sin login), luego publica con{' '}
+          <code className="rounded bg-amber-100 px-1">git push</code> + seed a Supabase. En Vercel el
+          panel y las APIs de match/save/delete están bloqueados (disco efímero).
         </div>
       </header>
 

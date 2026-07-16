@@ -12,4 +12,9 @@ export {
   type SessionUser,
 } from '@/lib/auth/session';
 export { getBrowserSupabase } from '@/lib/auth/browser-client';
-export { isAdminEmail, getAdminEmails } from '@/lib/auth/admin';
+export {
+  isAdminEmail,
+  getAdminEmails,
+  isLocalAdminDev,
+  isAdminAccessAllowed,
+} from '@/lib/auth/admin';

@@ -62,8 +62,9 @@ class PlannerIsolate {
       shapes: shapes,
     );
 
-    final directs = plans.where((p) => p.type == TripPlanType.direct).take(6);
-    final transfers = plans.where((p) => p.type == TripPlanType.transfer).take(6);
+    // Más directos visibles (el motor ya dedupea y ordena)
+    final directs = plans.where((p) => p.type == TripPlanType.direct).take(12);
+    final transfers = plans.where((p) => p.type == TripPlanType.transfer).take(8);
     return [...directs, ...transfers].map(_planToMap).toList();
   }
 
