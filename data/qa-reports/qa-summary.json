@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-16T20:00:20.897Z",
+  "generated_at": "2026-07-16T20:47:53.660Z",
   "totals": {
-    "routes": 101,
-    "approved": 101,
+    "routes": 100,
+    "approved": 100,
     "needs_review": 0,
     "rejected": 0
   },
@@ -1033,17 +1033,6 @@
     {
       "route_id": "ruta-rosa-puerta-del-sol-galaxia",
       "route_name": "Rosa Puerta del Sol - Galaxia",
-      "status": "approved",
-      "publishable": true,
-      "issue_count": 0,
-      "directions": [
-        "ida",
-        "vuelta"
-      ]
-    },
-    {
-      "route_id": "ruta-trincheras",
-      "route_name": "Trincheras",
       "status": "approved",
       "publishable": true,
       "issue_count": 0,

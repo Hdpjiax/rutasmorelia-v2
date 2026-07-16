@@ -177,6 +177,24 @@
       "created_at": "2026-07-16T19:50:26.743Z",
       "updated_at": "2026-07-16T19:52:34.877Z",
       "flags": []
+    },
+    {
+      "route_id": "ruta-durazo-santa-maria",
+      "route_name": "Durazno - Santa Maria",
+      "note": "Borrador guardado (vuelta)",
+      "status": "note",
+      "created_at": "2026-07-16T20:10:56.321Z",
+      "updated_at": "2026-07-16T20:20:04.646Z",
+      "flags": []
+    },
+    {
+      "route_id": "ruta-negra-1",
+      "route_name": "Negra 1",
+      "note": "Borrador guardado (vuelta)",
+      "status": "note",
+      "created_at": "2026-07-16T20:36:37.570Z",
+      "updated_at": "2026-07-16T20:36:37.570Z",
+      "flags": []
     }
   ]
 }

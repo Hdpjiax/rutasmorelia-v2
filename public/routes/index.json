@@ -423,10 +423,9 @@
       "name": "Durazno - Santa Maria",
       "color": "#8D6E63",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-durazo-santa-maria.geojson",
-      "colorName": "Durazno",
+      "colorName": "Azul",
       "colorLetter": "D",
-      "casingColor": "#3E2723"
+      "geojsonFile": "/routes/ruta-durazo-santa-maria.geojson"
     },
     {
       "id": "ruta-el-pedregal",
@@ -663,10 +662,9 @@
       "name": "Negra 1",
       "color": "#1A1A1A",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-negra-1.geojson",
-      "colorName": "Negro",
+      "colorName": "Azul",
       "colorLetter": "N",
-      "casingColor": "#F5F5F5"
+      "geojsonFile": "/routes/ruta-negra-1.geojson"
     },
     {
       "id": "ruta-negra-2",
@@ -937,16 +935,6 @@
       "colorName": "Rosa",
       "colorLetter": "R",
       "casingColor": "#880E4F"
-    },
-    {
-      "id": "ruta-trincheras",
-      "name": "Trincheras",
-      "color": "#795548",
-      "transportType": "combi",
-      "geojsonFile": "/routes/ruta-trincheras.geojson",
-      "colorName": "Trincheras",
-      "colorLetter": "T",
-      "casingColor": "#3E2723"
     },
     {
       "id": "ruta-verde-1",

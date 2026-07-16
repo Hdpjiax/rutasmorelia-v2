@@ -1,5 +1,5 @@
 {
-  "file": "d:\\rutasmorelia\\data\\processed\\matched\\ruta-negra-1.geojson",
+  "file": "data/processed/matched/ruta-negra-1.geojson",
   "route_id": "ruta-negra-1",
   "route_name": "Negra 1",
   "status": "approved",
@@ -9,16 +9,16 @@
     {
       "direction": "ida",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
-      "avg_snap_m": 2.37,
-      "max_snap_m": 36.95,
-      "confidence": 0.989,
+      "validator": "valhalla-editor",
+      "avg_snap_m": 2.1,
+      "max_snap_m": 5.8,
+      "confidence": 1,
       "issues": []
     },
     {
       "direction": "vuelta",
       "qa_status": "approved",
-      "validator": "valhalla+osrm",
+      "validator": "valhalla-editor",
       "avg_snap_m": 2.36,
       "max_snap_m": 27.71,
       "confidence": 0.99,
@@ -26,5 +26,6 @@
     }
   ],
   "pass": true,
-  "validated_at": "2026-07-09T11:25:47.320991+00:00"
+  "validated_at": "2026-07-16T20:43:43.941Z",
+  "transport_type": "combi"
 }
