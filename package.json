@@ -18,7 +18,8 @@
     "mobile:install": "pnpm --dir mobile install",
     "mobile:sync": "pnpm --dir mobile sync",
     "mobile:open": "pnpm --dir mobile open",
-    "mobile:doctor": "pnpm --dir mobile doctor"
+    "mobile:doctor": "pnpm --dir mobile doctor",
+    "mockups:store": "node scripts/capture_store_mockups.mjs http://localhost:3000"
   },
   "dependencies": {
     "@capacitor/browser": "^7.0.5",

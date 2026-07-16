@@ -6,11 +6,13 @@ import "./welcome-desktop-fix.css";
 
 /**
  * App tipo mapa: el usuario hace zoom solo en MapLibre, no en la página.
- * (evita que el pinch mueva toda la UI en móvil)
+ * (evita que el pinch mueva toda la UI en móvil / tablet / Chrome)
+ * Nota: Chrome a veces ignora user-scalable; se refuerza con CSS + PreventPageZoom.
  */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  minimumScale: 1,
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",

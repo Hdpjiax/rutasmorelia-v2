@@ -31,9 +31,42 @@ data/osrm/
 data/valhalla/tiles/
 data/valhalla/tiles.tar
 data/valhalla/build/
+data/qa-reports/
+data/processed/
 *.osm.pbf
 *.osrm*
 *.tar
+
+# Unnecessary root-level PDF scans (sources live under rutastransporte/)
+/*.pdf
+
+# Root brand drafts / scratch screenshots (canonical: public/brand, viamoreliaapp/assets/brand)
+/icono.png
+/icononuevo.png
+/nombre.png
+/logo-sin-fondo.png
+/logo-sin-fondo-128.png
+/erroresdart.png
+/privacidad.png
+/warnigs.png
+/ui.jpg
+
+# Flutter local/build (also covered by viamoreliaapp/.gitignore)
+viamoreliaapp/.dart_tool/
+viamoreliaapp/.packages
+viamoreliaapp/.pub-cache/
+viamoreliaapp/.pub/
+viamoreliaapp/build/
+viamoreliaapp/**/ephemeral/
+viamoreliaapp/android/local.properties
+viamoreliaapp/android/.gradle/
+viamoreliaapp/android/**/build/
+viamoreliaapp/ios/Pods/
+viamoreliaapp/ios/.symlinks/
+viamoreliaapp/**/*.iml
+viamoreliaapp/.idea/
+viamoreliaapp/**/*.apk
+viamoreliaapp/**/*.aab
 
 # Logs & local runtime
 *.log
@@ -42,13 +75,19 @@ terminals/
 test-results/
 playwright-report/
 coverage/
+scratch/
+mockups/
 
-# Tooling / IDE / agents local
+# Tooling / IDE / agents local (keep project skills only)
 .gemini/
-..agents/
+.agents/skills/*
+!.agents/skills/rutas-morelia-*/
+!.agents/skills/rutas-morelia-*/**
+.codebase-memory/
 codebase-memory-mcp-ui-windows-amd64/
 mcps/
 *.exe
+d/
 
 # OS / editor
 .DS_Store
@@ -62,4 +101,8 @@ Thumbs.db
 # Misc
 *.tmp
 *.bak
-d/
+*.class
+.history/
+
+# Accidental path from old ignore typo
+..agents/

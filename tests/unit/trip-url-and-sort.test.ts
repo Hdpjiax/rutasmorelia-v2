@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTripShareUrl,
+  fingerprintForPlan,
   hasTripShareParams,
+  matchPlanIndex,
   parseCoordParam,
   readTripUrlState,
   stripTripShareSearchParams,
@@ -42,17 +44,70 @@ describe('trip URL state', () => {
     expect(s.planIndex).toBe(1);
   });
 
-  it('construye URL compartible', () => {
+  it('construye URL compartible con plan y routes', () => {
     const url = buildTripShareUrl({
       base: 'https://viamorelia.org/',
       origin: [-101.19, 19.7],
       destination: [-101.17, 19.68],
       originLabel: 'Catedral',
       planIndex: 0,
+      routeId: 'ruta-amarilla-centro',
+      routesFingerprint: 'ruta-amarilla-centro:ida',
     });
     expect(url).toContain('from=');
     expect(url).toContain('to=');
     expect(url).toContain('fromLabel=Catedral');
+    expect(url).toContain('plan=0');
+    expect(url).toContain('route=ruta-amarilla-centro');
+    expect(url.includes('routes=ruta-amarilla-centro')).toBe(true);
+  });
+
+  it('lee routes fingerprint de la query', () => {
+    const s = readTripUrlState(
+      '?from=-101.19,19.70&to=-101.17,19.68&route=ruta-x&routes=ruta-x%3Aida%7Cruta-y%3Avuelta&plan=2'
+    );
+    expect(s.routeId).toBe('ruta-x');
+    expect(s.routesFingerprint).toBe('ruta-x:ida|ruta-y:vuelta');
+    expect(s.planIndex).toBe(2);
+  });
+
+  it('matchPlanIndex prioriza huella de rutas', () => {
+    const plans: TripPlan[] = [
+      fakePlan({
+        type: 'direct',
+        segments: [
+          {
+            type: 'ride',
+            instruction: 'a',
+            distance: 1,
+            duration: 1,
+            routeId: 'ruta-a',
+            direction: 'ida',
+          },
+        ],
+      }),
+      fakePlan({
+        type: 'direct',
+        segments: [
+          {
+            type: 'ride',
+            instruction: 'b',
+            distance: 1,
+            duration: 1,
+            routeId: 'ruta-b',
+            direction: 'vuelta',
+          },
+        ],
+      }),
+    ];
+    expect(fingerprintForPlan(plans[1])).toBe('ruta-b:vuelta');
+    expect(
+      matchPlanIndex(plans, {
+        fingerprint: 'ruta-b:vuelta',
+        fallbackIndex: 0,
+      })
+    ).toBe(1);
+    expect(matchPlanIndex(plans, { routeId: 'ruta-a', fallbackIndex: 1 })).toBe(0);
   });
 
   it('detecta params de viaje compartido', () => {
@@ -63,12 +118,13 @@ describe('trip URL state', () => {
 
   it('limpia params de viaje sin tocar admin', () => {
     const next = stripTripShareSearchParams(
-      '?from=-101.19,19.70&to=-101.17,19.68&fromLabel=Centro&admin=login'
+      '?from=-101.19,19.70&to=-101.17,19.68&fromLabel=Centro&routes=r%3Aida&admin=login'
     );
     expect(next).toContain('admin=login');
     expect(next).not.toContain('from=');
     expect(next).not.toContain('to=');
     expect(next).not.toContain('fromLabel=');
+    expect(next).not.toContain('routes=');
   });
 });
 

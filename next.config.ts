@@ -36,6 +36,8 @@ const nextConfig: NextConfig = {
     '*': heavyIgnores,
   },
   serverExternalPackages: [],
+  // Oculta el badge "N" de desarrollo (capturas / mockups de tienda)
+  devIndicators: false,
   typescript: {
     ignoreBuildErrors: false,
   },

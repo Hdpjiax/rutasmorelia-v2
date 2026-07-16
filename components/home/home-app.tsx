@@ -39,10 +39,21 @@ import { ResultsSheet } from '@/components/home/results-sheet';
 import { SelectedRouteCard } from '@/components/home/selected-route-card';
 import { OfflineBanner } from '@/components/home/offline-banner';
 import { LegalLinks } from '@/components/home/legal-links';
+import {
+  LegalInfoSheet,
+  type LegalTab,
+} from '@/components/home/legal-info-sheet';
 import { RouteExplorerList } from '@/components/home/route-explorer-list';
 import { SkipLink } from '@/components/ui/skip-link';
-import { openExternalUrl } from '@/lib/utils/external-link';
-import { buildTripShareUrl, shareOrCopyTripUrl, copyTextToClipboard, sortTripPlans, readTripUrlState } from '@/features/planner';
+import {
+  buildTripShareUrl,
+  shareOrCopyTripUrl,
+  copyTextToClipboard,
+  sortTripPlans,
+  readTripUrlState,
+  fingerprintForPlan,
+  primaryRouteIdFromPlan,
+} from '@/features/planner';
 import { TripResultsPanel } from '@/components/home/trip-results-panel';
 import { type Coordinate, type TripPlan } from '@/lib/routing/planner';
 import type { RouteDirection } from '@/lib/gis/direction-mode';
@@ -111,6 +122,8 @@ export default function HomeApp() {
   const [resultsOpen, setResultsOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [legalOpen, setLegalOpen] = useState(false);
+  const [legalTab, setLegalTab] = useState<LegalTab>('privacidad');
   const [showWelcome, setShowWelcome] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
@@ -537,18 +550,27 @@ export default function HomeApp() {
     };
   }, []);
 
-  const handleShareTrip = async () => {
-    if (!originCoords || !destinationCoords) {
-      toast('Elige origen y destino para compartir', 'warning');
-      return;
-    }
-    const path = buildTripShareUrl({
+  const buildCurrentTripSharePath = () => {
+    const plan = tripPlans[selectedPlanIndex];
+    const fp = plan ? fingerprintForPlan(plan) : null;
+    const rid = plan ? primaryRouteIdFromPlan(plan) : null;
+    return buildTripShareUrl({
       origin: originCoords,
       destination: destinationCoords,
       originLabel: originInput || null,
       destinationLabel: destinationInput || null,
       planIndex: selectedPlanIndex,
+      routeId: rid,
+      routesFingerprint: fp,
     });
+  };
+
+  const handleShareTrip = async () => {
+    if (!originCoords || !destinationCoords) {
+      toast('Elige origen y destino para compartir', 'warning');
+      return;
+    }
+    const path = buildCurrentTripSharePath();
     const result = await shareOrCopyTripUrl(path);
     if (result === 'shared') toast('Listo para compartir', 'success');
     else if (result === 'copied') toast('Enlace copiado', 'success');
@@ -559,13 +581,7 @@ export default function HomeApp() {
       toast('Elige origen y destino para copiar', 'warning');
       return;
     }
-    const path = buildTripShareUrl({
-      origin: originCoords,
-      destination: destinationCoords,
-      originLabel: originInput || null,
-      destinationLabel: destinationInput || null,
-      planIndex: selectedPlanIndex,
-    });
+    const path = buildCurrentTripSharePath();
     const absolute = `${window.location.origin}${path}`;
     const ok = await copyTextToClipboard(absolute);
     toast(ok ? 'Enlace del viaje copiado' : 'No se pudo copiar', ok ? 'success' : 'error');
@@ -780,7 +796,17 @@ export default function HomeApp() {
           </div>
         )}
       </div>
-      <LegalLinks className="mt-2 border-t border-slate-100 pt-3" />
+      <LegalLinks
+        className="mt-2 border-t border-slate-100 pt-3"
+        onOpenPrivacidad={() => {
+          setLegalTab('privacidad');
+          setLegalOpen(true);
+        }}
+        onOpenTerminos={() => {
+          setLegalTab('terminos');
+          setLegalOpen(true);
+        }}
+      />
     </div>
   );
 
@@ -966,19 +992,18 @@ export default function HomeApp() {
             right: 'max(0.5rem, var(--vm-safe-right))',
           }}
         >
-          <a
-            href="/privacidad"
-            onClick={(e) => {
-              e.preventDefault();
-              const absoluteUrl = window.location.origin + '/privacidad';
-              void openExternalUrl(absoluteUrl);
+          <button
+            type="button"
+            onClick={() => {
+              setLegalTab('privacidad');
+              setLegalOpen(true);
             }}
             className="vm-btn-icon md:!h-11 md:!w-11 md:!rounded-xl pointer-events-auto"
             title="Privacidad y términos"
             aria-label="Privacidad y términos"
           >
             <Info className="h-5 w-5 text-slate-600 md:h-5 md:w-5" aria-hidden />
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -1171,6 +1196,14 @@ export default function HomeApp() {
           routeId={selectedRouteId || ''}
           routeName={routes.find((r) => r.id === selectedRouteId)?.name || 'Ruta'}
           onClose={() => setReportOpen(false)}
+        />
+
+        {/* Legal in-app (evita página cortada en Android WebView / Browser) */}
+        <LegalInfoSheet
+          open={legalOpen}
+          tab={legalTab}
+          onTabChange={setLegalTab}
+          onClose={() => setLegalOpen(false)}
         />
 
         {/* Dock Inferior */}

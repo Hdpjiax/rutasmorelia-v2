@@ -33,6 +33,9 @@ export {
   shareOrCopyTripUrl,
   parseCoordParam,
   copyTextToClipboard,
+  fingerprintForPlan,
+  primaryRouteIdFromPlan,
+  matchPlanIndex,
   type TripUrlState,
 } from '@/lib/trip/url-state';
 export {

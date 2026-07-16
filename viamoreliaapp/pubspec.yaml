@@ -1,0 +1,45 @@
+name: viamoreliaapp
+description: Vía Morelia — transporte público de Morelia (origen-destino, ida/vuelta).
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.5.1
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  shared_preferences: ^2.3.2
+  path_provider: ^2.1.4
+  http: ^1.2.2
+  flutter_animate: ^4.5.0
+  google_fonts: ^6.2.1
+  share_plus: ^10.1.4
+  speech_to_text: ^7.0.0
+  url_launcher: ^6.3.1
+  collection: ^1.19.0
+  connectivity_plus: ^6.1.0
+  app_links: ^6.3.3
+  # MapLibre nativo en Android/iOS/Web.
+  # NO usar maplibre_webview aquí: arrastra flutter_inappwebview y rompe
+  # el build con AGP 9 (proguard-android.txt deprecado). Desktop Windows
+  # puede usar flutter run -d chrome o un emulador Android.
+  maplibre: ^0.3.3+2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  config:
+    enable-swift-package-manager: true
+  assets:
+    - assets/routes/
+    - assets/brand/
+    - assets/map/

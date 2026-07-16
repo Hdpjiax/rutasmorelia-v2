@@ -18,6 +18,7 @@ import {
   sortTripPlans,
   readTripUrlState,
   clearTripShareParamsFromLocation,
+  matchPlanIndex,
   type TripUrlState,
 } from '@/features/planner';
 import { usePublishedRoutes } from '@/features/routes/use-published-routes';
@@ -71,6 +72,8 @@ export function useTripPlannerWorkflow(favorites: string[]) {
   const shapesRef = useRef<PublishedShape[]>([]);
   const sharedTripOpenRef = useRef(false);
   const pendingSharePlanIndexRef = useRef<number | null>(null);
+  const pendingShareRouteIdRef = useRef<string | null>(null);
+  const pendingShareRoutesFpRef = useRef<string | null>(null);
 
   const publishedQuery = usePublishedRoutes();
 
@@ -114,7 +117,11 @@ export function useTripPlannerWorkflow(favorites: string[]) {
     const isSharedTrip = Boolean(trip.origin && trip.destination);
     if (isSharedTrip) {
       sharedTripOpenRef.current = true;
-      if (trip.planIndex != null) pendingSharePlanIndexRef.current = trip.planIndex;
+      // Preferir huella de rutas (app Flutter) sobre índice suelto
+      pendingSharePlanIndexRef.current =
+        trip.planIndex != null ? trip.planIndex : null;
+      pendingShareRouteIdRef.current = trip.routeId ?? null;
+      pendingShareRoutesFpRef.current = trip.routesFingerprint ?? null;
     }
 
     if (trip.origin) {
@@ -132,7 +139,23 @@ export function useTripPlannerWorkflow(favorites: string[]) {
       );
     }
 
-    if (trip.origin || trip.destination || trip.routeId || trip.planIndex != null) {
+    // Solo explorador de ruta si NO hay OD de viaje compartido
+    if (
+      !isSharedTrip &&
+      trip.routeId &&
+      !trip.origin &&
+      !trip.destination
+    ) {
+      // El home-app puede reaccionar a selectedRoute vía store/query; aquí solo limpiamos URL.
+    }
+
+    if (
+      trip.origin ||
+      trip.destination ||
+      trip.routeId ||
+      trip.routesFingerprint ||
+      trip.planIndex != null
+    ) {
       clearTripShareParamsFromLocation();
       if (opts?.notify && isSharedTrip) {
         toast('Viaje compartido abierto', 'success', 'ViaMorelia');
@@ -243,13 +266,16 @@ export function useTripPlannerWorkflow(favorites: string[]) {
         // Carga progresiva: dibujar primero las líneas rectas y luego enriquecerlas con la red de calles
         setTripPlans(sorted);
 
-        const sharePlan = pendingSharePlanIndexRef.current;
-        if (sharePlan != null && sharePlan >= 0 && sharePlan < sorted.length) {
-          setSelectedPlanIndex(sharePlan);
-        } else {
-          setSelectedPlanIndex(0);
-        }
+        // Match del plan compartido (app ↔ web): huella routes=…, luego route=, luego plan=
+        const pick = matchPlanIndex(sorted, {
+          fingerprint: pendingShareRoutesFpRef.current,
+          routeId: pendingShareRouteIdRef.current,
+          fallbackIndex: pendingSharePlanIndexRef.current,
+        });
+        setSelectedPlanIndex(pick);
         pendingSharePlanIndexRef.current = null;
+        pendingShareRouteIdRef.current = null;
+        pendingShareRoutesFpRef.current = null;
         setPlanTypeFilter('all');
         setPlanning(false);
 

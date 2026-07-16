@@ -1,4 +1,4 @@
-import type { Coordinate } from '@/lib/routing/planner';
+import type { Coordinate, TripPlan } from '@/lib/routing/planner';
 
 export type TripUrlState = {
   origin: Coordinate | null;
@@ -6,6 +6,8 @@ export type TripUrlState = {
   originLabel?: string;
   destinationLabel?: string;
   routeId?: string | null;
+  /** Huella de rides: `id:ida|id2:vuelta` (paridad app Flutter) */
+  routesFingerprint?: string | null;
   planIndex?: number;
 };
 
@@ -30,6 +32,78 @@ export function formatCoordParam(c: Coordinate, decimals = 5): string {
   return `${c[0].toFixed(decimals)},${c[1].toFixed(decimals)}`;
 }
 
+/** Huella estable de rides del plan: `ruta-id:ida|otra:vuelta` */
+export function fingerprintForPlan(plan: TripPlan): string {
+  const parts: string[] = [];
+  for (const s of plan.segments) {
+    if (s.type !== 'ride' || !s.routeId) continue;
+    const dir = s.direction ?? 'ida';
+    parts.push(`${s.routeId}:${dir}`);
+  }
+  return parts.join('|');
+}
+
+export function primaryRouteIdFromPlan(plan: TripPlan): string | null {
+  for (const s of plan.segments) {
+    if (s.type === 'ride' && s.routeId) return s.routeId;
+  }
+  return null;
+}
+
+/**
+ * Elige el plan que mejor coincide con la huella compartida (app/web).
+ * Prioridad: fingerprint exacto → ids de ruta → routeId suelto → planIndex → 0.
+ */
+export function matchPlanIndex(
+  plans: TripPlan[],
+  opts: {
+    fingerprint?: string | null;
+    routeId?: string | null;
+    fallbackIndex?: number | null;
+  } = {}
+): number {
+  if (!plans.length) return 0;
+  const { fingerprint, routeId, fallbackIndex } = opts;
+
+  if (fingerprint && fingerprint.trim()) {
+    const target = fingerprint.trim().toLowerCase();
+    for (let i = 0; i < plans.length; i++) {
+      if (fingerprintForPlan(plans[i]).toLowerCase() === target) return i;
+    }
+    const want = new Set(
+      target
+        .split('|')
+        .map((e) => e.split(':')[0])
+        .filter(Boolean)
+    );
+    for (let i = 0; i < plans.length; i++) {
+      const got = new Set(
+        plans[i].segments
+          .filter((s) => s.type === 'ride' && s.routeId)
+          .map((s) => String(s.routeId).toLowerCase())
+      );
+      if (want.size > 0 && [...want].every((id) => got.has(id))) return i;
+    }
+  }
+
+  if (routeId && routeId.trim()) {
+    const id = routeId.trim().toLowerCase();
+    for (let i = 0; i < plans.length; i++) {
+      if (plans[i].segments.some((s) => s.routeId?.toLowerCase() === id)) return i;
+    }
+  }
+
+  if (
+    fallbackIndex != null &&
+    Number.isFinite(fallbackIndex) &&
+    fallbackIndex >= 0 &&
+    fallbackIndex < plans.length
+  ) {
+    return Math.floor(fallbackIndex);
+  }
+  return 0;
+}
+
 export function readTripUrlState(search?: string): TripUrlState {
   const sp = new URLSearchParams(
     search ?? (typeof window !== 'undefined' ? window.location.search : '')
@@ -39,6 +113,7 @@ export function readTripUrlState(search?: string): TripUrlState {
   const originLabel = sp.get('fromLabel') || sp.get('ol') || undefined;
   const destinationLabel = sp.get('toLabel') || sp.get('dl') || undefined;
   const routeId = sp.get('route');
+  const routesFp = sp.get('routes')?.trim() || null;
   const planRaw = sp.get('plan');
   const planIndex =
     planRaw != null && planRaw !== '' && Number.isFinite(Number(planRaw))
@@ -51,6 +126,7 @@ export function readTripUrlState(search?: string): TripUrlState {
     originLabel: originLabel ? decodeURIComponent(originLabel) : undefined,
     destinationLabel: destinationLabel ? decodeURIComponent(destinationLabel) : undefined,
     routeId: routeId || null,
+    routesFingerprint: routesFp || null,
     planIndex,
   };
 }
@@ -61,6 +137,8 @@ export type BuildTripUrlOpts = {
   originLabel?: string | null;
   destinationLabel?: string | null;
   routeId?: string | null;
+  /** Huella `id:ida|id2:vuelta` del plan elegido */
+  routesFingerprint?: string | null;
   planIndex?: number | null;
   base?: string;
 };
@@ -74,6 +152,7 @@ export const TRIP_SHARE_PARAM_KEYS = [
   'ol',
   'dl',
   'route',
+  'routes',
   'plan',
 ] as const;
 
@@ -135,8 +214,12 @@ export function buildTripShareUrl(opts: BuildTripUrlOpts): string {
     url.searchParams.set('toLabel', opts.destinationLabel.trim().slice(0, 80));
   }
   if (opts.routeId) url.searchParams.set('route', opts.routeId);
-  if (opts.planIndex != null && opts.planIndex > 0) {
-    url.searchParams.set('plan', String(opts.planIndex));
+  if (opts.routesFingerprint?.trim()) {
+    url.searchParams.set('routes', opts.routesFingerprint.trim());
+  }
+  // Siempre incluir plan (incluido 0) si se pasa, para paridad con la app
+  if (opts.planIndex != null && Number.isFinite(opts.planIndex)) {
+    url.searchParams.set('plan', String(Math.max(0, Math.floor(opts.planIndex))));
   }
 
   return url.pathname + url.search + url.hash;

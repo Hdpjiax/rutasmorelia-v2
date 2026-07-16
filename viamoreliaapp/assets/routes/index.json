@@ -1,0 +1,1017 @@
+{
+  "type": "RouteIndex",
+  "generated": true,
+  "count": 101,
+  "routes": [
+    {
+      "id": "ruta-alberca-gertrudis",
+      "name": "Alberca (Gertrudis)",
+      "color": "#00897B",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-alberca-gertrudis.geojson",
+      "colorName": "Alberca",
+      "colorLetter": "A",
+      "casingColor": "#004D40"
+    },
+    {
+      "id": "ruta-alberca-metropolis",
+      "name": "Alberca (Metrópolis)",
+      "color": "#00897B",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-alberca-metropolis.geojson",
+      "colorName": "Alberca",
+      "colorLetter": "A",
+      "casingColor": "#004D40"
+    },
+    {
+      "id": "ruta-amarilla-centro",
+      "name": "Amarilla 1 Centro",
+      "color": "#FFD000",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-amarilla-centro.geojson",
+      "colorName": "Amarillo",
+      "colorLetter": "A",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-combi-amarilla-2",
+      "name": "Amarilla 2",
+      "color": "#FFD000",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-amarilla-2.geojson",
+      "colorName": "Amarillo",
+      "colorLetter": "A",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-combi-amarilla-tenencia-morelos",
+      "name": "Amarilla Tenencia Morelos",
+      "color": "#FFD000",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-amarilla-tenencia-morelos.geojson",
+      "colorName": "Amarillo",
+      "colorLetter": "A",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-arco-san-pedro",
+      "name": "Arcos San Pedro",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-arco-san-pedro.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "A",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-arroyo-colorado",
+      "name": "Arroyo Colorado",
+      "color": "#FF7043",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-arroyo-colorado.geojson",
+      "colorName": "General",
+      "colorLetter": "A",
+      "casingColor": "#BF360C"
+    },
+    {
+      "id": "ruta-atecuaro",
+      "name": "Atécuaro",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-atecuaro.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "A",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-combi-azul-a-soriana-cbta",
+      "name": "Azul A Soriana-CBTA",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-azul-a-soriana-cbta.geojson",
+      "colorName": "Azul",
+      "colorLetter": "A",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-combi-azul-a-soriana-vergel",
+      "name": "Azul A Soriana-Vergel",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-azul-a-soriana-vergel.geojson",
+      "colorName": "Azul",
+      "colorLetter": "A",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-combi-azul-b-michelena",
+      "name": "Azul B Michelena",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-azul-b-michelena.geojson",
+      "colorName": "Azul",
+      "colorLetter": "A",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-combi-azul-b-xangari",
+      "name": "Azul B Xangari",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-azul-b-xangari.geojson",
+      "colorName": "Azul",
+      "colorLetter": "A",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-combi-azul-c",
+      "name": "Azul C",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-combi-azul-c.geojson",
+      "colorName": "Azul",
+      "colorLetter": "A",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-cafe-oro-2-leandro-valle",
+      "name": "Café - Oro 2 (Leandro Valle)",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-oro-2-leandro-valle.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-1",
+      "name": "Café 1",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-1.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-1a",
+      "name": "Café 1A",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-1a.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-oro-2-rafael-carrillo",
+      "name": "Café Oro 2 Rafael Carrillo",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-oro-2-rafael-carrillo.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-oro-2a",
+      "name": "Café Oro 2A",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-oro-2a.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-oro-2b-madero",
+      "name": "Café Oro 2B Madero",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-oro-2b-madero.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-cafe-oro-2b-michoacan",
+      "name": "Café Oro 2B Michoacán",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cafe-oro-2b-michoacan.geojson",
+      "colorName": "Café",
+      "colorLetter": "C",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-campestre-mision-del-valle",
+      "name": "Campestre Misión Del Valle",
+      "color": "#66BB6A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-campestre-mision-del-valle.geojson",
+      "colorName": "Campestre",
+      "colorLetter": "C",
+      "casingColor": "#2E7D32"
+    },
+    {
+      "id": "ruta-campestre-posta-trebol-monarca",
+      "name": "Campestre Posta Trebol Monarca",
+      "color": "#66BB6A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-campestre-posta-trebol-monarca.geojson",
+      "colorName": "Campestre",
+      "colorLetter": "C",
+      "casingColor": "#2E7D32"
+    },
+    {
+      "id": "ruta-capula",
+      "name": "Capula",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-capula.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-centros-comerciales-leandro-valle",
+      "name": "Centros Comerciales (Leandro Valle)",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-centros-comerciales-leandro-valle.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-centros-comerciales-lucio-cabanas",
+      "name": "Centros Comerciales (Lucio Cabañas)",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-centros-comerciales-lucio-cabanas.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-charo",
+      "name": "Charo",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-charo.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-charo-san-antonio-corrales",
+      "name": "Charo (San Antonio Corrales)",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-charo-san-antonio-corrales.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-charo-indaparapeo-atapaneo-issste-soledad",
+      "name": "Charo - Ind Atapaneo (ISSTE - Soledad)",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-charo-indaparapeo-atapaneo-issste-soledad.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-chihuerio",
+      "name": "Chihuerio",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-chihuerio.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-chucandiro",
+      "name": "Chucandiro",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-chucandiro.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-circuito-carrillo",
+      "name": "Circuito Carrillo",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-circuito-carrillo.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-ciudad-de-hidalgo",
+      "name": "Ciudad De Hidalgo",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-ciudad-de-hidalgo.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-coeneo",
+      "name": "Coeneo",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-coeneo.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-cointzio",
+      "name": "Cointzio",
+      "color": "#5C6BC0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-cointzio.geojson",
+      "colorName": "General",
+      "colorLetter": "C",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-coral-1",
+      "name": "Coral 1",
+      "color": "#FF7043",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-coral-1.geojson",
+      "colorName": "Coral",
+      "colorLetter": "C",
+      "casingColor": "#BF360C"
+    },
+    {
+      "id": "ruta-coral-2",
+      "name": "Coral 2",
+      "color": "#FF7043",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-coral-2.geojson",
+      "colorName": "Coral",
+      "colorLetter": "C",
+      "casingColor": "#BF360C"
+    },
+    {
+      "id": "ruta-coral-2a",
+      "name": "Coral 2 A",
+      "color": "#FF7043",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-coral-2a.geojson",
+      "colorName": "Coral",
+      "colorLetter": "C",
+      "casingColor": "#BF360C"
+    },
+    {
+      "id": "ruta-crema-1",
+      "name": "Crema 1",
+      "color": "#D4B483",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-crema-1.geojson",
+      "colorName": "Crema",
+      "colorLetter": "C",
+      "casingColor": "#5D4037"
+    },
+    {
+      "id": "ruta-crema-2",
+      "name": "Crema 2",
+      "color": "#D4B483",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-crema-2.geojson",
+      "colorName": "Crema",
+      "colorLetter": "C",
+      "casingColor": "#5D4037"
+    },
+    {
+      "id": "ruta-crema-2a",
+      "name": "Crema 2A",
+      "color": "#D4B483",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-crema-2a.geojson",
+      "colorName": "Crema",
+      "colorLetter": "C",
+      "casingColor": "#5D4037"
+    },
+    {
+      "id": "ruta-dorado-industrial",
+      "name": "Dorado (Industrial)",
+      "color": "#F0B429",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-dorado-industrial.geojson",
+      "colorName": "Dorado",
+      "colorLetter": "D",
+      "casingColor": "#5D4037"
+    },
+    {
+      "id": "ruta-dorado-lomas-de-morelia",
+      "name": "Dorado (Lomas de Morelia)",
+      "color": "#F0B429",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-dorado-lomas-de-morelia.geojson",
+      "colorName": "Dorado",
+      "colorLetter": "D",
+      "casingColor": "#5D4037"
+    },
+    {
+      "id": "ruta-durazo-santa-maria",
+      "name": "Durazno - Santa Maria",
+      "color": "#8D6E63",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-durazo-santa-maria.geojson",
+      "colorName": "Durazno",
+      "colorLetter": "D",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-el-pedregal",
+      "name": "El Pedregal",
+      "color": "#78909C",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-el-pedregal.geojson",
+      "colorName": "Pedregal",
+      "colorLetter": "E",
+      "casingColor": "#37474F"
+    },
+    {
+      "id": "ruta-gris-1-circuito",
+      "name": "Gris 1 Circuito",
+      "color": "#8A8A8A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-gris-1-circuito.geojson",
+      "colorName": "Gris",
+      "colorLetter": "G",
+      "casingColor": "#212121"
+    },
+    {
+      "id": "ruta-gris-3-furamo",
+      "name": "Gris 3 Furamo",
+      "color": "#8A8A8A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-gris-3-furamo.geojson",
+      "colorName": "Gris",
+      "colorLetter": "G",
+      "casingColor": "#212121"
+    },
+    {
+      "id": "ruta-gris-3-oxxo",
+      "name": "Gris 3 Oxxo",
+      "color": "#8A8A8A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-gris-3-oxxo.geojson",
+      "colorName": "Gris",
+      "colorLetter": "G",
+      "casingColor": "#212121"
+    },
+    {
+      "id": "ruta-gris-4",
+      "name": "Gris 4",
+      "color": "#8A8A8A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-gris-4.geojson",
+      "colorName": "Gris",
+      "colorLetter": "G",
+      "casingColor": "#212121"
+    },
+    {
+      "id": "ruta-guinda-1-mora",
+      "name": "Guinda 1 Mora",
+      "color": "#C2185B",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-guinda-1-mora.geojson",
+      "colorName": "Guinda",
+      "colorLetter": "G",
+      "casingColor": "#4A0026"
+    },
+    {
+      "id": "ruta-guinda-1-praderas",
+      "name": "Guinda 1 Praderas",
+      "color": "#C2185B",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-guinda-1-praderas.geojson",
+      "colorName": "Guinda",
+      "colorLetter": "G",
+      "casingColor": "#4A0026"
+    },
+    {
+      "id": "ruta-guinda-2",
+      "name": "Guinda 2",
+      "color": "#C2185B",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-guinda-2.geojson",
+      "colorName": "Guinda",
+      "colorLetter": "G",
+      "casingColor": "#4A0026"
+    },
+    {
+      "id": "ruta-jesus-del-monte",
+      "name": "Jesus Del Monte",
+      "color": "#5C6BC0",
+      "transportType": "foraneo",
+      "geojsonFile": "/routes/ruta-jesus-del-monte.geojson",
+      "colorName": "Foráneo",
+      "colorLetter": "J",
+      "casingColor": "#283593"
+    },
+    {
+      "id": "ruta-morada-1-aldea",
+      "name": "Morada 1 Aldea",
+      "color": "#9C27B0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-1-aldea.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#4A148C"
+    },
+    {
+      "id": "ruta-morada-1-buenos-aires",
+      "name": "Morada 1 Buenos Aires",
+      "color": "#9C27B0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-1-buenos-aires.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#4A148C"
+    },
+    {
+      "id": "ruta-morada-1-mision-del-valle",
+      "name": "Morada 1 Misión del Valle",
+      "color": "#9C27B0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-1-mision-del-valle.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#4A148C"
+    },
+    {
+      "id": "ruta-morada-2-lomas-de-morelia",
+      "name": "Morada 2 Lomas de Morelia",
+      "color": "#9C27B0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-2-lomas-de-morelia.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#4A148C"
+    },
+    {
+      "id": "ruta-morada-2-satelite",
+      "name": "Morada 2 Satélite",
+      "color": "#9C27B0",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-2-satelite.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#4A148C"
+    },
+    {
+      "id": "ruta-morada-2a",
+      "name": "Morada 2A",
+      "color": "#3b82f6",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-morada-2a.geojson",
+      "colorName": "Morado",
+      "colorLetter": "M",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-naranja-1-issste",
+      "name": "Naranja 1 Issste",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-1-issste.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-1-la-soledad",
+      "name": "Naranja 1 La Soledad",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-1-la-soledad.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-2-santa-fe",
+      "name": "Naranja 2 Santa Fe",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-2-santa-fe.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-2-3-de-agosto",
+      "name": "Naranja 2-3 De Agosto",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-2-3-de-agosto.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-3-centro-puerta-del-sol",
+      "name": "Naranja 3 Centro-Puerta Del Sol",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-3-centro-puerta-del-sol.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-3-santa-maria-erandeni",
+      "name": "Naranja 3 Santa Maria-Erandeni",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-3-santa-maria-erandeni.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-3-santa-maria-ita",
+      "name": "Naranja 3 Santa Maria-Ita",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-3-santa-maria-ita.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-naranja-3-trico-metropolis",
+      "name": "Naranja 3 Trico-Metrópolis",
+      "color": "#FF9800",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-naranja-3-trico-metropolis.geojson",
+      "colorName": "Naranja",
+      "colorLetter": "N",
+      "casingColor": "#E65100"
+    },
+    {
+      "id": "ruta-negra-1",
+      "name": "Negra 1",
+      "color": "#1A1A1A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-negra-1.geojson",
+      "colorName": "Negro",
+      "colorLetter": "N",
+      "casingColor": "#F5F5F5"
+    },
+    {
+      "id": "ruta-negra-2",
+      "name": "Negra 2",
+      "color": "#1A1A1A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-negra-2.geojson",
+      "colorName": "Negro",
+      "colorLetter": "N",
+      "casingColor": "#F5F5F5"
+    },
+    {
+      "id": "ruta-oro-verde-encinos",
+      "name": "Oro Verde Encinos",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-oro-verde-encinos.geojson",
+      "colorName": "Verde",
+      "colorLetter": "O",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-oro-verde-soledad",
+      "name": "Oro Verde Soledad",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-oro-verde-soledad.geojson",
+      "colorName": "Verde",
+      "colorLetter": "O",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-oro-verde-trincheras",
+      "name": "Oro Verde Trincheras",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-oro-verde-trincheras.geojson",
+      "colorName": "Verde",
+      "colorLetter": "O",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-paloma-azul-arquito",
+      "name": "Paloma Azul Arquito",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-paloma-azul-arquito.geojson",
+      "colorName": "Azul",
+      "colorLetter": "P",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-paloma-azul-campina",
+      "name": "Paloma Azul Campiña",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-paloma-azul-campina.geojson",
+      "colorName": "Azul",
+      "colorLetter": "P",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-paloma-azul-zimpanio",
+      "name": "Paloma Azul Zimpanio",
+      "color": "#1E88E5",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-paloma-azul-zimpanio.geojson",
+      "colorName": "Azul",
+      "colorLetter": "P",
+      "casingColor": "#0D47A1"
+    },
+    {
+      "id": "ruta-panteon",
+      "name": "Panteon",
+      "color": "#546E7A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-panteon.geojson",
+      "colorName": "Panteón",
+      "colorLetter": "P",
+      "casingColor": "#263238"
+    },
+    {
+      "id": "ruta-por-torreon-nuevo",
+      "name": "Por Torreon Nuevo",
+      "color": "#3b82f6",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-por-torreon-nuevo.geojson",
+      "colorName": "General",
+      "colorLetter": "P",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-prados-verdes-a",
+      "name": "Prados Verdes A",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-prados-verdes-a.geojson",
+      "colorName": "Verde",
+      "colorLetter": "P",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-prados-verdes-b",
+      "name": "Prados Verdes B",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-prados-verdes-b.geojson",
+      "colorName": "Verde",
+      "colorLetter": "P",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-roja-1-comercial-mexicana",
+      "name": "Roja 1 Comercial Mexicana",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-1-comercial-mexicana.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-1",
+      "name": "Roja 1 Punhuato",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-1.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-2-oken",
+      "name": "Roja 2 Oken",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-2-oken.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-2-villas-del-sol",
+      "name": "Roja 2 Villas del Sol",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-2-villas-del-sol.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-3",
+      "name": "Roja 3",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-3.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-3a",
+      "name": "Roja 3A",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-3a.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-3b",
+      "name": "Roja 3B",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-3b.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-4-tinijaro",
+      "name": "Roja 4 Tiníjaro",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-4-tinijaro.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-4-tzindurio",
+      "name": "Roja 4 Tzíndurio",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-4-tzindurio.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-4a",
+      "name": "Roja 4A",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-4a.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-roja-4m",
+      "name": "Roja 4M",
+      "color": "#EF4444",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-roja-4m.geojson",
+      "colorName": "Rojo",
+      "colorLetter": "R",
+      "casingColor": "#222222"
+    },
+    {
+      "id": "ruta-rosa-2",
+      "name": "Rosa 2",
+      "color": "#EC407A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-rosa-2.geojson",
+      "colorName": "Rosa",
+      "colorLetter": "R",
+      "casingColor": "#880E4F"
+    },
+    {
+      "id": "ruta-rosa-2b",
+      "name": "Rosa 2B",
+      "color": "#EC407A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-rosa-2b.geojson",
+      "colorName": "Rosa",
+      "colorLetter": "R",
+      "casingColor": "#880E4F"
+    },
+    {
+      "id": "ruta-rosa-3",
+      "name": "Rosa 3",
+      "color": "#EC407A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-rosa-3.geojson",
+      "colorName": "Rosa",
+      "colorLetter": "R",
+      "casingColor": "#880E4F"
+    },
+    {
+      "id": "ruta-rosa-metropolis-estrella",
+      "name": "Rosa Metrópolis - Estrella",
+      "color": "#EC407A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-rosa-metropolis-estrella.geojson",
+      "colorName": "Rosa",
+      "colorLetter": "R",
+      "casingColor": "#880E4F"
+    },
+    {
+      "id": "ruta-rosa-puerta-del-sol-galaxia",
+      "name": "Rosa Puerta del Sol - Galaxia",
+      "color": "#EC407A",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-rosa-puerta-del-sol-galaxia.geojson",
+      "colorName": "Rosa",
+      "colorLetter": "R",
+      "casingColor": "#880E4F"
+    },
+    {
+      "id": "ruta-trincheras",
+      "name": "Trincheras",
+      "color": "#795548",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-trincheras.geojson",
+      "colorName": "Trincheras",
+      "colorLetter": "T",
+      "casingColor": "#3E2723"
+    },
+    {
+      "id": "ruta-verde-1",
+      "name": "Verde 1",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-1.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-verde-2",
+      "name": "Verde 2",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-2.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-verde-3-indeco",
+      "name": "Verde 3 INDECO",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-3-indeco.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-verde-3-lomas-del-valle",
+      "name": "Verde 3 Lomas del Valle",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-3-lomas-del-valle.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-verde-4",
+      "name": "Verde 4",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-4.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    },
+    {
+      "id": "ruta-verde-4b",
+      "name": "Verde 4B",
+      "color": "#43A047",
+      "transportType": "combi",
+      "geojsonFile": "/routes/ruta-verde-4b.geojson",
+      "colorName": "Verde",
+      "colorLetter": "V",
+      "casingColor": "#1B5E20"
+    }
+  ]
+}
