@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:maplibre/maplibre.dart';
 import '../../core/constants/geo_constants.dart';
@@ -12,9 +13,10 @@ import '../../models/segment_model.dart';
 import '../../models/trip_plan_model.dart';
 import '../micro/via_orb.dart';
 import 'basemap_enhance.dart';
+import '../../state/app_controller.dart';
 
 /// Mapa MapLibre + Positron GL + enhance web + etiquetas sin solaparse.
-class ViaMapCanvas extends StatefulWidget {
+class ViaMapCanvas extends ConsumerStatefulWidget {
   final PlaceModel? origin;
   final PlaceModel? destination;
   final LatLng? userPosition;
@@ -47,10 +49,10 @@ class ViaMapCanvas extends StatefulWidget {
   });
 
   @override
-  State<ViaMapCanvas> createState() => _ViaMapCanvasState();
+  ConsumerState<ViaMapCanvas> createState() => _ViaMapCanvasState();
 }
 
-class _ViaMapCanvasState extends State<ViaMapCanvas> with SingleTickerProviderStateMixin {
+class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerProviderStateMixin {
   MapController? _controller;
   bool _basemapEnhanced = false;
   late final AnimationController _arrowCtrl;
@@ -103,6 +105,12 @@ class _ViaMapCanvasState extends State<ViaMapCanvas> with SingleTickerProviderSt
       _controller?.moveCamera(
         center: Geographic(lon: p.longitude, lat: p.latitude),
       );
+    }
+    if (oldWidget.selectedRoute != widget.selectedRoute ||
+        oldWidget.activePlan != widget.activePlan ||
+        oldWidget.routeDirectionFilter != widget.routeDirectionFilter ||
+        oldWidget.shapes != widget.shapes) {
+      _updateNativeLayers();
     }
   }
 
@@ -161,30 +169,131 @@ class _ViaMapCanvasState extends State<ViaMapCanvas> with SingleTickerProviderSt
 
 
 
+  void _updateNativeLayers() {
+    final style = _controller?.style;
+    if (style == null) return;
+
+    scheduleMicrotask(() async {
+      try {
+        try {
+          await style.removeLayer('rm-pmtiles-casing');
+        } catch (_) {}
+        try {
+          await style.removeLayer('rm-pmtiles-fill');
+        } catch (_) {}
+
+        if (widget.activePlan != null) {
+          final usedIds = widget.activePlan!.segments
+              .where((s) => s.routeId != null)
+              .map((s) => s.routeId!)
+              .toList();
+
+          if (usedIds.isNotEmpty) {
+            final filter = ['in', ['get', 'routeId'], ['literal', usedIds]];
+
+            await style.addLayer(
+              LineStyleLayer(
+                id: 'rm-pmtiles-casing',
+                sourceId: 'rutas-pmtiles-source',
+                sourceLayerId: 'rutas',
+                filter: filter,
+                paint: {
+                  'line-color': ['get', 'casingColor'],
+                  'line-width': 3.0,
+                  'line-opacity': 0.14,
+                },
+                layout: {
+                  'line-cap': 'round',
+                  'line-join': 'round',
+                },
+              ),
+            );
+
+            await style.addLayer(
+              LineStyleLayer(
+                id: 'rm-pmtiles-fill',
+                sourceId: 'rutas-pmtiles-source',
+                sourceLayerId: 'rutas',
+                filter: filter,
+                paint: {
+                  'line-color': ['get', 'color'],
+                  'line-width': 2.0,
+                  'line-opacity': 0.20,
+                },
+                layout: {
+                  'line-cap': 'round',
+                  'line-join': 'round',
+                },
+              ),
+            );
+          }
+        } else if (widget.selectedRoute != null) {
+          final routeId = widget.selectedRoute!.id;
+          final List<Object> filter;
+
+          if (widget.routeDirectionFilter == 'ida') {
+            filter = [
+              'all',
+              ['==', ['get', 'routeId'], routeId],
+              ['==', ['get', 'direction'], 'ida']
+            ];
+          } else if (widget.routeDirectionFilter == 'vuelta') {
+            filter = [
+              'all',
+              ['==', ['get', 'routeId'], routeId],
+              ['==', ['get', 'direction'], 'vuelta']
+            ];
+          } else {
+            filter = ['==', ['get', 'routeId'], routeId];
+          }
+
+          await style.addLayer(
+            LineStyleLayer(
+              id: 'rm-pmtiles-casing',
+              sourceId: 'rutas-pmtiles-source',
+              sourceLayerId: 'rutas',
+              filter: filter,
+              paint: {
+                'line-color': ['get', 'casingColor'],
+                'line-width': 4.0,
+                'line-opacity': 1.0,
+              },
+              layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+              },
+            ),
+          );
+
+          await style.addLayer(
+            LineStyleLayer(
+              id: 'rm-pmtiles-fill',
+              sourceId: 'rutas-pmtiles-source',
+              sourceLayerId: 'rutas',
+              filter: filter,
+              paint: {
+                'line-color': ['get', 'color'],
+                'line-width': 3.0,
+                'line-opacity': 1.0,
+              },
+              layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+              },
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error updating native PMTiles layers: $e');
+      }
+    });
+  }
+
   List<Layer> _buildLayers() {
     final layers = <Layer>[];
 
     if (widget.activePlan != null) {
       _layersForPlan(widget.activePlan!, layers);
-    } else if (widget.shapes.isNotEmpty) {
-      final display = DirectionModeService.toCorridorDisplay(
-        widget.shapes,
-        preferDirection: widget.routeDirectionFilter,
-      );
-      for (final shape in display) {
-        if (shape.coordinates.length < 2) continue;
-        final isSense = shape.role == 'sense-label';
-        layers.add(PolylineLayer(
-          polylines: [_lineFeature(shape.coordinates, id: '${shape.id}-cas')],
-          color: shape.casingColor ?? const Color(0xFF0F172A),
-          width: isSense ? 3 : 4,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [_lineFeature(shape.coordinates, id: shape.id)],
-          color: shape.color.withValues(alpha: isSense ? 0.55 : 1),
-          width: isSense ? 2 : 3,
-        ));
-      }
     }
 
     return layers;
@@ -195,23 +304,6 @@ class _ViaMapCanvasState extends State<ViaMapCanvas> with SingleTickerProviderSt
         .where((s) => s.routeId != null)
         .map((s) => s.routeId!)
         .toSet();
-
-    // Corredor completo de fondo (muy tenue y delgado)
-    for (final id in usedIds) {
-      for (final shape in widget.shapes.where((s) => s.routeId == id)) {
-        if (shape.coordinates.length < 2) continue;
-        layers.add(PolylineLayer(
-          polylines: [_lineFeature(shape.coordinates, id: '${shape.id}-bg-cas')],
-          color: const Color(0xFF1E293B).withValues(alpha: 0.14),
-          width: 3,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [_lineFeature(shape.coordinates, id: '${shape.id}-bg')],
-          color: shape.color.withValues(alpha: 0.2),
-          width: 2,
-        ));
-      }
-    }
 
     // Tramo activo del plan: delgado (antes casing 10 / fill 6)
     for (final segment in plan.segments) {
@@ -635,6 +727,24 @@ class _ViaMapCanvasState extends State<ViaMapCanvas> with SingleTickerProviderSt
     if (_basemapEnhanced) return;
     _basemapEnhanced = true;
     await enhanceBasemapLikeWeb(style);
+
+    // Add PMTiles source if port is available
+    final port = ref.read(appControllerProvider).tileServerPort;
+    if (port > 0) {
+      try {
+        await style.addSource(
+          VectorSource(
+            id: 'rutas-pmtiles-source',
+            tiles: ['http://localhost:$port/tiles/{z}/{x}/{y}.pbf'],
+            minZoom: 10,
+            maxZoom: 18,
+          ),
+        );
+      } catch (e) {
+        debugPrint('Error adding vector source: $e');
+      }
+    }
+    _updateNativeLayers();
   }
 
   @override

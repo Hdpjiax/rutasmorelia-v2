@@ -205,33 +205,30 @@
     },
     {
       "id": "ruta-campestre-mision-del-valle",
-      "name": "Campestre Misión Del Valle",
+      "name": "Ruta Campestre Mision Del Valle",
       "color": "#66BB6A",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-campestre-mision-del-valle.geojson",
-      "colorName": "Campestre",
+      "colorName": "Azul",
       "colorLetter": "C",
-      "casingColor": "#2E7D32"
+      "geojsonFile": "/routes/ruta-campestre-mision-del-valle.geojson"
     },
     {
       "id": "ruta-campestre-posta-trebol-monarca",
-      "name": "Campestre Posta Trebol Monarca",
+      "name": "Ruta Campestre Posta Trebol Monarca",
       "color": "#66BB6A",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-campestre-posta-trebol-monarca.geojson",
-      "colorName": "Campestre",
+      "colorName": "Azul",
       "colorLetter": "C",
-      "casingColor": "#2E7D32"
+      "geojsonFile": "/routes/ruta-campestre-posta-trebol-monarca.geojson"
     },
     {
       "id": "ruta-capula",
-      "name": "Capula",
+      "name": "Ruta Capula",
       "color": "#5C6BC0",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-capula.geojson",
-      "colorName": "General",
+      "colorName": "Azul",
       "colorLetter": "C",
-      "casingColor": "#283593"
+      "geojsonFile": "/routes/ruta-capula.geojson"
     },
     {
       "id": "ruta-centros-comerciales-leandro-valle",
@@ -258,10 +255,9 @@
       "name": "Charo",
       "color": "#5C6BC0",
       "transportType": "foraneo",
-      "geojsonFile": "/routes/ruta-charo.geojson",
-      "colorName": "Foráneo",
+      "colorName": "Azul",
       "colorLetter": "C",
-      "casingColor": "#283593"
+      "geojsonFile": "/routes/ruta-charo.geojson"
     },
     {
       "id": "ruta-charo-san-antonio-corrales",
@@ -358,10 +354,9 @@
       "name": "Coral 2",
       "color": "#FF7043",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-coral-2.geojson",
-      "colorName": "Coral",
+      "colorName": "Azul",
       "colorLetter": "C",
-      "casingColor": "#BF360C"
+      "geojsonFile": "/routes/ruta-coral-2.geojson"
     },
     {
       "id": "ruta-coral-2a",
@@ -428,10 +423,9 @@
       "name": "Durazno - Santa Maria",
       "color": "#8D6E63",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-durazo-santa-maria.geojson",
-      "colorName": "Durazno",
+      "colorName": "Azul",
       "colorLetter": "D",
-      "casingColor": "#3E2723"
+      "geojsonFile": "/routes/ruta-durazo-santa-maria.geojson"
     },
     {
       "id": "ruta-el-pedregal",
@@ -668,10 +662,9 @@
       "name": "Negra 1",
       "color": "#1A1A1A",
       "transportType": "combi",
-      "geojsonFile": "/routes/ruta-negra-1.geojson",
-      "colorName": "Negro",
+      "colorName": "Azul",
       "colorLetter": "N",
-      "casingColor": "#F5F5F5"
+      "geojsonFile": "/routes/ruta-negra-1.geojson"
     },
     {
       "id": "ruta-negra-2",
@@ -942,16 +935,6 @@
       "colorName": "Rosa",
       "colorLetter": "R",
       "casingColor": "#880E4F"
-    },
-    {
-      "id": "ruta-trincheras",
-      "name": "Trincheras",
-      "color": "#795548",
-      "transportType": "combi",
-      "geojsonFile": "/routes/ruta-trincheras.geojson",
-      "colorName": "Trincheras",
-      "colorLetter": "T",
-      "casingColor": "#3E2723"
     },
     {
       "id": "ruta-verde-1",

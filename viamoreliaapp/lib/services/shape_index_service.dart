@@ -40,7 +40,20 @@ class ShapeIndexService {
     _error = null;
     onProgress?.call(0.1);
 
-    // Cat├ílogo remoto ÔåÆ cache ÔåÆ assets (r├ípido; no shapes a├║n)
+    // Invalidation check: if assets changed, clear cache
+    try {
+      final assetIndexJson = await rootBundle.loadString('assets/routes/index.json');
+      final assetHash = _generateSimpleHash(assetIndexJson);
+      final cachedHash = await _localDb.getCachedAssetsVersion();
+      if (cachedHash != assetHash) {
+        await _localDb.clearCache();
+        await _localDb.setCachedAssetsVersion(assetHash);
+      }
+    } catch (e) {
+      debugPrint('Error verifying assets version: $e');
+    }
+
+    // Catálogo remoto → cache → assets (rápido; no shapes aún)
     var list = await _api.fetchCatalog();
     if (list.isEmpty) {
       try {
@@ -48,7 +61,7 @@ class ShapeIndexService {
         list = _parseCatalog(asset);
         await _localDb.cacheRouteMetaList(asset);
       } catch (e) {
-        _error = 'No se pudo cargar cat├ílogo: $e';
+        _error = 'No se pudo cargar catálogo: $e';
       }
     }
 
@@ -56,8 +69,16 @@ class ShapeIndexService {
     _catalogReady = _catalog.isNotEmpty;
     onProgress?.call(1);
     if (!_catalogReady) {
-      _error ??= 'Cat├ílogo vac├¡o';
+      _error ??= 'Catálogo vacío';
     }
+  }
+
+  String _generateSimpleHash(String input) {
+    int hash = 0;
+    for (int i = 0; i < input.length; i++) {
+      hash = (31 * hash + input.codeUnitAt(i)) & 0xFFFFFFFF;
+    }
+    return hash.toRadixString(16);
   }
 
   /// Precarga un subconjunto (favoritas + muestra) en background.

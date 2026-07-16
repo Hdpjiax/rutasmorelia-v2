@@ -19,6 +19,8 @@ import '../services/share_service.dart';
 import '../services/speech_service.dart';
 import '../services/transport_classify.dart';
 import '../services/walk_route_service.dart';
+import '../services/tile_server.dart';
+import '../services/local_db_service.dart';
 
 enum AppPanel { none, trip, routes, favorites, legal, search }
 
@@ -82,6 +84,7 @@ class AppUiState {
   final bool online;
   final PinDropMode pinDropMode;
   final String? bannerMessage;
+  final int tileServerPort;
 
   const AppUiState({
     this.bootstrapped = false,
@@ -127,6 +130,7 @@ class AppUiState {
     this.online = true,
     this.pinDropMode = PinDropMode.none,
     this.bannerMessage,
+    this.tileServerPort = 0,
   });
 
   TripPlanModel? get selectedPlan {
@@ -232,6 +236,7 @@ class AppUiState {
     PinDropMode? pinDropMode,
     String? bannerMessage,
     bool clearBanner = false,
+    int? tileServerPort,
   }) {
     return AppUiState(
       bootstrapped: bootstrapped ?? this.bootstrapped,
@@ -277,6 +282,7 @@ class AppUiState {
       online: online ?? this.online,
       pinDropMode: pinDropMode ?? this.pinDropMode,
       bannerMessage: clearBanner ? null : (bannerMessage ?? this.bannerMessage),
+      tileServerPort: tileServerPort ?? this.tileServerPort,
     );
   }
 }
@@ -307,6 +313,7 @@ class AppController extends StateNotifier<AppUiState> {
   DateTime _lastCameraMove = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastGpsUiPush = DateTime.fromMillisecondsSinceEpoch(0);
   LatLng? _pendingGps;
+  TileServer? _tileServer;
 
   ShapeIndexService get _index => _ref.read(shapeIndexProvider);
   LocationService get _location => _ref.read(locationServiceProvider);
@@ -347,6 +354,17 @@ class AppController extends StateNotifier<AppUiState> {
       online: _net.isOnline,
       loadProgress: 0.2,
     );
+
+    // Extract PMTiles and start local TileServer
+    try {
+      final localDb = LocalDbService();
+      final pmtilesPath = await localDb.getLocalPmtilesPath();
+      _tileServer = TileServer(pmtilesPath: pmtilesPath);
+      await _tileServer!.start();
+      state = state.copyWith(tileServerPort: _tileServer!.port);
+    } catch (e) {
+      debugPrint('Failed to extract or start TileServer: $e');
+    }
 
     // Catálogo rápido (sin shapes) → mapa usable al instante
     await _index.initialize(onProgress: (p) {
@@ -1018,6 +1036,7 @@ class AppController extends StateNotifier<AppUiState> {
     _gpsSub?.cancel();
     _netSub?.cancel();
     _linkSub?.cancel();
+    _tileServer?.stop();
     try {
       _ref.read(connectivityProvider).dispose();
     } catch (_) {}

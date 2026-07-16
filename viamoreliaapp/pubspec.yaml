@@ -29,6 +29,7 @@ dependencies:
   # el build con AGP 9 (proguard-android.txt deprecado). Desktop Windows
   # puede usar flutter run -d chrome o un emulador Android.
   maplibre: ^0.3.3+2
+  pmtiles: ^1.2.0
 
 dev_dependencies:
   flutter_test:
