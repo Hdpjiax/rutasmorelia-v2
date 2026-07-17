@@ -40,18 +40,7 @@ class ShapeIndexService {
     _error = null;
     onProgress?.call(0.1);
 
-    // Invalidation check: if assets changed, clear cache
-    try {
-      final assetIndexJson = await rootBundle.loadString('assets/routes/index.json');
-      final assetHash = _generateSimpleHash(assetIndexJson);
-      final cachedHash = await _localDb.getCachedAssetsVersion();
-      if (cachedHash != assetHash) {
-        await _localDb.clearCache();
-        await _localDb.setCachedAssetsVersion(assetHash);
-      }
-    } catch (e) {
-      debugPrint('Error verifying assets version: $e');
-    }
+
 
     // Catálogo remoto → cache → assets (rápido; no shapes aún)
     var list = await _api.fetchCatalog();
@@ -73,7 +62,7 @@ class ShapeIndexService {
     }
   }
 
-  String _generateSimpleHash(String input) {
+  static String generateSimpleHash(String input) {
     int hash = 0;
     for (int i = 0; i < input.length; i++) {
       hash = (31 * hash + input.codeUnitAt(i)) & 0xFFFFFFFF;

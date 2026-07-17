@@ -86,11 +86,11 @@ class ViaUserDot extends StatelessWidget {
       width: size * 0.55,
       height: size * 0.55,
       decoration: BoxDecoration(
-        color: ViaColors.mint,
+        color: ViaColors.primary,
         shape: BoxShape.circle,
         border: Border.all(color: Colors.white, width: 2.5),
         boxShadow: [
-          BoxShadow(color: ViaColors.mint.withValues(alpha: 0.45), blurRadius: 6),
+          BoxShadow(color: ViaColors.primary.withValues(alpha: 0.45), blurRadius: 6),
         ],
       ),
     );
@@ -109,7 +109,7 @@ class ViaUserDot extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: ViaColors.mint.withValues(alpha: 0.25),
+              color: ViaColors.primary.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
           )

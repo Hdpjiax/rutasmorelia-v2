@@ -13,6 +13,7 @@ class TravelSegmentModel {
   final String? routeName;
   final Color? color;
   final String? direction; // 'ida' | 'vuelta'
+  final double? fare; // Estimated cost in MXN for this segment
   final LatLng? boardingPoint;
   final LatLng? alightingPoint;
   final LatLng? walkFrom;
@@ -29,6 +30,7 @@ class TravelSegmentModel {
     this.routeName,
     this.color,
     this.direction,
+    this.fare,
     this.boardingPoint,
     this.alightingPoint,
     this.walkFrom,

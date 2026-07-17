@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:maplibre/maplibre.dart';
@@ -52,17 +53,27 @@ class ViaMapCanvas extends ConsumerStatefulWidget {
   ConsumerState<ViaMapCanvas> createState() => _ViaMapCanvasState();
 }
 
-class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerProviderStateMixin {
+class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
+    with TickerProviderStateMixin {
   MapController? _controller;
   bool _basemapEnhanced = false;
-  late final AnimationController _arrowCtrl;
-  double _arrowT = 0;
-  DateTime _lastArrowUi = DateTime.fromMillisecondsSinceEpoch(0);
 
-  // Cache solo de polylines (baratas de invalidar). Marcadores se redibujan
-  // con flechas a ~4–5 fps (impacto visual sin 60 rebuilds/s).
+  // Cache solo de polylines (baratas de invalidar).
   Object? _layersKey;
   List<Layer> _cachedLayers = const [];
+  double _lastZoom = 13.0;
+
+  // Route reveal animation
+  late final AnimationController _revealCtrl;
+  double _revealProgress = 1.0;
+
+  // Plan reveal animation
+  late final AnimationController _planRevealCtrl;
+  double _planRevealProgress = 1.0;
+
+  // Pulse glow after reveal
+  late final AnimationController _pulseCtrl;
+  double _pulseGlow = 0.0;
 
   static const _positronStyle =
       'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
@@ -73,25 +84,46 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _arrowCtrl = AnimationController(vsync: this, duration: ViaMotion.arrowLoop)
-      ..addListener(_onArrowTick)
-      ..repeat();
-  }
+    _revealCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _revealCtrl.addListener(() {
+      setState(() => _revealProgress = _revealCtrl.value);
+    });
+    _revealCtrl.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _pulseCtrl.forward(from: 0.0);
+      }
+    });
 
-  void _onArrowTick() {
-    final now = DateTime.now();
-    // ~4.5 fps: se ve el movimiento, no satura el UI thread
-    if (now.difference(_lastArrowUi).inMilliseconds < 220) return;
-    _lastArrowUi = now;
-    if (!mounted) return;
-    setState(() => _arrowT = _arrowCtrl.value);
+    _planRevealCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _planRevealCtrl.addListener(() {
+      setState(() => _planRevealProgress = _planRevealCtrl.value);
+    });
+
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _pulseCtrl.addListener(() {
+      if (_pulseCtrl.value < 0.4) {
+        _pulseGlow = _pulseCtrl.value / 0.4 * 0.35;
+      } else {
+        _pulseGlow = 0.35 * (1 - (_pulseCtrl.value - 0.4) / 0.6);
+      }
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    _arrowCtrl
-      ..removeListener(_onArrowTick)
-      ..dispose();
+    _revealCtrl.dispose();
+    _planRevealCtrl.dispose();
+    _pulseCtrl.dispose();
     super.dispose();
   }
 
@@ -112,6 +144,24 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         oldWidget.shapes != widget.shapes) {
       _updateNativeLayers();
     }
+
+    // Route reveal: animate when a route is first selected or changes
+    if (oldWidget.selectedRoute?.id != widget.selectedRoute?.id &&
+        widget.selectedRoute != null) {
+      _revealProgress = 0.0;
+      _revealCtrl
+        ..value = 0.0
+        ..forward();
+    }
+
+    // Plan reveal: animate when a new plan is selected
+    if (oldWidget.activePlan != widget.activePlan &&
+        widget.activePlan != null) {
+      _planRevealProgress = 0.0;
+      _planRevealCtrl
+        ..value = 0.0
+        ..forward();
+    }
   }
 
   Geographic _g(LatLng p) => Geographic(lon: p.longitude, lat: p.latitude);
@@ -128,10 +178,13 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
     return out;
   }
 
-  Feature<LineString> _lineFeature(List<LatLng> coords, {String? id}) {
-    final slim = _decimate(coords);
+  Feature<LineString> _lineFeature(List<LatLng> coords,
+      {String? id, double reveal = 1.0}) {
+    final count =
+        (coords.length * reveal.clamp(0.0, 1.0)).ceil().clamp(2, coords.length);
+    final visible = coords.take(count).toList();
     final flat = <double>[];
-    for (final c in slim) {
+    for (final c in visible) {
       flat.add(c.longitude);
       flat.add(c.latitude);
     }
@@ -143,12 +196,19 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
 
   Object? _planKey(TripPlanModel? p) {
     if (p == null) return null;
+    var walkPointsCount = 0;
+    for (final s in p.segments) {
+      if (s.type == SegmentType.walk && s.walkPath != null) {
+        walkPointsCount += s.walkPath!.length;
+      }
+    }
     return (
       p.type,
       p.segments.length,
       p.totalDuration.round(),
       p.boardingPoint.latitude.toStringAsFixed(5),
       p.alightingPoint.longitude.toStringAsFixed(5),
+      walkPointsCount,
     );
   }
 
@@ -165,135 +225,60 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         _planKey(widget.activePlan),
         _shapesFingerprint(),
         widget.routeDirectionFilter,
+        (_revealProgress * 50).round(),
+        (_planRevealProgress * 50).round(),
+        (_pulseGlow * 10).round(),
       );
 
 
 
-  void _updateNativeLayers() {
-    final style = _controller?.style;
-    if (style == null) return;
-
-    scheduleMicrotask(() async {
-      try {
-        try {
-          await style.removeLayer('rm-pmtiles-casing');
-        } catch (_) {}
-        try {
-          await style.removeLayer('rm-pmtiles-fill');
-        } catch (_) {}
-
-        if (widget.activePlan != null) {
-          final usedIds = widget.activePlan!.segments
-              .where((s) => s.routeId != null)
-              .map((s) => s.routeId!)
-              .toList();
-
-          if (usedIds.isNotEmpty) {
-            final filter = ['in', ['get', 'routeId'], ['literal', usedIds]];
-
-            await style.addLayer(
-              LineStyleLayer(
-                id: 'rm-pmtiles-casing',
-                sourceId: 'rutas-pmtiles-source',
-                sourceLayerId: 'rutas',
-                filter: filter,
-                paint: {
-                  'line-color': ['get', 'casingColor'],
-                  'line-width': 3.0,
-                  'line-opacity': 0.14,
-                },
-                layout: {
-                  'line-cap': 'round',
-                  'line-join': 'round',
-                },
-              ),
-            );
-
-            await style.addLayer(
-              LineStyleLayer(
-                id: 'rm-pmtiles-fill',
-                sourceId: 'rutas-pmtiles-source',
-                sourceLayerId: 'rutas',
-                filter: filter,
-                paint: {
-                  'line-color': ['get', 'color'],
-                  'line-width': 2.0,
-                  'line-opacity': 0.20,
-                },
-                layout: {
-                  'line-cap': 'round',
-                  'line-join': 'round',
-                },
-              ),
-            );
-          }
-        } else if (widget.selectedRoute != null) {
-          final routeId = widget.selectedRoute!.id;
-          final List<Object> filter;
-
-          if (widget.routeDirectionFilter == 'ida') {
-            filter = [
-              'all',
-              ['==', ['get', 'routeId'], routeId],
-              ['==', ['get', 'direction'], 'ida']
-            ];
-          } else if (widget.routeDirectionFilter == 'vuelta') {
-            filter = [
-              'all',
-              ['==', ['get', 'routeId'], routeId],
-              ['==', ['get', 'direction'], 'vuelta']
-            ];
-          } else {
-            filter = ['==', ['get', 'routeId'], routeId];
-          }
-
-          await style.addLayer(
-            LineStyleLayer(
-              id: 'rm-pmtiles-casing',
-              sourceId: 'rutas-pmtiles-source',
-              sourceLayerId: 'rutas',
-              filter: filter,
-              paint: {
-                'line-color': ['get', 'casingColor'],
-                'line-width': 4.0,
-                'line-opacity': 1.0,
-              },
-              layout: {
-                'line-cap': 'round',
-                'line-join': 'round',
-              },
-            ),
-          );
-
-          await style.addLayer(
-            LineStyleLayer(
-              id: 'rm-pmtiles-fill',
-              sourceId: 'rutas-pmtiles-source',
-              sourceLayerId: 'rutas',
-              filter: filter,
-              paint: {
-                'line-color': ['get', 'color'],
-                'line-width': 3.0,
-                'line-opacity': 1.0,
-              },
-              layout: {
-                'line-cap': 'round',
-                'line-join': 'round',
-              },
-            ),
-          );
-        }
-      } catch (e) {
-        debugPrint('Error updating native PMTiles layers: $e');
-      }
-    });
-  }
+  void _updateNativeLayers() {}
 
   List<Layer> _buildLayers() {
     final layers = <Layer>[];
 
     if (widget.activePlan != null) {
       _layersForPlan(widget.activePlan!, layers);
+    } else if (widget.shapes.isNotEmpty) {
+      final display = DirectionModeService.toCorridorDisplay(
+        widget.shapes,
+        preferDirection: widget.routeDirectionFilter,
+      );
+      for (final shape in display) {
+        if (shape.coordinates.length < 2) continue;
+        final isSense = shape.role == 'sense-label';
+        layers.add(PolylineLayer(
+          polylines: [
+            _lineFeature(shape.coordinates,
+                id: '${shape.id}-cas', reveal: _revealProgress)
+          ],
+          color: shape.casingColor ?? const Color(0xFF0F172A),
+          width: isSense ? 3 : 4,
+        ));
+        layers.add(PolylineLayer(
+          polylines: [
+            _lineFeature(shape.coordinates,
+                id: shape.id, reveal: _revealProgress)
+          ],
+          color: shape.color.withValues(alpha: isSense ? 0.55 : 1),
+          width: isSense ? 2 : 3,
+        ));
+      }
+
+      // Pulse glow on top of route lines after reveal completes
+      if (_pulseGlow > 0.01) {
+        for (final shape in display) {
+          if (shape.coordinates.length < 2) continue;
+          layers.add(PolylineLayer(
+            polylines: [
+              _lineFeature(shape.coordinates,
+                  id: 'pulse-${shape.id}', reveal: 1.0)
+            ],
+            color: const Color(0xFFF5B719).withValues(alpha: _pulseGlow),
+            width: 8,
+          ));
+        }
+      }
     }
 
     return layers;
@@ -304,6 +289,29 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         .where((s) => s.routeId != null)
         .map((s) => s.routeId!)
         .toSet();
+
+    // Corredor completo de fondo (muy tenue y delgado)
+    for (final id in usedIds) {
+      for (final shape in widget.shapes.where((s) => s.routeId == id)) {
+        if (shape.coordinates.length < 2) continue;
+        layers.add(PolylineLayer(
+          polylines: [
+            _lineFeature(shape.coordinates,
+                id: '${shape.id}-bg-cas', reveal: _planRevealProgress)
+          ],
+          color: const Color(0xFF1E293B).withValues(alpha: 0.14),
+          width: 3,
+        ));
+        layers.add(PolylineLayer(
+          polylines: [
+            _lineFeature(shape.coordinates,
+                id: '${shape.id}-bg', reveal: _planRevealProgress)
+          ],
+          color: shape.color.withValues(alpha: 0.2),
+          width: 2,
+        ));
+      }
+    }
 
     // Tramo activo del plan: delgado (antes casing 10 / fill 6)
     for (final segment in plan.segments) {
@@ -323,12 +331,18 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         if (coords.length < 2) continue;
         final color = segment.color ?? ViaColors.mint;
         layers.add(PolylineLayer(
-          polylines: [_lineFeature(coords, id: 'seg-cas-${segment.routeId}')],
+          polylines: [
+            _lineFeature(coords,
+                id: 'seg-cas-${segment.routeId}', reveal: _planRevealProgress)
+          ],
           color: const Color(0xFF0F172A),
           width: 4,
         ));
         layers.add(PolylineLayer(
-          polylines: [_lineFeature(coords, id: 'seg-${segment.routeId}')],
+          polylines: [
+            _lineFeature(coords,
+                id: 'seg-${segment.routeId}', reveal: _planRevealProgress)
+          ],
           color: color,
           width: 3,
         ));
@@ -344,12 +358,18 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
           null => ViaColors.textSecondary,
         };
         layers.add(PolylineLayer(
-          polylines: [_lineFeature(path, id: 'walk-cas-${segment.walkKind}')],
+          polylines: [
+            _lineFeature(path,
+                id: 'walk-cas-${segment.walkKind}', reveal: 1.0)
+          ],
           color: Colors.white.withValues(alpha: 0.85),
           width: 3,
         ));
         layers.add(PolylineLayer(
-          polylines: [_lineFeature(path, id: 'walk-${segment.walkKind}')],
+          polylines: [
+            _lineFeature(path,
+                id: 'walk-${segment.walkKind}', reveal: 1.0)
+          ],
           color: color,
           width: 2,
           dashArray: const [2, 2],
@@ -359,7 +379,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
   }
 
   /// Etiquetas, orbes y flechas con animación suave (throttle en setState).
-  List<Marker> _buildMarkers(double t) {
+  List<Marker> _buildMarkers() {
     final markers = <Marker>[];
 
     if (widget.userPosition != null) {
@@ -368,19 +388,102 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         size: const Size(32, 32),
         child: ViaUserDot(size: 28, pulse: widget.tracking),
       ));
+
+      // Direction arrow during walk navigation
+      if (widget.tracking) {
+        final navState = ref.read(appControllerProvider);
+        if (navState.walkNavSteps != null && navState.currentNavStep != null) {
+          List<LatLng>? wp;
+          if (widget.activePlan != null) {
+            for (final seg in widget.activePlan!.segments) {
+              if (seg.type == SegmentType.walk && seg.walkPath != null && seg.walkPath!.length >= 2) {
+                if (navState.currentNavStep!.startIndex < seg.walkPath!.length) {
+                  wp = seg.walkPath!;
+                  break;
+                }
+              }
+            }
+          }
+          if (wp != null && widget.userPosition != null) {
+            final idx = navState.currentNavStep!.startIndex;
+            final nextIdx = idx < wp.length - 1 ? idx + 1 : idx;
+            final dy = wp[nextIdx].latitude - wp[idx].latitude;
+            final dx = wp[nextIdx].longitude - wp[idx].longitude;
+            if (dx != 0 || dy != 0) {
+              final angle = math.atan2(dy, dx);
+              markers.add(Marker(
+                point: _g(widget.userPosition!),
+                size: const Size(48, 48),
+                alignment: Alignment.center,
+                child: Transform.rotate(
+                  angle: -angle + (math.pi / 2),
+                  child: Icon(
+                    navState.currentNavStep!.instruction.contains('derecha')
+                        ? Icons.turn_right_rounded
+                        : navState.currentNavStep!.instruction.contains('izquierda')
+                            ? Icons.turn_left_rounded
+                            : Icons.navigation_rounded,
+                    size: 36,
+                    color: ViaColors.walkToBoard.withValues(alpha: 0.85),
+                    shadows: const [
+                      Shadow(color: Colors.black45, blurRadius: 6),
+                    ],
+                  ),
+                ),
+              ));
+            }
+          }
+        }
+      }
     }
     if (widget.tracking && widget.projectedOnRoute != null) {
+      // Pulse ring behind bus marker
       markers.add(Marker(
         point: _g(widget.projectedOnRoute!),
-        size: const Size(22, 22),
+        size: const Size(48, 48),
         child: Container(
           decoration: BoxDecoration(
-            color: ViaColors.coral,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2.5),
-            boxShadow: [
-              BoxShadow(color: ViaColors.coral.withValues(alpha: 0.45), blurRadius: 8),
-            ],
+            color: ViaColors.primary.withValues(alpha: 0.08),
+          ),
+        ).animate(onPlay: (c) => c.repeat(reverse: true))
+          .scale(
+            begin: const Offset(0.8, 0.8),
+            end: const Offset(1.3, 1.3),
+            duration: 1200.ms,
+            curve: Curves.easeInOut,
+          ),
+      ));
+
+      // Bus marker with smooth entrance animation
+      markers.add(Marker(
+        point: _g(widget.projectedOnRoute!),
+        size: const Size(36, 36),
+        alignment: Alignment.center,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: 0.8 + 0.2 * value,
+              child: child,
+            );
+          },
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: ViaColors.primary,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2.5),
+              boxShadow: [
+                BoxShadow(color: ViaColors.primary.withValues(alpha: 0.45), blurRadius: 8),
+              ],
+            ),
+            child: const Center(
+              child: Icon(Icons.directions_bus_rounded, size: 16, color: Colors.white),
+            ),
           ),
         ),
       ));
@@ -413,7 +516,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
     }
 
     if (widget.activePlan != null) {
-      _markersForPlan(widget.activePlan!, markers, t);
+      _markersForPlan(widget.activePlan!, markers);
     } else {
       final display = DirectionModeService.toCorridorDisplay(
         widget.shapes,
@@ -422,24 +525,35 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
       for (final shape in display) {
         if (shape.coordinates.length < 10) continue;
         final label = shape.direction == 'vuelta' ? 'Vuelta' : 'Ida';
-        // Ida ~35%, Vuelta ~65% — no el mismo punto
-        final frac = shape.direction == 'vuelta' ? 0.65 : 0.35;
+        // Ida al inicio, Vuelta al inicio (extremos opuestos de la ciudad)
+        final frac = 0.08;
         final pt = _pointAtFraction(shape.coordinates, frac);
         markers.add(Marker(
           point: _g(pt),
-          size: const Size(48, 28),
+          size: const Size(68, 28),
           alignment: shape.direction == 'vuelta'
               ? Alignment.topCenter
               : Alignment.bottomCenter,
           child: _senseChip(label),
         ));
+
+        // Densidad de flechas dinámica según el nivel de zoom
+        int arrowCount = 8;
+        if (_lastZoom > 15.0) {
+          arrowCount = 28;
+        } else if (_lastZoom > 13.5) {
+          arrowCount = 16;
+        } else if (_lastZoom > 11.5) {
+          arrowCount = 10;
+        }
+
         _addArrows(
           markers,
           shape.coordinates,
           shape.color,
-          t,
-          count: 4,
-          skipEnds: 0.14,
+          count: arrowCount,
+          size: 16,
+          skipEnds: 0.08,
         );
       }
     }
@@ -447,7 +561,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
     return markers;
   }
 
-  void _markersForPlan(TripPlanModel plan, List<Marker> markers, double t) {
+  void _markersForPlan(TripPlanModel plan, List<Marker> markers) {
     final segs = plan.segments;
 
     bool isTransferWalk(int i) {
@@ -498,11 +612,21 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
         final color = segment.color ?? ViaColors.mint;
 
         if (coords.length >= 4) {
-          _addArrows(markers, coords, color, t, count: 4, skipEnds: 0.18);
+          // Densidad de flechas para plan según zoom
+          int planArrowCount = 6;
+          if (_lastZoom > 15.0) {
+            planArrowCount = 20;
+          } else if (_lastZoom > 13.5) {
+            planArrowCount = 12;
+          } else if (_lastZoom > 11.5) {
+            planArrowCount = 8;
+          }
+
+          _addArrows(markers, coords, color, count: planArrowCount, size: 14, skipEnds: 0.12);
           final sensePt = _pointAtFraction(coords, 0.45);
           markers.add(Marker(
             point: _g(sensePt),
-            size: const Size(48, 26),
+            size: const Size(68, 28),
             alignment: Alignment.bottomCenter,
             child: _senseChip(segment.direction == 'vuelta' ? 'Vuelta' : 'Ida'),
           ));
@@ -540,7 +664,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
             WalkKind.transfer => const Color(0xFF6AA9D8),
             null => ViaColors.textSecondary,
           };
-          _addArrows(markers, path, color, t, count: 2, size: 12, skipEnds: 0.22);
+          _addArrows(markers, path, color, count: 4, size: 12, skipEnds: 0.18);
         }
       }
     }
@@ -574,19 +698,18 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
   void _addArrows(
     List<Marker> markers,
     List<LatLng> coords,
-    Color color,
-    double animationValue, {
+    Color color, {
     int count = 4,
     double size = 13,
     double skipEnds = 0.1,
   }) {
     if (coords.length < 4) return;
-    final slim = _decimate(coords, maxPoints: 80);
-    if (slim.length < 4) return;
+    // IMPORTANTE: Usar coordenadas reales sin decimar para que las flechas
+    // se ubiquen 100% sobre la línea dibujada y no floten fuera.
+    final slim = coords;
     final span = 1.0 - 2 * skipEnds;
     for (var k = 0; k < count; k++) {
-      final base = skipEnds + span * (k / count);
-      final frac = skipEnds + ((base - skipEnds + animationValue * span) % span);
+      final frac = skipEnds + span * (k / (count - 1).clamp(1, 25));
       final exact = frac * (slim.length - 2);
       final index = exact.floor().clamp(0, slim.length - 2);
       final rem = exact - index;
@@ -615,23 +738,26 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
   }
 
   Widget _senseChip(String label) {
+    final isVuelta = label.toLowerCase().contains('vuelta');
+    final activeColor = isVuelta ? ViaColors.walkFromAlight : ViaColors.walkToBoard;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.96),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF1E293B), width: 1.2),
+        border: Border.all(color: activeColor, width: 1.5),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1)),
         ],
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w900,
-          color: Color(0xFF0F172A),
+          color: activeColor,
           height: 1.1,
         ),
       ),
@@ -727,24 +853,6 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
     if (_basemapEnhanced) return;
     _basemapEnhanced = true;
     await enhanceBasemapLikeWeb(style);
-
-    // Add PMTiles source if port is available
-    final port = ref.read(appControllerProvider).tileServerPort;
-    if (port > 0) {
-      try {
-        await style.addSource(
-          VectorSource(
-            id: 'rutas-pmtiles-source',
-            tiles: ['http://localhost:$port/tiles/{z}/{x}/{y}.pbf'],
-            minZoom: 10,
-            maxZoom: 18,
-          ),
-        );
-      } catch (e) {
-        debugPrint('Error adding vector source: $e');
-      }
-    }
-    _updateNativeLayers();
   }
 
   @override
@@ -754,7 +862,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
       _layersKey = lk;
       _cachedLayers = _buildLayers();
     }
-    final markers = _buildMarkers(_arrowT);
+    final markers = _buildMarkers();
 
     // RepaintBoundary: el mapa no invalida el chrome UI y viceversa.
     return RepaintBoundary(
@@ -784,6 +892,14 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas> with SingleTickerPr
           } else if (event is MapEventLongClick) {
             final g = event.point;
             widget.onLongPress?.call(LatLng(g.lat, g.lon));
+          } else {
+            // Escuchar cambios de zoom del mapa para re-calcular densidad de flechas
+            final z = _controller?.camera?.zoom;
+            if (z != null && (z - _lastZoom).abs() > 0.22) {
+              setState(() {
+                _lastZoom = z;
+              });
+            }
           }
         },
         layers: _cachedLayers,

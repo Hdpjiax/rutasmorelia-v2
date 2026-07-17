@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalDbService {
   static const String _kRouteMetaListKey = 'cached_route_meta_list';
-  static const String _kAssetsVersionKey = 'routes_assets_version_v2';
+  static const String _kAssetsVersionKey = 'routes_assets_version_v3';
 
   Future<String?> getCachedRouteMetaList() async {
     final prefs = await SharedPreferences.getInstance();

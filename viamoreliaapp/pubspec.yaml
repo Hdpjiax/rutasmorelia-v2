@@ -30,6 +30,7 @@ dependencies:
   # puede usar flutter run -d chrome o un emulador Android.
   maplibre: ^0.3.3+2
   pmtiles: ^1.2.0
+  flutter_tts: ^4.2.5
 
 dev_dependencies:
   flutter_test:

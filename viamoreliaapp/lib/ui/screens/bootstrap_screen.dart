@@ -45,7 +45,7 @@ class _BootstrapScreenState extends ConsumerState<BootstrapScreen> {
                   errorBuilder: (_, _, _) => const Icon(
                     Icons.route_rounded,
                     size: 72,
-                    color: ViaColors.mint,
+                    color: ViaColors.primary,
                   ),
                 )
                     .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -79,7 +79,7 @@ class _BootstrapScreenState extends ConsumerState<BootstrapScreen> {
                   child: LinearProgressIndicator(
                     value: state.loadProgress.clamp(0.08, 1),
                     minHeight: 6,
-                    color: ViaColors.mint,
+                    color: ViaColors.primary,
                     backgroundColor: ViaColors.hairline,
                   ),
                 ),
@@ -96,7 +96,7 @@ class _BootstrapScreenState extends ConsumerState<BootstrapScreen> {
                   Text(
                     state.loadError!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFFDC3D4A), fontSize: 12.5),
+                    style: const TextStyle(color: ViaColors.coralBrand, fontSize: 12.5),
                   ),
                 ],
               ],

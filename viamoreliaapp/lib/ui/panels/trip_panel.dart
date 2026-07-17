@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/via_theme.dart';
+import '../../models/segment_model.dart';
 import '../../models/trip_plan_model.dart';
 import '../../state/app_controller.dart';
 import '../micro/via_panel.dart';
@@ -29,18 +30,22 @@ class TripPanel extends ConsumerWidget {
           onPressed: state.origin != null && state.destination != null
               ? () => ctrl.shareCurrentTrip()
               : null,
-          icon: const Icon(Icons.ios_share_rounded, color: ViaColors.textSecondary),
+          icon: const Icon(Icons.ios_share_rounded,
+              color: ViaColors.textSecondary),
         ),
         IconButton(
           tooltip: 'Reportar',
           onPressed: () {
-            showDialog(context: context, builder: (_) => const ReportRouteDialog());
+            showDialog(
+                context: context, builder: (_) => const ReportRouteDialog());
           },
-          icon: const Icon(Icons.flag_outlined, color: ViaColors.textSecondary),
+          icon: const Icon(Icons.flag_outlined,
+              color: ViaColors.textSecondary),
         ),
       ],
       child: Column(
         children: [
+          // Filter & sort chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -63,9 +68,12 @@ class TripPanel extends ConsumerWidget {
                   label: 'Transbordo',
                   selected: state.planFilter == PlanFilter.transfer,
                   icon: Icons.transfer_within_a_station_rounded,
-                  selectedColor: ViaColors.violet,
+                  selectedColor: ViaColors.secondary,
                   onTap: () => ctrl.setPlanFilter(PlanFilter.transfer),
                 ),
+                const SizedBox(width: 10),
+                Container(
+                    width: 1, height: 20, color: ViaColors.hairline),
                 const SizedBox(width: 10),
                 ViaChip(
                   label: 'Tiempo',
@@ -74,13 +82,13 @@ class TripPanel extends ConsumerWidget {
                 ),
                 const SizedBox(width: 6),
                 ViaChip(
-                  label: 'Menos caminar',
+                  label: 'Caminata',
                   selected: state.planSort == PlanSort.walk,
                   onTap: () => ctrl.setPlanSort(PlanSort.walk),
                 ),
                 const SizedBox(width: 6),
                 ViaChip(
-                  label: 'Menos transbordos',
+                  label: 'Transbordos',
                   selected: state.planSort == PlanSort.transfers,
                   onTap: () => ctrl.setPlanSort(PlanSort.transfers),
                 ),
@@ -88,20 +96,29 @@ class TripPanel extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
+
+          // Loading or empty or list
           if (state.planning)
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  LinearProgressIndicator(
-                    value: state.planningProgress.clamp(0.05, 1),
-                    color: ViaColors.mint,
-                    backgroundColor: ViaColors.paperTint,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(99),
+                    child: LinearProgressIndicator(
+                      value: state.planningProgress.clamp(0.05, 1),
+                      minHeight: 6,
+                      color: ViaColors.primary,
+                      backgroundColor: ViaColors.paperTint,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'Calculando rutas… ${(state.planningProgress * 100).round()}%',
-                    style: const TextStyle(color: ViaColors.textSecondary),
+                    style: const TextStyle(
+                      color: ViaColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -129,6 +146,7 @@ class TripPanel extends ConsumerWidget {
                   return _PlanCard(
                     plan: plan,
                     selected: selected,
+                    index: i,
                     tracking: selected && state.tracking,
                     trackingLabel: selected && state.tracking
                         ? _segLabel(state.trackingSegment)
@@ -139,23 +157,7 @@ class TripPanel extends ConsumerWidget {
                       ctrl.startTracking();
                     },
                     onStopTrack: ctrl.stopTracking,
-                  )
-                      .animate()
-                      .fadeIn(duration: 280.ms, delay: (45 * i).ms)
-                      .slideY(
-                        begin: 0.1,
-                        end: 0,
-                        duration: 340.ms,
-                        delay: (45 * i).ms,
-                        curve: Curves.easeOutCubic,
-                      )
-                      .scale(
-                        begin: const Offset(0.97, 0.97),
-                        end: const Offset(1, 1),
-                        duration: 320.ms,
-                        delay: (45 * i).ms,
-                        curve: Curves.easeOutBack,
-                      );
+                  );
                 },
               ),
             ),
@@ -182,6 +184,7 @@ class _PlanCard extends StatelessWidget {
   final TripPlanModel plan;
   final bool selected;
   final bool tracking;
+  final int index;
   final String? trackingLabel;
   final VoidCallback onSelect;
   final VoidCallback onTrack;
@@ -191,6 +194,7 @@ class _PlanCard extends StatelessWidget {
     required this.plan,
     required this.selected,
     required this.tracking,
+    required this.index,
     this.trackingLabel,
     required this.onSelect,
     required this.onTrack,
@@ -200,88 +204,354 @@ class _PlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTransfer = plan.type == TripPlanType.transfer;
-    final rides = plan.segments.where((s) => s.routeName != null).map((s) => s.routeName!).toSet();
+    final gradientColors = isTransfer
+        ? const [ViaColors.primary, ViaColors.secondary]
+        : const [ViaColors.emerald, ViaColors.primary];
 
-    return AnimatedContainer(
-      duration: ViaMotion.quick,
+    // Unique route chips preserving order
+    final routeNames = <String, Color>{};
+    for (final s in plan.segments) {
+      if (s.type == SegmentType.ride &&
+          s.routeName != null &&
+          !routeNames.containsKey(s.routeName)) {
+        routeNames[s.routeName!] = s.color ?? ViaColors.primary;
+      }
+    }
+
+    return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: selected ? ViaColors.mintSoft : ViaColors.paperTint,
-        borderRadius: BorderRadius.circular(ViaRadii.md),
+        borderRadius: BorderRadius.circular(ViaRadii.card),
         border: Border.all(
-          color: selected ? ViaColors.mint.withValues(alpha: 0.55) : ViaColors.hairline,
-          width: selected ? 1.4 : 1,
+          color: selected
+              ? ViaColors.primary.withValues(alpha: 0.4)
+              : ViaColors.hairline.withValues(alpha: 0.5),
         ),
+        color: selected
+            ? ViaColors.mintSoft.withValues(alpha: 0.5)
+            : ViaColors.paperElevated.withValues(alpha: 0.92),
+        boxShadow: selected
+            ? [
+                BoxShadow(
+                  color: ViaColors.primary.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(ViaRadii.md),
+          borderRadius: BorderRadius.circular(ViaRadii.card),
           onTap: onSelect,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: Stack(
+            children: [
+              // Top gradient accent bar
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: gradientColors,
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(ViaRadii.card - 1),
+                      topRight: Radius.circular(ViaRadii.card - 1),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: (isTransfer ? ViaColors.violet : ViaColors.mint).withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(99),
+                    // Header row: type badge + duration + walk
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Type badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: (isTransfer
+                                    ? ViaColors.secondary
+                                    : ViaColors.primary)
+                                .withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isTransfer
+                                    ? Icons.transfer_within_a_station_rounded
+                                    : Icons.trending_flat_rounded,
+                                size: 13,
+                                color: isTransfer
+                                    ? ViaColors.secondary
+                                    : ViaColors.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                isTransfer ? 'Transbordo' : 'Directa',
+                                style: TextStyle(
+                                  color: isTransfer
+                                      ? ViaColors.secondary
+                                      : ViaColors.primary,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Spacer(),
+                        // Duration + walk
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '~${plan.totalDurationMinutes} min',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                color: ViaColors.ink,
+                                height: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '${plan.walkDistanceTotal.round()} m caminata',
+                              style: const TextStyle(
+                                color: ViaColors.textMuted,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            if (plan.totalFareFormatted != null) ...[
+                              const SizedBox(height: 2),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.attach_money_rounded,
+                                    size: 12,
+                                    color: ViaColors.textMuted,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    plan.totalFareFormatted!,
+                                    style: const TextStyle(
+                                      color: ViaColors.textMuted,
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // Route name chips with color dots
+                    if (routeNames.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: routeNames.entries.map((e) {
+                          return _RouteChip(
+                            label: e.key,
+                            color: e.value,
+                          );
+                        }).toList(),
                       ),
-                      child: Text(
-                        isTransfer ? 'Transbordo' : 'Directa',
-                        style: TextStyle(
-                          color: isTransfer ? ViaColors.violet : ViaColors.mint,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 11,
+                    ],
+
+                    // Fare estimate banner
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.attach_money_rounded,
+                            size: 14, color: ViaColors.textSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Tarifa estimada: \$9 - \$12',
+                          style: const TextStyle(
+                            color: ViaColors.textSecondary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Tracking label (collapsed)
+                    if (trackingLabel != null && !selected) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: ViaColors.coral,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            trackingLabel!,
+                            style: const TextStyle(
+                              color: ViaColors.coral,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // Expanded details when selected
+                    if (selected) ...[
+                      // Tracking label (expanded)
+                      if (trackingLabel != null) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: ViaColors.coralSoft,
+                            borderRadius:
+                                BorderRadius.circular(ViaRadii.sm),
+                            border: Border.all(
+                              color: ViaColors.coral.withValues(alpha: 0.25),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: ViaColors.coral,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                trackingLabel!,
+                                style: const TextStyle(
+                                  color: ViaColors.coral,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      ViaTripTimeline(plan: plan),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: tracking ? onStopTrack : onTrack,
+                          icon: Icon(
+                            tracking
+                                ? Icons.stop_rounded
+                                : Icons.navigation_rounded,
+                            size: 18,
+                          ),
+                          label: Text(
+                            tracking
+                                ? 'Detener seguimiento'
+                                : 'Seguir mi viaje',
+                          ),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: tracking
+                                ? ViaColors.coral
+                                : ViaColors.primary,
+                          ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '~${plan.totalDurationMinutes} min',
-                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                    ),
+                      const SizedBox(height: 6),
+                      const ViaSuggestedStopBanner(),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  rides.isEmpty ? 'Solo caminata' : rides.join(' · '),
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).animate().fadeIn(
+          duration: 280.ms,
+          delay: (40 * index).ms,
+          curve: Curves.easeOutCubic,
+        ).slideY(
+          begin: 0.08,
+          end: 0,
+          duration: 320.ms,
+          delay: (40 * index).ms,
+          curve: Curves.easeOutCubic,
+        );
+  }
+}
+
+class _RouteChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _RouteChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(ViaRadii.pill),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.35),
+                  blurRadius: 3,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Caminata ~${plan.walkDistanceTotal.round()} m',
-                  style: const TextStyle(color: ViaColors.textMuted, fontSize: 12),
-                ),
-                if (trackingLabel != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    trackingLabel!,
-                    style: const TextStyle(
-                      color: ViaColors.coral,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12.5,
-                    ),
-                  ),
-                ],
-                if (selected) ...[
-                  const SizedBox(height: 12),
-                  ViaTripTimeline(plan: plan),
-                  const SizedBox(height: 10),
-                  FilledButton.icon(
-                    onPressed: tracking ? onStopTrack : onTrack,
-                    icon: Icon(tracking ? Icons.stop_rounded : Icons.navigation_rounded, size: 18),
-                    label: Text(tracking ? 'Detener seguimiento' : 'Seguir mi viaje'),
-                  ),
-                ],
               ],
             ),
           ),
-        ),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w700,
+              fontSize: 11.5,
+            ),
+          ),
+        ],
       ),
     );
   }

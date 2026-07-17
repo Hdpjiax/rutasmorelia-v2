@@ -11,6 +11,7 @@ class TripPlanModel {
   final double totalDistance; // meters
   final double totalDuration; // seconds
   final double walkDistanceTotal; // meters
+  final double? totalFare; // Estimated total cost in MXN
 
   TripPlanModel({
     required this.type,
@@ -20,9 +21,15 @@ class TripPlanModel {
     required this.totalDistance,
     required this.totalDuration,
     required this.walkDistanceTotal,
+    this.totalFare,
   });
 
   // Derived properties
   int get totalDurationMinutes => (totalDuration / 60).round();
   int get walkDurationMinutes => (walkDistanceTotal / 1.2 / 60).round(); // Assuming 1.2 m/s walk speed
+
+  String? get totalFareFormatted {
+    if (totalFare == null) return null;
+    return '\$${totalFare!.toStringAsFixed(0)}';
+  }
 }

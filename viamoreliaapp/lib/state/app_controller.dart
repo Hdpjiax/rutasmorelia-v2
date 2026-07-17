@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/place_model.dart';
 import '../models/route_model.dart';
 import '../models/segment_model.dart';
@@ -15,12 +17,14 @@ import '../services/place_search_service.dart';
 import '../services/planner_isolate.dart';
 import '../services/routing_engine.dart';
 import '../services/shape_index_service.dart';
+import '../gis/walk_navigation.dart';
 import '../services/share_service.dart';
 import '../services/speech_service.dart';
 import '../services/transport_classify.dart';
 import '../services/walk_route_service.dart';
 import '../services/tile_server.dart';
 import '../services/local_db_service.dart';
+import '../services/voice_guide_service.dart';
 
 enum AppPanel { none, trip, routes, favorites, legal, search }
 
@@ -80,11 +84,15 @@ class AppUiState {
   final String? trackingLabel;
   /// Punto proyectado sobre la polyline del ride (seguimiento).
   final LatLng? projectedOnRoute;
+  final List<WalkNavStep>? walkNavSteps;
+  final WalkNavStep? currentNavStep;
+  final double navStepProgress;
   final List<RouteShapeModel> mapShapes;
   final bool online;
   final PinDropMode pinDropMode;
   final String? bannerMessage;
   final int tileServerPort;
+  final int tileServerMaxZoom;
 
   const AppUiState({
     this.bootstrapped = false,
@@ -126,11 +134,15 @@ class AppUiState {
     this.metersToNext = 0,
     this.trackingLabel,
     this.projectedOnRoute,
+    this.walkNavSteps,
+    this.currentNavStep,
+    this.navStepProgress = 0,
     this.mapShapes = const [],
     this.online = true,
     this.pinDropMode = PinDropMode.none,
     this.bannerMessage,
     this.tileServerPort = 0,
+    this.tileServerMaxZoom = 14,
   });
 
   TripPlanModel? get selectedPlan {
@@ -231,12 +243,17 @@ class AppUiState {
     bool clearTrackingLabel = false,
     LatLng? projectedOnRoute,
     bool clearProjected = false,
+    List<WalkNavStep>? walkNavSteps,
+    bool clearWalkNavSteps = false,
+    WalkNavStep? currentNavStep,
+    double? navStepProgress,
     List<RouteShapeModel>? mapShapes,
     bool? online,
     PinDropMode? pinDropMode,
     String? bannerMessage,
     bool clearBanner = false,
     int? tileServerPort,
+    int? tileServerMaxZoom,
   }) {
     return AppUiState(
       bootstrapped: bootstrapped ?? this.bootstrapped,
@@ -278,11 +295,15 @@ class AppUiState {
       metersToNext: metersToNext ?? this.metersToNext,
       trackingLabel: clearTrackingLabel ? null : (trackingLabel ?? this.trackingLabel),
       projectedOnRoute: clearProjected ? null : (projectedOnRoute ?? this.projectedOnRoute),
+      walkNavSteps: clearWalkNavSteps ? null : (walkNavSteps ?? this.walkNavSteps),
+      currentNavStep: currentNavStep ?? this.currentNavStep,
+      navStepProgress: navStepProgress ?? this.navStepProgress,
       mapShapes: mapShapes ?? this.mapShapes,
       online: online ?? this.online,
       pinDropMode: pinDropMode ?? this.pinDropMode,
       bannerMessage: clearBanner ? null : (bannerMessage ?? this.bannerMessage),
       tileServerPort: tileServerPort ?? this.tileServerPort,
+      tileServerMaxZoom: tileServerMaxZoom ?? this.tileServerMaxZoom,
     );
   }
 }
@@ -355,13 +376,30 @@ class AppController extends StateNotifier<AppUiState> {
       loadProgress: 0.2,
     );
 
+    // Verify assets version and clear cache if changed BEFORE copying PMTiles
+    try {
+      final localDb = LocalDbService();
+      final assetIndexJson = await rootBundle.loadString('assets/routes/index.json');
+      final assetHash = ShapeIndexService.generateSimpleHash(assetIndexJson);
+      final cachedHash = await localDb.getCachedAssetsVersion();
+      if (cachedHash != assetHash) {
+        await localDb.clearCache();
+        await localDb.setCachedAssetsVersion(assetHash);
+      }
+    } catch (e) {
+      debugPrint('Error verifying assets version on bootstrap: $e');
+    }
+
     // Extract PMTiles and start local TileServer
     try {
       final localDb = LocalDbService();
       final pmtilesPath = await localDb.getLocalPmtilesPath();
       _tileServer = TileServer(pmtilesPath: pmtilesPath);
       await _tileServer!.start();
-      state = state.copyWith(tileServerPort: _tileServer!.port);
+      state = state.copyWith(
+        tileServerPort: _tileServer!.port,
+        tileServerMaxZoom: _tileServer!.maxZoom,
+      );
     } catch (e) {
       debugPrint('Failed to extract or start TileServer: $e');
     }
@@ -448,9 +486,21 @@ class AppController extends StateNotifier<AppUiState> {
     state = state.copyWith(showWelcome: false);
   }
 
-  void setPanel(AppPanel panel) => state = state.copyWith(panel: panel);
-  void togglePanel(AppPanel panel) =>
-      state = state.copyWith(panel: state.panel == panel ? AppPanel.none : panel);
+  void setPanel(AppPanel panel) {
+    state = state.copyWith(
+      panel: panel,
+      routeQuery: panel == AppPanel.routes ? '' : null,
+      searchCollapsed: panel == AppPanel.none ? false : null,
+    );
+  }
+  void togglePanel(AppPanel panel) {
+    final opening = state.panel != panel;
+    state = state.copyWith(
+      panel: state.panel == panel ? AppPanel.none : panel,
+      routeQuery: opening && panel == AppPanel.routes ? '' : null,
+      searchCollapsed: !opening ? false : null,
+    );
+  }
   void setSearchCollapsed(bool v) => state = state.copyWith(searchCollapsed: v);
   void setBottomCollapsed(bool v) => state = state.copyWith(bottomCollapsed: v);
   void setLegalTab(LegalTab t) => state = state.copyWith(legalTab: t, panel: AppPanel.legal);
@@ -566,11 +616,43 @@ class AppController extends StateNotifier<AppUiState> {
     final rideName = rideSeg?.routeName ?? 'ruta';
     final rideDir = rideSeg?.direction == 'vuelta' ? 'Vuelta' : 'Ida';
 
+    // Walk nav computation
+    List<WalkNavStep>? navSteps;
+    WalkNavStep? curStep;
+    double stepProg = 0;
+
     if (seg == TrackingSegment.walkToBoard) {
       metersToNext = dBoard;
       final total = _engine.getHaversineDistance(origin, board).clamp(1.0, 1e9);
       progress = (1 - (dBoard / total)).clamp(0.0, 1.0);
       label = 'Camina a subir · ${metersToNext.round()} m';
+
+      for (final s in plan.segments) {
+        if (s.type == SegmentType.walk && s.walkKind == WalkKind.toBoard && s.walkPath != null && s.walkPath!.length >= 2) {
+          final path = s.walkPath!;
+          navSteps = computeWalkNavSteps(path);
+          if (navSteps.isNotEmpty) {
+            final frac = _engine.projectPointOntoLineString(path, pos).fraction;
+            for (var i = navSteps.length - 1; i >= 0; i--) {
+              final stepFrac = navSteps[i].startIndex / (path.length - 1);
+              if (frac >= stepFrac) {
+                curStep = navSteps[i];
+                if (i < navSteps.length - 1) {
+                  final nextFrac = navSteps[i + 1].startIndex / (path.length - 1);
+                  stepProg = ((frac - stepFrac) / (nextFrac - stepFrac)).clamp(0.0, 1.0);
+                } else {
+                  stepProg = 1.0;
+                }
+                break;
+              }
+            }
+            if (curStep != null) {
+              label = '${curStep.instruction} · ${curStep.distance.round()} m';
+            }
+          }
+          break;
+        }
+      }
     } else if (seg == TrackingSegment.ride) {
       metersToNext = dAlight;
       // Proyectar sobre corredor del ride
@@ -596,6 +678,33 @@ class AppController extends StateNotifier<AppUiState> {
       final total = _engine.getHaversineDistance(alight, dest).clamp(1.0, 1e9);
       progress = (1 - (dDest / total)).clamp(0.0, 1.0);
       label = 'Camina al destino · ${metersToNext.round()} m';
+
+      for (final s in plan.segments) {
+        if (s.type == SegmentType.walk && s.walkKind == WalkKind.fromAlight && s.walkPath != null && s.walkPath!.length >= 2) {
+          final path = s.walkPath!;
+          navSteps = computeWalkNavSteps(path);
+          if (navSteps.isNotEmpty) {
+            final frac = _engine.projectPointOntoLineString(path, pos).fraction;
+            for (var i = navSteps.length - 1; i >= 0; i--) {
+              final stepFrac = navSteps[i].startIndex / (path.length - 1);
+              if (frac >= stepFrac) {
+                curStep = navSteps[i];
+                if (i < navSteps.length - 1) {
+                  final nextFrac = navSteps[i + 1].startIndex / (path.length - 1);
+                  stepProg = ((frac - stepFrac) / (nextFrac - stepFrac)).clamp(0.0, 1.0);
+                } else {
+                  stepProg = 1.0;
+                }
+                break;
+              }
+            }
+            if (curStep != null) {
+              label = '${curStep.instruction} · ${curStep.distance.round()} m';
+            }
+          }
+          break;
+        }
+      }
     } else {
       metersToNext = 0;
       progress = 1;
@@ -603,6 +712,8 @@ class AppController extends StateNotifier<AppUiState> {
     }
 
     final near = dAlight <= 150 && seg != TrackingSegment.walkToBoard;
+    final bool isWalk = seg == TrackingSegment.walkToBoard || seg == TrackingSegment.walkToDest;
+    final bool clearNav = !isWalk || navSteps == null;
     state = state.copyWith(
       trackingSegment: seg,
       nearAlight: near,
@@ -611,7 +722,28 @@ class AppController extends StateNotifier<AppUiState> {
       trackingLabel: label,
       projectedOnRoute: projected,
       userPosition: pos,
+      walkNavSteps: navSteps,
+      clearWalkNavSteps: clearNav,
+      currentNavStep: isWalk ? curStep : null,
+      navStepProgress: isWalk ? stepProg : 0,
     );
+
+    VoiceGuideService.instance.onTrackingUpdate(
+      trackingSegment: seg.name,
+      navInstruction: _navInstructionForSegment(seg, projected, dAlight, dBoard, dDest),
+      metersToNext: metersToNext,
+      nearAlight: near,
+      routeName: rideSeg?.routeName,
+      routeDirection: rideDir,
+    );
+  }
+
+  String? _navInstructionForSegment(TrackingSegment seg, LatLng? projected, double dAlight, double dBoard, double dDest) {
+    if ((seg == TrackingSegment.walkToBoard || seg == TrackingSegment.walkToDest) &&
+        state.currentNavStep != null) {
+      return state.currentNavStep!.instruction;
+    }
+    return null;
   }
 
   void stopLiveGps() {
@@ -707,8 +839,11 @@ class AppController extends StateNotifier<AppUiState> {
       );
       if (token != _planToken) return;
 
+      // Enrich with fare estimates
+      final enriched = _enrichPlansWithFares(quick);
+
       final pick = ShareService.matchPlanIndex(
-        quick,
+        enriched,
         fingerprint: preferredFingerprint,
         routeId: preferredRouteId,
         fallbackIndex: preferredPlanIndex ?? 0,
@@ -716,7 +851,7 @@ class AppController extends StateNotifier<AppUiState> {
 
       // Instant show (walks still straight)
       state = state.copyWith(
-        plans: quick,
+        plans: enriched,
         planning: false,
         planningProgress: 1,
         selectedPlanIndex: pick,
@@ -726,7 +861,7 @@ class AppController extends StateNotifier<AppUiState> {
       unawaited(_api.telemetry('plan_ok', {'n': quick.length, 'pick': pick}));
 
       // OSRM: primero el plan elegido (rápido), luego el resto en background
-      unawaited(_hydrateWalksAsync(token, quick, shapes, priorityIndex: pick));
+      unawaited(_hydrateWalksAsync(token, enriched, shapes, priorityIndex: pick));
     } catch (e) {
       if (token != _planToken) return;
       state = state.copyWith(
@@ -772,6 +907,11 @@ class AppController extends StateNotifier<AppUiState> {
         segs.add(s);
       }
     }
+    final totalFare = segs.fold<double?>(null, (sum, s) {
+      if (s.fare == null) return sum;
+      return (sum ?? 0) + s.fare!;
+    });
+
     return TripPlanModel(
       type: plan.type,
       segments: segs,
@@ -780,6 +920,7 @@ class AppController extends StateNotifier<AppUiState> {
       totalDistance: plan.totalDistance,
       totalDuration: plan.totalDuration,
       walkDistanceTotal: plan.walkDistanceTotal,
+      totalFare: totalFare,
     );
   }
 
@@ -832,12 +973,74 @@ class AppController extends StateNotifier<AppUiState> {
     return pool.where((s) => ids.contains(s.routeId)).toList();
   }
 
+  double _estimateFare(String? transportType) {
+    if (transportType == 'combi') return 9.0;
+    if (transportType == 'autobus') return 10.0;
+    return 9.0;
+  }
+
+  String? _transportTypeForRoute(String? routeId) {
+    if (routeId == null) return null;
+    try {
+      return _index.catalog.firstWhere((r) => r.id == routeId).transportType;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  List<TripPlanModel> _enrichPlansWithFares(List<TripPlanModel> plans) {
+    return plans.map((plan) {
+      final segs = plan.segments.map((s) {
+        if (s.type == SegmentType.ride) {
+          final tt = _transportTypeForRoute(s.routeId);
+          final fare = _estimateFare(tt);
+          return TravelSegmentModel(
+            type: s.type,
+            instruction: s.instruction,
+            distance: s.distance,
+            duration: s.duration,
+            routeId: s.routeId,
+            routeName: s.routeName,
+            color: s.color,
+            direction: s.direction,
+            boardingPoint: s.boardingPoint,
+            alightingPoint: s.alightingPoint,
+            walkFrom: s.walkFrom,
+            walkTo: s.walkTo,
+            walkKind: s.walkKind,
+            walkPath: s.walkPath,
+            fare: fare,
+          );
+        }
+        return s;
+      }).toList();
+
+      final totalFare = segs.fold<double?>(null, (sum, s) {
+        if (s.fare == null) return sum;
+        return (sum ?? 0) + s.fare!;
+      });
+
+      return TripPlanModel(
+        type: plan.type,
+        segments: segs,
+        boardingPoint: plan.boardingPoint,
+        alightingPoint: plan.alightingPoint,
+        totalDistance: plan.totalDistance,
+        totalDuration: plan.totalDuration,
+        walkDistanceTotal: plan.walkDistanceTotal,
+        totalFare: totalFare,
+      );
+    }).toList();
+  }
+
   void selectPlan(int index) {
     if (index < 0 || index >= state.plans.length) return;
     state = state.copyWith(
       selectedPlanIndex: index,
       bottomCollapsed: true,
       clearSelectedRoute: true,
+      panel: AppPanel.none,
+      searchCollapsed: true,
     );
     unawaited(_api.telemetry('select_plan', {'i': index}));
   }
@@ -850,6 +1053,7 @@ class AppController extends StateNotifier<AppUiState> {
       plans: const [],
       panel: AppPanel.none,
       bottomCollapsed: false,
+      searchCollapsed: true,
     );
     unawaited(_api.telemetry('select_route', {'id': meta.id}));
   }
@@ -933,6 +1137,7 @@ class AppController extends StateNotifier<AppUiState> {
 
   void startTracking() {
     if (state.selectedPlan == null) return;
+    VoiceGuideService.instance.reset();
     if (!state.gpsLive) startLiveGps();
     state = state.copyWith(
       tracking: true,
@@ -943,6 +1148,10 @@ class AppController extends StateNotifier<AppUiState> {
       trackingProgress: 0,
       metersToNext: 0,
       trackingLabel: 'Iniciando seguimiento…',
+      walkNavSteps: null,
+      clearWalkNavSteps: true,
+      currentNavStep: null,
+      navStepProgress: 0,
     );
     final pos = state.userPosition;
     if (pos != null) _updateTrackingProgress(pos, state.selectedPlan!);
@@ -950,6 +1159,7 @@ class AppController extends StateNotifier<AppUiState> {
   }
 
   void stopTracking() {
+    VoiceGuideService.instance.reset();
     state = state.copyWith(
       tracking: false,
       nearAlight: false,
@@ -957,6 +1167,9 @@ class AppController extends StateNotifier<AppUiState> {
       metersToNext: 0,
       clearTrackingLabel: true,
       clearProjected: true,
+      clearWalkNavSteps: true,
+      currentNavStep: null,
+      navStepProgress: 0,
     );
   }
 
@@ -975,6 +1188,28 @@ class AppController extends StateNotifier<AppUiState> {
       'plan': state.selectedPlanIndex,
       'routes': fp,
     }));
+  }
+
+  Future<void> shareTrip() async {
+    final plan = state.selectedPlan;
+    final origin = state.origin;
+    final dest = state.destination;
+    if (plan == null || origin == null || dest == null) return;
+
+    final routeNames = plan.segments
+      .where((s) => s.type == SegmentType.ride && s.routeName != null)
+      .map((s) => s.routeName!)
+      .toList();
+
+    final text = '🚌 ViaMorelia\n\n'
+        'De: ${origin.name}\n'
+        'A: ${dest.name}\n'
+        'Ruta(s): ${routeNames.join(" → ")}\n'
+        'Duración: ${plan.totalDurationMinutes} min\n'
+        'Distancia: ${(plan.totalDistance / 1000).toStringAsFixed(1)} km\n\n'
+        'Planeado con ViaMorelia — transporte público en Morelia, sin paradas oficiales.';
+
+    await Share.share(text, subject: 'Mi viaje en ViaMorelia');
   }
 
   Future<bool> reportRoute(String reason, {String? note}) async {
