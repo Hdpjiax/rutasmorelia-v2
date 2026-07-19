@@ -5,14 +5,28 @@ import 'package:pmtiles/pmtiles.dart';
 
 class TileServer {
   HttpServer? _server;
-  PmTilesArchive? _archive;
-  final String pmtilesPath;
+  PmTilesArchive? _routesArchive;
+  PmTilesArchive? _basemapArchive;
+  final String routesPmtilesPath;
+  final String basemapPmtilesPath;
 
-  TileServer({required this.pmtilesPath});
+  TileServer({
+    required this.routesPmtilesPath,
+    required this.basemapPmtilesPath,
+  });
 
   Future<void> start() async {
     try {
-      _archive = await PmTilesArchive.from(pmtilesPath);
+      _routesArchive = await PmTilesArchive.from(routesPmtilesPath);
+      
+      final basemapFile = File(basemapPmtilesPath);
+      if (await basemapFile.exists()) {
+        _basemapArchive = await PmTilesArchive.from(basemapPmtilesPath);
+        debugPrint('Basemap PMTiles cargado con éxito desde $basemapPmtilesPath');
+      } else {
+        debugPrint('Aviso: Archivo de basemap PMTiles no encontrado en $basemapPmtilesPath. Se ejecutará sin basemap offline.');
+      }
+
       // Bind to localhost on a random available port (0)
       _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       
@@ -40,63 +54,76 @@ class TileServer {
             debugPrint('TileServer SUCCESS: served tiles.json');
             return;
           }
-          // Path matches /tiles/z/x/y.pbf
-          final match = RegExp(r'^/tiles/(\d+)/(\d+)/(\d+)\.pbf$').firstMatch(path);
-          if (match != null) {
-            final z = int.parse(match.group(1)!);
-            final x = int.parse(match.group(2)!);
-            final y = int.parse(match.group(3)!);
-            
-            final tileId = ZXY(z, x, y).toTileId();
-            final tile = await _archive!.tile(tileId);
-            List<int> bytes;
-            try {
-              bytes = tile.bytes();
-            } catch (_) {
-              request.response.statusCode = HttpStatus.notFound;
-              debugPrint('TileServer 404 (TileNotFound): $path');
-              return;
-            }
-            
-            // Set protobuf content type for vector tiles
-            request.response.headers.contentType = ContentType('application', 'x-protobuf');
-            
-            // MapLibre expects decompression or content encoding
-            // Tippecanoe vector tiles are typically gzip compressed.
-            // We set Content-Encoding to gzip, so native MapLibre client decompresses automatically.
-            request.response.headers.set('Content-Encoding', 'gzip');
-            request.response.headers.set('Access-Control-Allow-Origin', '*');
-            
-            request.response.add(bytes);
-            debugPrint('TileServer SUCCESS: $path (bytes: ${bytes.length})');
+
+          final routesMatch = RegExp(r'^/tiles/(\d+)/(\d+)/(\d+)\.pbf$').firstMatch(path);
+          final basemapMatch = RegExp(r'^/basemap/(\d+)/(\d+)/(\d+)\.pbf$').firstMatch(path);
+
+          if (routesMatch != null && _routesArchive != null) {
+            final z = int.parse(routesMatch.group(1)!);
+            final x = int.parse(routesMatch.group(2)!);
+            final y = int.parse(routesMatch.group(3)!);
+            await _serveTile(_routesArchive!, z, x, y, request, path);
+          } else if (basemapMatch != null && _basemapArchive != null) {
+            final z = int.parse(basemapMatch.group(1)!);
+            final x = int.parse(basemapMatch.group(2)!);
+            final y = int.parse(basemapMatch.group(3)!);
+            await _serveTile(_basemapArchive!, z, x, y, request, path);
           } else {
             request.response.statusCode = HttpStatus.notFound;
-            debugPrint('TileServer 404: $path (invalid pattern)');
+            debugPrint('TileServer 404: $path (invalid pattern or archive not loaded)');
+            await request.response.close();
           }
         } catch (e) {
           request.response.statusCode = HttpStatus.internalServerError;
           debugPrint('TileServer ERROR: $path -> $e');
-        } finally {
-          await request.response.close();
+          try {
+            await request.response.close();
+          } catch (_) {}
         }
       });
-      final meta = await _archive!.metadata;
-      debugPrint('Local tile server started on port $port serving $pmtilesPath (minZoom: $minZoom, maxZoom: $maxZoom)');
-      debugPrint('PMTiles Archive Metadata: $meta');
+      debugPrint('Local tile server started on port $port serving archives.');
     } catch (e) {
       debugPrint('Error starting local tile server: $e');
       rethrow;
     }
   }
 
+  Future<void> _serveTile(
+    PmTilesArchive archive,
+    int z,
+    int x,
+    int y,
+    HttpRequest request,
+    String path,
+  ) async {
+    final tileId = ZXY(z, x, y).toTileId();
+    final tile = await archive.tile(tileId);
+    List<int> bytes;
+    try {
+      bytes = tile.bytes();
+    } catch (_) {
+      request.response.statusCode = HttpStatus.notFound;
+      debugPrint('TileServer 404 (TileNotFound): $path');
+      return;
+    }
+    
+    request.response.headers.contentType = ContentType('application', 'x-protobuf');
+    request.response.headers.set('Content-Encoding', 'gzip');
+    request.response.headers.set('Access-Control-Allow-Origin', '*');
+    
+    request.response.add(bytes);
+    debugPrint('TileServer SUCCESS: $path (bytes: ${bytes.length})');
+  }
+
   int get port => _server?.port ?? 0;
-  int get minZoom => _archive?.minZoom ?? 0;
-  int get maxZoom => _archive?.maxZoom ?? 14;
+  int get minZoom => _routesArchive?.minZoom ?? 0;
+  int get maxZoom => _routesArchive?.maxZoom ?? 14;
 
   Future<void> stop() async {
     try {
       await _server?.close(force: true);
-      await _archive?.close();
+      await _routesArchive?.close();
+      await _basemapArchive?.close();
     } catch (e) {
       debugPrint('Error stopping local tile server: $e');
     }

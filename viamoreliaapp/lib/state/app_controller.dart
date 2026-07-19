@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,6 +95,7 @@ class AppUiState {
   final String? bannerMessage;
   final int tileServerPort;
   final int tileServerMaxZoom;
+  final String mapStyleUri;
 
   const AppUiState({
     this.bootstrapped = false,
@@ -143,6 +146,7 @@ class AppUiState {
     this.bannerMessage,
     this.tileServerPort = 0,
     this.tileServerMaxZoom = 14,
+    this.mapStyleUri = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
   });
 
   TripPlanModel? get selectedPlan {
@@ -254,6 +258,7 @@ class AppUiState {
     bool clearBanner = false,
     int? tileServerPort,
     int? tileServerMaxZoom,
+    String? mapStyleUri,
   }) {
     return AppUiState(
       bootstrapped: bootstrapped ?? this.bootstrapped,
@@ -304,6 +309,7 @@ class AppUiState {
       bannerMessage: clearBanner ? null : (bannerMessage ?? this.bannerMessage),
       tileServerPort: tileServerPort ?? this.tileServerPort,
       tileServerMaxZoom: tileServerMaxZoom ?? this.tileServerMaxZoom,
+      mapStyleUri: mapStyleUri ?? this.mapStyleUri,
     );
   }
 }
@@ -356,11 +362,29 @@ class AppController extends StateNotifier<AppUiState> {
     final work = await _favs.getWork();
 
     await _net.start();
-    _netSub = _net.onlineStream.listen((online) {
+    _netSub = _net.onlineStream.listen((online) async {
+      String styleUri = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+      if (!online && _tileServer != null && _tileServer!.port > 0) {
+        try {
+          final localDb = LocalDbService();
+          final basemapPmtilesPath = await localDb.getLocalBasemapPmtilesPath();
+          final basemapFile = File(basemapPmtilesPath);
+          if (await basemapFile.exists()) {
+            final rawStyle = await rootBundle.loadString('assets/map/local_style.json');
+            final filledStyle = rawStyle.replaceAll('{{PORT}}', _tileServer!.port.toString());
+            final base64Style = base64Encode(utf8.encode(filledStyle));
+            styleUri = 'data:application/json;base64,$base64Style';
+          }
+        } catch (e) {
+          debugPrint('Error actualizando estilo offline en red callback: $e');
+        }
+      }
+
       state = state.copyWith(
         online: online,
         bannerMessage: online ? null : 'Sin conexión · catálogo local y geocode limitados',
         clearBanner: online,
+        mapStyleUri: styleUri,
       );
       _api.telemetry(online ? 'online' : 'offline');
     });
@@ -393,12 +417,35 @@ class AppController extends StateNotifier<AppUiState> {
     // Extract PMTiles and start local TileServer
     try {
       final localDb = LocalDbService();
-      final pmtilesPath = await localDb.getLocalPmtilesPath();
-      _tileServer = TileServer(pmtilesPath: pmtilesPath);
+      final routesPmtilesPath = await localDb.getLocalPmtilesPath();
+      final basemapPmtilesPath = await localDb.getLocalBasemapPmtilesPath();
+      _tileServer = TileServer(
+        routesPmtilesPath: routesPmtilesPath,
+        basemapPmtilesPath: basemapPmtilesPath,
+      );
       await _tileServer!.start();
+
+      final port = _tileServer!.port;
+      String styleUri = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+
+      if (!_net.isOnline && port > 0) {
+        try {
+          final basemapFile = File(basemapPmtilesPath);
+          if (await basemapFile.exists()) {
+            final rawStyle = await rootBundle.loadString('assets/map/local_style.json');
+            final filledStyle = rawStyle.replaceAll('{{PORT}}', port.toString());
+            final base64Style = base64Encode(utf8.encode(filledStyle));
+            styleUri = 'data:application/json;base64,$base64Style';
+          }
+        } catch (e) {
+          debugPrint('Error preparando estilo offline al inicio: $e');
+        }
+      }
+
       state = state.copyWith(
-        tileServerPort: _tileServer!.port,
+        tileServerPort: port,
         tileServerMaxZoom: _tileServer!.maxZoom,
+        mapStyleUri: styleUri,
       );
     } catch (e) {
       debugPrint('Failed to extract or start TileServer: $e');
@@ -974,9 +1021,7 @@ class AppController extends StateNotifier<AppUiState> {
   }
 
   double _estimateFare(String? transportType) {
-    if (transportType == 'combi') return 9.0;
-    if (transportType == 'autobus') return 10.0;
-    return 9.0;
+    return 10.0;
   }
 
   String? _transportTypeForRoute(String? routeId) {
@@ -1237,8 +1282,8 @@ class AppController extends StateNotifier<AppUiState> {
   List<RouteMetaModel> get catalog => _index.catalog;
 
   List<RouteMetaModel> get filteredCatalog {
-    final q = state.routeQuery.trim().toLowerCase();
-    return _index.catalog.where((r) {
+    final q = _normalizeRouteText(state.routeQuery);
+    final list = _index.catalog.where((r) {
       // Solo rutas publicables (paridad web approved)
       if (!r.isPublished) return false;
       if (state.onlyFavoriteRoutes && !state.favoriteRouteIds.contains(r.id)) {
@@ -1251,12 +1296,52 @@ class AppController extends StateNotifier<AppUiState> {
       );
       if (state.transportFilter == 'combi' && cls != 'combi') return false;
       if (state.transportFilter == 'autobus' && cls != 'autobus') return false;
-      if (q.isEmpty) return true;
-      final blob = r.display.searchBlob;
-      return r.name.toLowerCase().contains(q) ||
-          r.id.toLowerCase().contains(q) ||
-          blob.contains(q);
+      return true;
     }).toList();
+
+    if (q.isEmpty) return list;
+
+    final scored = list.map((r) {
+      final name = _normalizeRouteText(r.name);
+      final id = _normalizeRouteText(r.id);
+      final blob = _normalizeRouteText(r.display.searchBlob);
+
+      double score = 0.0;
+      if (name == q || id == q) {
+        score += 500;
+      } else if (name.startsWith(q) || id.startsWith(q)) {
+        score += 320;
+      } else if (name.contains(q) || id.contains(q) || blob.contains(q)) {
+        score += 150;
+      }
+
+      final qTokens = q.split(RegExp(r'\s+')).where((w) => w.length >= 2);
+      final nameTokens = name.split(RegExp(r'\s+')).where((w) => w.length >= 2);
+      for (final qt in qTokens) {
+        if (nameTokens.any((nt) => nt.startsWith(qt) || nt.contains(qt))) {
+          score += 60;
+        } else if (blob.contains(qt)) {
+          score += 30;
+        }
+      }
+
+      return MapEntry(r, score);
+    }).where((e) => e.value > 0).toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return scored.map((e) => e.key).toList();
+  }
+
+  String _normalizeRouteText(String s) {
+    return s
+        .toLowerCase()
+        .replaceAll(RegExp(r'[áàäâ]'), 'a')
+        .replaceAll(RegExp(r'[éèëê]'), 'e')
+        .replaceAll(RegExp(r'[íìïî]'), 'i')
+        .replaceAll(RegExp(r'[óòöô]'), 'o')
+        .replaceAll(RegExp(r'[úùüû]'), 'u')
+        .replaceAll(RegExp(r'[ñ]'), 'n')
+        .trim();
   }
 
   Future<void> restoreLastTrip() async {

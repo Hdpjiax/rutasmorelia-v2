@@ -38,7 +38,7 @@ class WalkRouteService {
     try {
       final proxy = await _api
           .walkRoute(from.longitude, from.latitude, to.longitude, to.latitude)
-          .timeout(const Duration(milliseconds: 2200));
+          .timeout(const Duration(milliseconds: 8000));
       if (proxy.length >= 2) {
         final path = proxy.map((c) => LatLng(c[1], c[0])).toList();
         return _cache[k] = path;
@@ -56,7 +56,7 @@ class WalkRouteService {
             Uri.parse(url),
             headers: {'User-Agent': 'ViaMorelia/1.0 (https://viamorelia.org; foot)'},
           )
-          .timeout(const Duration(milliseconds: 2200));
+          .timeout(const Duration(milliseconds: 8000));
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         final routes = data['routes'] as List<dynamic>?;

@@ -32,4 +32,16 @@ class TripPlanModel {
     if (totalFare == null) return null;
     return '\$${totalFare!.toStringAsFixed(0)}';
   }
+
+  String get fareDetail {
+    final fare = totalFare ?? 10.0;
+    final rides = segments.where((s) => s.type == SegmentType.ride).length;
+    if (rides <= 1) {
+      return 'Costo: \$${fare.toStringAsFixed(2)} MXN sin transbordo';
+    } else {
+      final trans = rides - 1;
+      final transText = trans == 1 ? '1 transbordo' : '$trans transbordos';
+      return 'Costo total: \$${fare.toStringAsFixed(2)} MXN con $transText';
+    }
+  }
 }

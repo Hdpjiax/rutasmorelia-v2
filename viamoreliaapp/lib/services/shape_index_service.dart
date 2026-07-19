@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:sqflite/sqflite.dart' show Sqflite;
 import '../core/constants/geo_constants.dart';
 import '../models/route_model.dart';
 import 'api_client.dart';
@@ -40,8 +43,6 @@ class ShapeIndexService {
     _error = null;
     onProgress?.call(0.1);
 
-
-
     // Catálogo remoto → cache → assets (rápido; no shapes aún)
     var list = await _api.fetchCatalog();
     if (list.isEmpty) {
@@ -56,9 +57,51 @@ class ShapeIndexService {
 
     _catalog = list;
     _catalogReady = _catalog.isNotEmpty;
-    onProgress?.call(1);
+    onProgress?.call(0.5);
+
+    if (_catalogReady) {
+      unawaited(_indexAllRoutesInDb());
+    }
+
+    onProgress?.call(1.0);
     if (!_catalogReady) {
       _error ??= 'Catálogo vacío';
+    }
+  }
+
+  Future<void> _indexAllRoutesInDb() async {
+    try {
+      final db = await _localDb.database;
+      final countRes = await db.rawQuery('SELECT count(*) as count FROM routes');
+      final int count = Sqflite.firstIntValue(countRes) ?? 0;
+
+      if (count >= _catalog.length) {
+        debugPrint('SQLite index ya poblado: $count rutas registradas.');
+        return;
+      }
+
+      debugPrint('Inicializando indexación de routes en SQLite...');
+      final Map<String, List<RouteShapeModel>> allShapes = {};
+      const batchSize = 12;
+
+      for (var i = 0; i < _catalog.length; i += batchSize) {
+        final slice = _catalog.skip(i).take(batchSize).toList();
+        await Future.wait(slice.map((meta) async {
+          final raw = await _loadGeojsonString(meta);
+          if (raw != null) {
+            final parsed = parseShapesFromGeojson(meta, raw);
+            if (parsed.isNotEmpty) {
+              allShapes[meta.id] = parsed;
+            }
+          }
+        }));
+        await Future.delayed(const Duration(milliseconds: 15));
+      }
+
+      await _localDb.saveRoutesAndShapes(_catalog, allShapes);
+      debugPrint('Indexación SQLite completada: ${allShapes.length} shapes guardados.');
+    } catch (e) {
+      debugPrint('Error en la indexación en segundo plano SQLite: $e');
     }
   }
 
@@ -98,15 +141,49 @@ class ShapeIndexService {
     return parsed;
   }
 
-  /// Carga shapes para planificar OD.
-  /// Evalua TODO el catalogo en lotes paralelos (no solo las primeras N)
-  /// y filtra por bbox del viaje para no perder directos.
   Future<List<RouteShapeModel>> loadShapesNearTrip(
     LatLng origin,
     LatLng destination, {
     void Function(double p)? onProgress,
   }) async {
     if (_catalog.isEmpty) return const [];
+    onProgress?.call(0.05);
+
+    try {
+      final db = await _localDb.database;
+      final countRes = await db.rawQuery('SELECT count(*) as count FROM shapes');
+      final int dbCount = Sqflite.firstIntValue(countRes) ?? 0;
+
+      if (dbCount > 0) {
+        debugPrint('Consultando shapes en SQLite local para plan de viaje...');
+        onProgress?.call(0.2);
+
+        for (final pad in [0.05, 0.09, 0.15, 0.24]) {
+          final minLat = [origin.latitude, destination.latitude].reduce((a, b) => a < b ? a : b) - pad;
+          final maxLat = [origin.latitude, destination.latitude].reduce((a, b) => a > b ? a : b) + pad;
+          final minLng = [origin.longitude, destination.longitude].reduce((a, b) => a < b ? a : b) - pad;
+          final maxLng = [origin.longitude, destination.longitude].reduce((a, b) => a > b ? a : b) + pad;
+
+          final rows = await _localDb.queryShapesInBbox(minLat, maxLat, minLng, maxLng);
+          final shapes = await compute(_parseShapesBboxIsolate, rows);
+
+          if (shapes.length >= 14 || pad >= 0.24) {
+            onProgress?.call(1.0);
+            debugPrint('Búsqueda espacial SQLite completada: ${shapes.length} shapes candidatas.');
+            for (final s in shapes) {
+              _byRouteId[s.routeId] = [
+                ...(_byRouteId[s.routeId] ?? []).where((old) => old.id != s.id),
+                s
+              ];
+            }
+            if (shapes.isEmpty) break;
+            return shapes;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error consultando shapes en SQLite local: $e. Usando fallback tradicional.');
+    }
 
     final all = <RouteShapeModel>[];
     final list = List<RouteMetaModel>.from(_catalog);
@@ -120,7 +197,7 @@ class ShapeIndexService {
       for (final shapes in results) {
         all.addAll(shapes);
       }
-      onProgress?.call(((i + slice.length) / list.length * 0.9).clamp(0.0, 0.9));
+      onProgress?.call((0.2 + (i + slice.length) / list.length * 0.7).clamp(0.0, 0.9));
     }
 
     for (final pad in [0.05, 0.09, 0.15, 0.24]) {
@@ -272,4 +349,38 @@ class ShapeIndexService {
     } catch (_) {}
     return out;
   }
+}
+
+List<RouteShapeModel> _parseShapesBboxIsolate(List<Map<String, dynamic>> rows) {
+  final List<RouteShapeModel> shapes = [];
+  for (final row in rows) {
+    final coordsJsonStr = row['coordinates_json'] as String;
+    final coordsList = jsonDecode(coordsJsonStr) as List<dynamic>;
+    final coords = coordsList.map((pt) => LatLng((pt[1] as num).toDouble(), (pt[0] as num).toDouble())).toList();
+
+    Color color = Colors.grey;
+    final intVal = row['route_color'] as int?;
+    if (intVal != null) {
+      color = Color(intVal);
+    }
+
+    Color? casing;
+    final casingVal = row['casing_color'] as int?;
+    if (casingVal != null) {
+      casing = Color(casingVal);
+    }
+
+    shapes.add(RouteShapeModel(
+      id: row['id'] as String,
+      routeId: row['route_id'] as String,
+      routeName: row['route_name'] as String,
+      color: color,
+      direction: row['direction'] as String,
+      coordinates: coords,
+      directionMode: row['direction_mode'] as String?,
+      role: 'full',
+      casingColor: casing,
+    ));
+  }
+  return shapes;
 }

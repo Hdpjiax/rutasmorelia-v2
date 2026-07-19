@@ -23,7 +23,7 @@ const List<Map<String, dynamic>> _rawCatalog = [
   { 'id': 'cat-hospital-civil', 'name': 'Hospital Civil de Morelia', 'description': 'Salud', 'category': 'health', 'coordinates': [-101.19, 19.695] },
   { 'id': 'cat-issste', 'name': 'Hospital ISSSTE Morelia', 'description': 'Salud', 'category': 'health', 'coordinates': [-101.175, 19.71] },
   { 'id': 'cat-imss', 'name': 'IMSS Hospital General Regional', 'description': 'Salud', 'category': 'health', 'coordinates': [-101.205, 19.71] },
-  { 'id': 'cat-central-camiones', 'name': 'Central de Autobuses de Morelia', 'description': 'Transporte foráneo', 'category': 'transport', 'coordinates': [-101.178, 19.685] },
+  { 'id': 'cat-central-camiones', 'name': 'Central de Autobuses de Morelia (TAM)', 'description': 'Transporte foráneo (Poniente)', 'category': 'transport', 'coordinates': [-101.228, 19.718] },
   { 'id': 'cat-aeropuerto', 'name': 'Aeropuerto Internacional de Morelia', 'description': 'Gral. Francisco J. Múgica', 'category': 'transport', 'coordinates': [-101.025, 19.85] },
   { 'id': 'cat-chapultepec', 'name': 'Colonia Chapultepec', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.205, 19.685] },
   { 'id': 'cat-felix-ireta', 'name': 'Colonia Félix Ireta', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.195, 19.69] },
@@ -45,7 +45,7 @@ const List<Map<String, dynamic>> _rawCatalog = [
   { 'id': 'cat-lomas-universidad', 'name': 'Lomas de la Universidad', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.18, 19.68] },
   { 'id': 'cat-independencia', 'name': 'Colonia Independencia', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.2, 19.71] },
   { 'id': 'cat-electricistas', 'name': 'Colonia Electricistas', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.21, 19.69] },
-  { 'id': 'cat-prados-verdes', 'name': 'Prados Verdes', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.24, 19.7] },
+  { 'id': 'cat-prados-verdes', 'name': 'Prados Verdes', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.200, 19.715] },
   { 'id': 'cat-mision-valle', 'name': 'Misión del Valle', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.23, 19.69] },
   { 'id': 'cat-villla-universidad', 'name': 'Villa Universidad', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.185, 19.685] },
   { 'id': 'cat-lazaro', 'name': 'Lázaro Cárdenas (Periférico)', 'description': 'Av. Lázaro Cárdenas', 'category': 'street', 'coordinates': [-101.2, 19.7] },
@@ -73,7 +73,28 @@ const List<Map<String, dynamic>> _rawCatalog = [
   { 'id': 'cat-jardin-rosas', 'name': 'Jardín de las Rosas', 'description': 'Centro Histórico', 'category': 'park', 'coordinates': [-101.193, 19.704] },
   { 'id': 'cat-plaza-valladolid', 'name': 'Plaza Valladolid', 'description': 'Centro comercial', 'category': 'mall', 'coordinates': [-101.2, 19.71] },
   { 'id': 'cat-arco-san-pedro', 'name': 'Arcos de San Pedro', 'description': 'Zona', 'category': 'area', 'coordinates': [-101.17, 19.69] },
-  { 'id': 'cat-atecuaro', 'name': 'Atécuaro', 'description': 'Comunidad', 'category': 'area', 'coordinates': [-101.22, 19.62] }
+  { 'id': 'cat-atecuaro', 'name': 'Atécuaro', 'description': 'Comunidad', 'category': 'area', 'coordinates': [-101.22, 19.62] },
+  // NUEVOS POIs Emblemáticos y de Alta Frecuencia en Morelia
+  { 'id': 'cat-americas', 'name': 'Plaza Las Américas (Espacio Las Américas)', 'description': 'Centro Comercial', 'category': 'mall', 'coordinates': [-101.169, 19.701] },
+  { 'id': 'cat-altozano', 'name': 'Paseo Altozano', 'description': 'Centro Comercial (Zona Sur / Loma)', 'category': 'mall', 'coordinates': [-101.190, 19.660] },
+  { 'id': 'cat-plaza-morelia', 'name': 'Plaza Morelia (Plaza Escala Morelia)', 'description': 'Centro Comercial', 'category': 'mall', 'coordinates': [-101.167, 19.704] },
+  { 'id': 'cat-pedregal', 'name': 'Villas del Pedregal', 'description': 'Desarrollo Habitacional (Poniente)', 'category': 'colonia', 'coordinates': [-101.298, 19.697] },
+  { 'id': 'cat-panteon', 'name': 'Panteón Municipal de Morelia', 'description': 'Cementerio / Monumento', 'category': 'landmark', 'coordinates': [-101.213, 19.695] },
+  { 'id': 'cat-star-medica', 'name': 'Hospital Star Médica Morelia', 'description': 'Salud / Clínica', 'category': 'health', 'coordinates': [-101.185, 19.679] },
+  { 'id': 'cat-hospital-angeles', 'name': 'Hospital Ángeles Morelia', 'description': 'Salud / Clínica (Altozano)', 'category': 'health', 'coordinates': [-101.188, 19.661] },
+  { 'id': 'cat-issste-charo', 'name': 'Hospital ISSSTE regional (Charo)', 'description': 'Salud (Salida a Charo)', 'category': 'health', 'coordinates': [-101.115, 19.721] },
+  { 'id': 'cat-tres-marias', 'name': 'Ciudad Tres Marías', 'description': 'Fraccionamiento / Zona Residencial', 'category': 'colonia', 'coordinates': [-101.120, 19.707] },
+  { 'id': 'cat-unam-morelia', 'name': 'UNAM Campus Morelia', 'description': 'Educación Superior (Salida a Pátzcuaro)', 'category': 'education', 'coordinates': [-101.226, 19.650] },
+  { 'id': 'cat-colonia-juarez', 'name': 'Colonia Juárez', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.202, 19.696] },
+  { 'id': 'cat-colonia-cuauhtemoc', 'name': 'Colonia Cuauhtémoc', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.182, 19.698] },
+  { 'id': 'cat-mercado-abastos', 'name': 'Mercado de Abastos de Morelia', 'description': 'Comercio / Abasto', 'category': 'market', 'coordinates': [-101.165, 19.718] },
+  { 'id': 'cat-imss-charo', 'name': 'Hospital General Regional IMSS (Charo)', 'description': 'Salud (Salida a Charo)', 'category': 'health', 'coordinates': [-101.112, 19.723] },
+  { 'id': 'cat-colonia-centro', 'name': 'Colonia Centro (Centro Histórico)', 'description': 'Centro de Morelia', 'category': 'colonia', 'coordinates': [-101.194, 19.702] },
+  { 'id': 'cat-periferico', 'name': 'Paseo de la República (Periférico)', 'description': 'Circuito Vial', 'category': 'street', 'coordinates': [-101.190, 19.710] },
+  { 'id': 'cat-colina', 'name': 'Colonia La Colina', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.222, 19.712] },
+  { 'id': 'cat-colonia-guadalupe', 'name': 'Colonia Guadalupe', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.210, 19.715] },
+  { 'id': 'cat-colonia-vasco', 'name': 'Colonia Vasco de Quiroga', 'description': 'Morelia', 'category': 'colonia', 'coordinates': [-101.178, 19.702] },
+  { 'id': 'cat-escala-camelinas', 'name': 'Plaza Escala Camelinas (Plaza Fiesta)', 'description': 'Centro Comercial', 'category': 'mall', 'coordinates': [-101.188, 19.688] }
 ];
 
 final List<PlaceModel> localCatalog = _rawCatalog.map((p) {

@@ -1,4 +1,4 @@
-import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -18,16 +18,10 @@ import '../panels/selected_route_card.dart';
 import '../panels/trip_panel.dart';
 import '../panels/welcome_overlay.dart';
 
-const Color _petro = Color(0xFF005B57);
-const Color _dorado = Color(0xFFF5B719);
-const Color _petroSoft = Color(0xFFE0F3F1);
-const Color _doradoSoft = Color(0xFFFFF8E1);
-
-const LinearGradient _petroDorado = LinearGradient(
-  colors: [_petro, Color(0xFF00897B), _dorado],
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-);
+const Color _petro = ViaColors.petroleo;
+const Color _dorado = ViaColors.dorado;
+const Color _petroSoft = ViaColors.petroleoSoft;
+const Color _doradoSoft = ViaColors.doradoSoft;
 
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
@@ -66,6 +60,19 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             next.alightingPoint,
             state.origin?.coordinates,
             state.destination?.coordinates,
+          );
+        });
+      }
+    });
+    ref.listen(appControllerProvider.select((s) => (s.panel, s.bottomCollapsed, s.tracking)), (prev, next) {
+      final selectedPlan = ref.read(appControllerProvider).selectedPlan;
+      if (selectedPlan != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _fitPlan(
+            selectedPlan.boardingPoint,
+            selectedPlan.alightingPoint,
+            ref.read(appControllerProvider).origin?.coordinates,
+            ref.read(appControllerProvider).destination?.coordinates,
           );
         });
       }
@@ -111,9 +118,22 @@ class _HomeShellState extends ConsumerState<HomeShell> {
         );
       }
     });
+    ref.listen(appControllerProvider.select((s) => s.selectedRoute), (prev, next) {
+      if (next != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _fitRoute(next.id);
+        });
+      }
+    });
 
     final topPad = MediaQuery.paddingOf(context).top;
     final bottomPad = MediaQuery.paddingOf(context).bottom;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final panelBottomOffset = isTablet ? 104.0 : 88.0;
+    final hasPanel = state.panel != AppPanel.none && !state.bottomCollapsed;
+    final double controlsBottom = hasPanel
+        ? (isTablet ? 300.0 : 340.0) + bottomPad + 16
+        : 110.0 + bottomPad;
 
     return Scaffold(
       backgroundColor: ViaColors.paper,
@@ -135,6 +155,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               onTap: state.pinDropMode != PinDropMode.none
                   ? (p) {
                       final mode = state.pinDropMode;
+                      HapticFeedback.mediumImpact();
                       ctrl.applyPinDrop(p);
                       ViaToast.show(
                         context,
@@ -146,7 +167,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                       );
                     }
                   : null,
-              onLongPress: (p) => ctrl.applyPinDrop(p),
+              onLongPress: (p) {
+                HapticFeedback.mediumImpact();
+                ctrl.applyPinDrop(p);
+              },
             ),
           ),
 
@@ -202,31 +226,31 @@ class _HomeShellState extends ConsumerState<HomeShell> {
 
           // Logo + Search
           Positioned(
-            top: topPad + (state.bannerMessage != null || !state.online ? 52 : 10),
+            top: topPad + (state.bannerMessage != null || !state.online ? (isTablet ? 56 : 52) : 10),
             left: 12,
             right: 12,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 2, right: 2),
+                  padding: EdgeInsets.only(top: isTablet ? 5 : 2, right: 2),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
                         'assets/brand/icono-sin-fondo.png',
-                        width: 36,
-                        height: 36,
+                        width: isTablet ? 46 : 36,
+                        height: isTablet ? 46 : 36,
                         errorBuilder: (_, _, _) => Container(
-                          width: 36,
-                          height: 36,
+                          width: isTablet ? 46 : 36,
+                          height: isTablet ? 46 : 36,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             gradient: const LinearGradient(
                               colors: [_petro, _dorado],
                             ),
                           ),
-                          child: const Icon(Icons.route_rounded, size: 16, color: Colors.white),
+                          child: Icon(Icons.route_rounded, size: isTablet ? 20 : 16, color: Colors.white),
                         ),
                       )
                           .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -236,15 +260,15 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                             duration: 1600.ms,
                             curve: Curves.easeInOut,
                           ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: isTablet ? 8 : 6),
                       Image.asset(
                         'assets/brand/nombre-sin-fondo.png',
-                        height: 22,
+                        height: isTablet ? 28 : 22,
                         errorBuilder: (_, _, _) => Text(
                           'Vía Morelia',
                           style: TextStyle(
                             fontWeight: FontWeight.w900,
-                            fontSize: 14,
+                            fontSize: isTablet ? 18 : 14,
                             color: ViaColors.ink,
                             shadows: [
                               Shadow(
@@ -322,14 +346,16 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               child: const SelectedRouteCard(),
             ),
 
-          // Map controls — LEFT side, elegant glass circles with staggered entrance
-          Positioned(
-            top: topPad + 80,
+          // Map controls — LEFT side, elegant glass circles positioned lower & enlarged
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutExpo,
+            bottom: controlsBottom,
             left: 12,
             child: Column(
               children: [
                 ViaRoundIconButton(
-                  size: 36,
+                  size: 42,
                   icon: Icons.add_rounded,
                   tooltip: 'Acercar',
                   onPressed: () {
@@ -343,7 +369,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                 ),
                 const SizedBox(height: 6),
                 ViaRoundIconButton(
-                  size: 36,
+                  size: 42,
                   icon: Icons.remove_rounded,
                   tooltip: 'Alejar',
                   onPressed: () {
@@ -362,8 +388,8 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                   children: [
                     if (state.gpsLive)
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 58,
+                        height: 58,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _petro.withValues(alpha: 0.08),
@@ -376,7 +402,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                          curve: Curves.easeInOut,
                        ),
                     ViaRoundIconButton(
-                      size: 36,
+                      size: 42,
                       icon: state.locating
                           ? Icons.hourglass_top_rounded
                           : (state.gpsLive ? Icons.gps_fixed_rounded : Icons.gps_not_fixed_rounded),
@@ -389,7 +415,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                         await ctrl.requestGps(setAsOrigin: false, startLive: true);
                         final pos = ref.read(appControllerProvider).userPosition;
                         if (pos != null) {
-                          _map?.moveCamera(
+                           _map?.moveCamera(
                             center: Geographic(lon: pos.longitude, lat: pos.latitude),
                             zoom: 15.2,
                           );
@@ -404,7 +430,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                 ),
                 const SizedBox(height: 6),
                 ViaRoundIconButton(
-                  size: 36,
+                  size: 42,
                   icon: Icons.place_rounded,
                   tooltip: 'Fijar en mapa',
                   color: state.pinDropMode != PinDropMode.none ? ViaColors.coral : ViaColors.ink,
@@ -428,9 +454,9 @@ class _HomeShellState extends ConsumerState<HomeShell> {
 
           // Premium Bottom Dock — floating glass pill
           Positioned(
-            left: 12,
-            right: 12,
-            bottom: bottomPad + 12,
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: _BottomDock(
               active: state.panel,
               hasTrip: state.plans.isNotEmpty ||
@@ -450,7 +476,12 @@ class _HomeShellState extends ConsumerState<HomeShell> {
                   );
                 }
               },
-              onMore: () => _openMoreMenu(context, ctrl),
+              onLegal: () => ctrl.togglePanel(AppPanel.legal),
+              onClear: () {
+                HapticFeedback.heavyImpact();
+                ctrl.clearSession();
+                ViaToast.success(context, 'Mapa y sesión limpiados.', title: 'Limpiar');
+              },
             ),
           ),
 
@@ -459,7 +490,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             Positioned(
               left: 10,
               right: 10,
-              bottom: bottomPad + 78,
+              bottom: bottomPad + panelBottomOffset,
               child: AnimatedSwitcher(
                 duration: ViaMotion.normal,
                 child: KeyedSubtree(
@@ -480,7 +511,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             Positioned(
               left: 12,
               right: 12,
-              bottom: bottomPad + 78,
+              bottom: bottomPad + panelBottomOffset,
               child: ViaPanel(
                 padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
                 child: Column(
@@ -614,47 +645,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     return Icons.navigation_rounded;
   }
 
-  void _openMoreMenu(BuildContext context, AppController ctrl) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return ViaPanel(
-          radius: ViaRadii.xl,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.history_rounded, color: _petro),
-                title: const Text('Último viaje', style: TextStyle(fontWeight: FontWeight.w800)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  ctrl.restoreLastTrip();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.layers_clear_rounded, color: _dorado),
-                title: const Text('Limpiar mapa', style: TextStyle(fontWeight: FontWeight.w800)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  ctrl.clearSession();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.gavel_rounded, color: _petro),
-                title: const Text('Avisos legales', style: TextStyle(fontWeight: FontWeight.w800)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  ctrl.setPanel(AppPanel.legal);
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    );
-  }
+
 
   void _fitPlan(LatLng a, LatLng b, LatLng? o, LatLng? d) {
     final pts = <Geographic>[
@@ -664,10 +655,38 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     if (o != null) pts.add(Geographic(lon: o.longitude, lat: o.latitude));
     if (d != null) pts.add(Geographic(lon: d.longitude, lat: d.latitude));
     if (pts.length < 2) return;
+
+    final state = ref.read(appControllerProvider);
+    final hasPanel = state.panel != AppPanel.none || state.tracking;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+
+    final double bottomPadding = hasPanel
+        ? (isTablet ? 300.0 : 340.0)
+        : 90.0;
+
     try {
       _map?.fitBounds(
         bounds: LngLatBounds.fromPoints(pts),
-        padding: const EdgeInsets.fromLTRB(48, 170, 48, 210),
+        padding: EdgeInsets.fromLTRB(48, 170, 48, bottomPadding),
+      );
+    } catch (_) {}
+  }
+
+  void _fitRoute(String routeId) {
+    final shapes = ref.read(appControllerProvider).mapShapes;
+    final pts = <Geographic>[];
+    for (final s in shapes) {
+      if (s.routeId == routeId) {
+        for (final c in s.coordinates) {
+          pts.add(Geographic(lon: c.longitude, lat: c.latitude));
+        }
+      }
+    }
+    if (pts.isEmpty) return;
+    try {
+      _map?.fitBounds(
+        bounds: LngLatBounds.fromPoints(pts),
+        padding: const EdgeInsets.fromLTRB(48, 120, 48, 220),
       );
     } catch (_) {}
   }
@@ -683,7 +702,8 @@ class _BottomDock extends StatelessWidget {
   final VoidCallback onRoutes;
   final VoidCallback onFavorites;
   final VoidCallback onGps;
-  final VoidCallback onMore;
+  final VoidCallback onLegal;
+  final VoidCallback onClear;
 
   const _BottomDock({
     required this.active,
@@ -694,101 +714,101 @@ class _BottomDock extends StatelessWidget {
     required this.onRoutes,
     required this.onFavorites,
     required this.onGps,
-    required this.onMore,
+    required this.onLegal,
+    required this.onClear,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    final bottomPad = MediaQuery.paddingOf(context).bottom;
+
+    return Align(
+      alignment: Alignment.bottomCenter,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 340),
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(12, 10, 12, bottomPad + 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(ViaRadii.xl + 4),
+          color: ViaColors.paperElevated.withValues(alpha: 0.94),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
+          ),
+          border: const Border(
+            top: BorderSide(
+              color: ViaColors.hairline,
+              width: 1.5,
+            ),
+          ),
           boxShadow: [
             BoxShadow(
-              color: _petro.withValues(alpha: 0.08),
-              blurRadius: 28,
-              spreadRadius: 3,
-              offset: const Offset(0, 0),
-            ),
-            BoxShadow(
-              color: _dorado.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: const Color(0xFF142033).withValues(alpha: 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: ViaColors.ink.withValues(alpha: 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, -8),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(ViaRadii.xl),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ViaColors.paperElevated.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(ViaRadii.xl),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.55),
-                  width: 1.2,
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-              child: Row(
-                children: [
-                  _DockItem(
-                    index: 0,
-                    icon: tracking
-                        ? Icons.navigation_rounded
-                        : Icons.directions_transit_filled_rounded,
-                    label: tracking ? 'En vivo' : 'Viaje',
-                    selected: active == AppPanel.trip,
-                    onTap: onTrip,
-                    badge: hasTrip,
-                  ),
-                  _DockItem(
-                    index: 1,
-                    icon: Icons.map_rounded,
-                    label: 'Rutas',
-                    selected: active == AppPanel.routes,
-                    onTap: onRoutes,
-                  ),
-                  _DockItem(
-                    index: 2,
-                    icon: Icons.favorite_rounded,
-                    label: 'Favoritos',
-                    selected: active == AppPanel.favorites,
-                    onTap: onFavorites,
-                  ),
-                  _DockItem(
-                    index: 3,
-                    icon: gpsLive ? Icons.gps_fixed_rounded : Icons.my_location_rounded,
-                    label: 'GPS',
-                    selected: gpsLive,
-                    onTap: onGps,
-                  ),
-                  _DockItem(
-                    index: 4,
-                    icon: Icons.more_horiz_rounded,
-                    label: 'Más',
-                    selected: active == AppPanel.legal,
-                    onTap: onMore,
-                  ),
-                ],
-              ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _DockItem(
+              index: 0,
+              icon: tracking
+                  ? Icons.navigation_rounded
+                  : Icons.directions_transit_filled_rounded,
+              label: tracking ? 'En vivo' : 'Viaje',
+              selected: active == AppPanel.trip,
+              onTap: onTrip,
+              badge: hasTrip,
+              activeColor: _petro,
             ),
-          ),
+            _DockItem(
+              index: 1,
+              icon: Icons.map_rounded,
+              label: 'Rutas',
+              selected: active == AppPanel.routes,
+              onTap: onRoutes,
+              activeColor: _petro,
+            ),
+            _DockItem(
+              index: 2,
+              icon: Icons.favorite_rounded,
+              label: 'Favoritos',
+              selected: active == AppPanel.favorites,
+              onTap: onFavorites,
+              activeColor: _petro,
+            ),
+            _DockItem(
+              index: 3,
+              icon: gpsLive ? Icons.gps_fixed_rounded : Icons.my_location_rounded,
+              label: 'GPS',
+              selected: gpsLive,
+              onTap: onGps,
+              activeColor: _petro,
+            ),
+            _DockItem(
+              index: 4,
+              icon: Icons.gavel_rounded,
+              label: 'Legales',
+              selected: active == AppPanel.legal,
+              onTap: onLegal,
+              activeColor: _petro,
+            ),
+            _DockItem(
+              index: 5,
+              icon: Icons.layers_clear_rounded,
+              label: 'Limpiar',
+              selected: false,
+              onTap: onClear,
+              activeColor: _dorado,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Dock item with gradient glow icon container, small label, pulsing dorado dot,
-/// premium selection animation (bounce scale + fade), and staggered entrance.
+/// Dock item with dynamic expand selection animation, drop indicator bubble, and scale.
 class _DockItem extends StatefulWidget {
   final int index;
   final IconData icon;
@@ -796,6 +816,7 @@ class _DockItem extends StatefulWidget {
   final bool selected;
   final VoidCallback onTap;
   final bool badge;
+  final Color activeColor;
 
   const _DockItem({
     required this.index,
@@ -804,6 +825,7 @@ class _DockItem extends StatefulWidget {
     required this.selected,
     required this.onTap,
     this.badge = false,
+    this.activeColor = _petro,
   });
 
   @override
@@ -820,18 +842,18 @@ class _DockItemState extends State<_DockItem> with SingleTickerProviderStateMixi
     super.initState();
     _selectCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
     );
     _selectAnim = CurvedAnimation(
       parent: _selectCtrl,
-      curve: Curves.easeOutBack,
+      curve: Curves.easeOutCubic,
     );
     if (widget.selected) _selectCtrl.value = 1.0;
     _triggerEntrance();
   }
 
   void _triggerEntrance() {
-    Future.delayed(Duration(milliseconds: 80 * widget.index), () {
+    Future.delayed(Duration(milliseconds: 50 * widget.index), () {
       if (mounted) setState(() => _entered = true);
     });
   }
@@ -840,7 +862,7 @@ class _DockItemState extends State<_DockItem> with SingleTickerProviderStateMixi
   void didUpdateWidget(_DockItem old) {
     super.didUpdateWidget(old);
     if (widget.selected && !old.selected) {
-      _selectCtrl.forward(from: 0.0);
+      _selectCtrl.forward();
     } else if (!widget.selected && old.selected) {
       _selectCtrl.reverse();
     }
@@ -854,122 +876,107 @@ class _DockItemState extends State<_DockItem> with SingleTickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
+    final double iconSize = isTablet ? 22.0 : 19.0;
+    final double fontSize = isTablet ? 11.0 : 9.0;
+    final double badgeSize = isTablet ? 8.5 : 7.0;
+    final double badgeOffset = isTablet ? -2.5 : -2.0;
+
     return Expanded(
-      child: ViaBounceable(
-        onTap: widget.onTap,
-        child: AnimatedBuilder(
-          animation: _selectAnim,
-          builder: (context, child) {
-            final scale = widget.selected
-                ? (0.4 + 0.6 * _selectAnim.value)
-                : (0.6 + 0.4 * _selectAnim.value);
-            final opacity = widget.selected
-                ? (0.3 + 0.7 * _selectAnim.value)
-                : 0.7;
-            return Opacity(
-              opacity: _entered ? opacity : 0.0,
-              child: Transform.translate(
-                offset: Offset(0, _entered ? 0 : 14),
-                child: Transform.scale(
-                  scale: scale,
-                  child: child,
-                ),
-              ),
-            );
-          },
+      child: Opacity(
+        opacity: _entered ? 1.0 : 0.0,
+        child: ViaBounceable(
+          onTap: widget.onTap,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  AnimatedContainer(
-                    duration: ViaMotion.quick,
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: widget.selected ? _petroDorado : null,
-                      color: widget.selected ? null : Colors.transparent,
-                      boxShadow: widget.selected
-                          ? [
-                              BoxShadow(
-                                color: _petro.withValues(alpha: 0.25),
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                              ),
-                              BoxShadow(
-                                color: _dorado.withValues(alpha: 0.15),
-                                blurRadius: 12,
-                                spreadRadius: -2,
-                              ),
-                            ]
-                          : null,
+              AnimatedBuilder(
+                animation: _selectAnim,
+                builder: (context, child) {
+                  final double translateY = -7.0 * _selectAnim.value;
+                  final double scale = 0.95 + 0.05 * _selectAnim.value;
+
+                  return Transform.translate(
+                    offset: Offset(0, translateY),
+                    child: Transform.scale(
+                      scale: scale,
+                      child: child,
                     ),
-                    child: Icon(
-                      widget.icon,
-                      color: widget.selected ? Colors.white : ViaColors.textSecondary,
-                      size: 17,
-                    ),
-                  ),
-                  if (widget.badge)
-                    Positioned(
-                      right: -2,
-                      top: -1,
-                      child: Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: _dorado,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: _dorado.withValues(alpha: 0.5),
-                              blurRadius: 3,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
+                  );
+                },
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: widget.selected 
+                            ? widget.activeColor.withValues(alpha: 0.12) 
+                            : Colors.transparent,
+                      ),
+                      child: Icon(
+                        widget.icon,
+                        color: widget.selected ? widget.activeColor : ViaColors.textSecondary,
+                        size: iconSize,
                       ),
                     ),
-                ],
+                    if (widget.badge)
+                      Positioned(
+                        right: badgeOffset,
+                        top: badgeOffset,
+                        child: Container(
+                          width: badgeSize,
+                          height: badgeSize,
+                          decoration: const BoxDecoration(
+                            color: _dorado,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 3),
+              const SizedBox(height: 2),
               Text(
                 widget.label,
                 style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: widget.selected ? _petro : ViaColors.textMuted,
-                  letterSpacing: 0.1,
+                  color: widget.selected ? widget.activeColor : ViaColors.textMuted,
+                  fontWeight: widget.selected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: fontSize,
+                  letterSpacing: -0.1,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                softWrap: false,
               ),
               const SizedBox(height: 2),
               SizedBox(
                 height: 4,
                 child: widget.selected
-                    ? Center(
-                        child: Container(
-                          width: 4,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: _dorado,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: _dorado.withValues(alpha: 0.6),
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                        ).animate(onPlay: (c) => c.repeat(reverse: true))
-                         .scale(
-                           begin: const Offset(0.75, 0.75),
-                           end: const Offset(1.4, 1.4),
-                           duration: 800.ms,
-                           curve: Curves.easeInOut,
-                         ),
+                    ? AnimatedBuilder(
+                        animation: _selectAnim,
+                        builder: (context, _) {
+                          return Container(
+                            width: 4.0 * _selectAnim.value,
+                            height: 4.0 * _selectAnim.value,
+                            decoration: BoxDecoration(
+                              color: widget.activeColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: widget.activeColor.withValues(alpha: 0.4),
+                                  blurRadius: 3,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       )
                     : const SizedBox.shrink(),
               ),

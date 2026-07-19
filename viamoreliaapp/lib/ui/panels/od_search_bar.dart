@@ -62,10 +62,32 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
     _micPulseAnim = Tween<double>(begin: 1.0, end: 1.35).animate(
       CurvedAnimation(parent: _micPulseCtrl, curve: Curves.easeInOut),
     );
+    _originFocus.addListener(_onOriginFocusChange);
+    _destFocus.addListener(_onDestFocusChange);
+  }
+
+  void _onOriginFocusChange() {
+    if (_originFocus.hasFocus) {
+      setState(() {
+        _active = _Field.origin;
+      });
+      _onQuery(_originCtrl.text, _Field.origin);
+    }
+  }
+
+  void _onDestFocusChange() {
+    if (_destFocus.hasFocus) {
+      setState(() {
+        _active = _Field.destination;
+      });
+      _onQuery(_destCtrl.text, _Field.destination);
+    }
   }
 
   @override
   void dispose() {
+    _originFocus.removeListener(_onOriginFocusChange);
+    _destFocus.removeListener(_onDestFocusChange);
     _debounce?.cancel();
     _micPulseCtrl.dispose();
     _originCtrl.dispose();
@@ -99,6 +121,13 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
   void _onQuery(String value, _Field field) {
     _active = field;
     _debounce?.cancel();
+    if (value.trim().isEmpty) {
+      setState(() {
+        _suggestions = [];
+        _searching = false;
+      });
+      return;
+    }
     _debounce = Timer(const Duration(milliseconds: 220), () async {
       setState(() => _searching = true);
       final hits =
@@ -167,6 +196,17 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
     final state = ref.watch(appControllerProvider);
     _syncFromState(state);
 
+    final activeCtrl = _active == _Field.origin 
+        ? _originCtrl 
+        : (_active == _Field.destination ? _destCtrl : null);
+    final hasText = activeCtrl != null && activeCtrl.text.trim().isNotEmpty;
+
+    final showSuggestions = !widget.collapsed &&
+        state.pinDropMode == PinDropMode.none &&
+        _active != null &&
+        hasText &&
+        (_suggestions.isNotEmpty || _searching);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -174,8 +214,7 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
           _collapsedFab()
         else
           _expandedPanel(state),
-        if (!widget.collapsed &&
-            (_suggestions.isNotEmpty || _searching)) ...[
+        if (showSuggestions) ...[
           const SizedBox(height: 8),
           _suggestionsPanel(),
         ],
@@ -260,10 +299,6 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
                   glowColor: _originAccent,
                   icon: Icons.trip_origin_rounded,
                   onChanged: (v) => _onQuery(v, _Field.origin),
-                  onFocus: () {
-                    _active = _Field.origin;
-                    _onQuery(_originCtrl.text, _Field.origin);
-                  },
                   onMic: () => _voice(_Field.origin),
                   onGps: () => ref
                       .read(appControllerProvider.notifier)
@@ -280,10 +315,6 @@ class _OdSearchBarState extends ConsumerState<OdSearchBar>
                   glowColor: _destAccent,
                   icon: Icons.flag_rounded,
                   onChanged: (v) => _onQuery(v, _Field.destination),
-                  onFocus: () {
-                    _active = _Field.destination;
-                    _onQuery(_originCtrl.text, _Field.destination);
-                  },
                   onMic: () => _voice(_Field.destination),
                   listening: _listening && _active == _Field.destination,
                   pulseAnim: _micPulseAnim,
@@ -601,7 +632,6 @@ class _OdField extends StatelessWidget {
   final Color glowColor;
   final IconData icon;
   final ValueChanged<String> onChanged;
-  final VoidCallback onFocus;
   final VoidCallback onMic;
   final VoidCallback? onGps;
   final bool listening;
@@ -615,7 +645,6 @@ class _OdField extends StatelessWidget {
     required this.glowColor,
     required this.icon,
     required this.onChanged,
-    required this.onFocus,
     required this.onMic,
     this.onGps,
     this.listening = false,
@@ -624,88 +653,88 @@ class _OdField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      onFocusChange: (has) {
-        if (has) onFocus();
-      },
-      child: AnimatedContainer(
-        duration: ViaMotion.quick,
-        curve: Curves.easeOutCubic,
-        decoration: BoxDecoration(
-          color: ViaColors.paper,
-          borderRadius: BorderRadius.circular(ViaRadii.input),
-          border: Border.all(
-            color: focusNode.hasFocus
-                ? glowColor.withValues(alpha: 0.5)
-                : ViaColors.hairline.withValues(alpha: 0.6),
-            width: focusNode.hasFocus ? 1.5 : 1,
-          ),
-          boxShadow: focusNode.hasFocus
-              ? [
-                  BoxShadow(
-                    color: glowColor.withValues(alpha: 0.15),
-                    blurRadius: 10,
-                    spreadRadius: 0,
-                  ),
-                ]
-              : null,
-        ),
-        child: TextField(
-          controller: controller,
-          focusNode: focusNode,
-          onChanged: onChanged,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: ViaColors.textPrimary),
-          decoration: InputDecoration(
-            isDense: true,
-            hintText: hint,
-            hintStyle: const TextStyle(color: ViaColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Icon(icon, color: color, size: 18),
+    return ListenableBuilder(
+      listenable: focusNode,
+      builder: (context, _) {
+        return AnimatedContainer(
+          duration: ViaMotion.quick,
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            color: ViaColors.paper,
+            borderRadius: BorderRadius.circular(ViaRadii.input),
+            border: Border.all(
+              color: focusNode.hasFocus
+                  ? glowColor.withValues(alpha: 0.5)
+                  : ViaColors.hairline.withValues(alpha: 0.6),
+              width: focusNode.hasFocus ? 1.5 : 1,
             ),
-            prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 0),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (onGps != null)
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    onPressed: onGps,
-                    icon: Icon(Icons.my_location_rounded, size: 18, color: color.withValues(alpha: 0.7)),
-                    tooltip: 'Usar GPS',
-                  ),
-                AnimatedBuilder(
-                  animation: pulseAnim ?? kAlwaysCompleteAnimation,
-                  builder: (context, child) {
-                    final scale = listening && pulseAnim != null ? pulseAnim!.value : 1.0;
-                    final micColor = listening ? color : ViaColors.textMuted;
-                    return Transform.scale(
-                      scale: scale,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 2),
-                        decoration: listening
-                            ? BoxDecoration(
-                                color: color.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              )
-                            : null,
-                        child: IconButton(
-                          visualDensity: VisualDensity.compact,
-                          onPressed: onMic,
-                          icon: Icon(listening ? Icons.mic_rounded : Icons.mic_none_rounded, size: 18, color: micColor),
-                          tooltip: 'Dictar',
+            boxShadow: focusNode.hasFocus
+                ? [
+                    BoxShadow(
+                      color: glowColor.withValues(alpha: 0.15),
+                      blurRadius: 10,
+                      spreadRadius: 0,
+                    ),
+                  ]
+                : null,
+          ),
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            onChanged: onChanged,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: ViaColors.textPrimary),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: hint,
+              hintStyle: const TextStyle(color: ViaColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Icon(icon, color: color, size: 18),
+              ),
+              prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 0),
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (onGps != null)
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      onPressed: onGps,
+                      icon: Icon(Icons.my_location_rounded, size: 18, color: color.withValues(alpha: 0.7)),
+                      tooltip: 'Usar GPS',
+                    ),
+                  AnimatedBuilder(
+                    animation: pulseAnim ?? kAlwaysCompleteAnimation,
+                    builder: (context, child) {
+                      final scale = listening && pulseAnim != null ? pulseAnim!.value : 1.0;
+                      final micColor = listening ? color : ViaColors.textMuted;
+                      return Transform.scale(
+                        scale: scale,
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 2),
+                          decoration: listening
+                              ? BoxDecoration(
+                                  color: color.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                )
+                              : null,
+                          child: IconButton(
+                            visualDensity: VisualDensity.compact,
+                            onPressed: onMic,
+                            icon: Icon(listening ? Icons.mic_rounded : Icons.mic_none_rounded, size: 18, color: micColor),
+                            tooltip: 'Dictar',
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

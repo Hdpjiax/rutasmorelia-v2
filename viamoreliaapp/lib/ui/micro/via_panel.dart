@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import '../../core/theme/via_theme.dart';
 
 /// Standard glass decoration for consistency across all components.
@@ -123,16 +124,41 @@ class ViaPanel extends StatelessWidget {
       borderRadius: BorderRadius.circular(radius),
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-        child: Container(
-          padding: padding,
-          decoration: ViaGlass.decoration(
-            radius: radius,
-            opacity: color != null ? 1.0 : 0.90,
-            backgroundColor: color ?? ViaColors.paperElevated,
-            borderColor: color != null ? null : Colors.white.withValues(alpha: 0.55),
-            shadows: shadows,
+        child: Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Ink(
+                padding: padding,
+                decoration: ViaGlass.decoration(
+                  radius: radius,
+                  opacity: color != null ? 1.0 : 0.90,
+                  backgroundColor: color ?? ViaColors.paperElevated,
+                  borderColor: color != null ? null : Colors.white.withValues(alpha: 0.55),
+                  shadows: shadows,
+                ),
+                child: child,
+              ),
+              // Golden light streak at the top border
+              Positioned(
+                top: 0,
+                left: 20,
+                right: 20,
+                height: 1.5,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ViaColors.dorado.withValues(alpha: 0.0),
+                        ViaColors.dorado.withValues(alpha: 0.65),
+                        ViaColors.dorado.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: child,
         ),
       ),
     );
@@ -175,6 +201,7 @@ class _ViaSheetScaffoldState extends State<ViaSheetScaffold> {
     if (widget.onClose == null) return;
     final vy = d.primaryVelocity ?? 0;
     if (_dragOffset > 90 || vy > 700) {
+      HapticFeedback.lightImpact();
       widget.onClose!();
       return;
     }
@@ -217,27 +244,24 @@ class _ViaSheetScaffoldState extends State<ViaSheetScaffold> {
                     onVerticalDragUpdate: _onDragUpdate,
                     onVerticalDragEnd: _onDragEnd,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 4),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 42,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: ViaColors.hairlineStrong,
-                              borderRadius: BorderRadius.circular(99),
+                      padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
+                      child: Center(
+                        child: Container(
+                          width: 38,
+                          height: 4.5,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [ViaColors.petroleo, ViaColors.dorado],
                             ),
+                            borderRadius: BorderRadius.circular(99),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ViaColors.dorado.withValues(alpha: 0.15),
+                                blurRadius: 4,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            widget.onClose != null ? 'Desliza para cerrar' : '',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: ViaColors.textMuted,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -249,22 +273,46 @@ class _ViaSheetScaffoldState extends State<ViaSheetScaffold> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                widget.title,
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                      color: ViaColors.textPrimary,
-                                      fontWeight: FontWeight.w800,
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 4,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [ViaColors.petroleo, ViaColors.dorado],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderRadius: BorderRadius.circular(2),
                                     ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      widget.title,
+                                      style: const TextStyle(
+                                        color: ViaColors.textPrimary,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 18,
+                                        letterSpacing: -0.3,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               if (widget.subtitle != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  widget.subtitle!,
-                                  style: const TextStyle(
-                                    color: ViaColors.textMuted,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.3,
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Text(
+                                    widget.subtitle!,
+                                    style: const TextStyle(
+                                      color: ViaColors.textMuted,
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.3,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -273,13 +321,46 @@ class _ViaSheetScaffoldState extends State<ViaSheetScaffold> {
                         ),
                         ...?widget.actions,
                         if (widget.onClose != null)
-                          IconButton(
-                            onPressed: widget.onClose,
-                            icon: const Icon(Icons.close_rounded, color: ViaColors.textSecondary),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4, right: 8),
+                            child: ViaBounceable(
+                              onTap: widget.onClose!,
+                              child: Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: ViaColors.paperTint.withValues(alpha: 0.8),
+                                  border: Border.all(
+                                    color: ViaColors.hairline.withValues(alpha: 0.5),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  size: 16,
+                                  color: ViaColors.textSecondary,
+                                ),
+                              ),
+                            ),
                           ),
                       ],
                     ),
                   ),
+                  // Thin gradient separator under the header
+                  Container(
+                    height: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          ViaColors.dorado.withValues(alpha: 0.25),
+                          ViaColors.primary.withValues(alpha: 0.15),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
                   Flexible(child: widget.child),
                 ],
               ),
@@ -522,6 +603,7 @@ class _ViaBounceableState extends State<ViaBounceable> with SingleTickerProvider
 
   void _onTapDown(TapDownDetails _) {
     _bounceCtrl.forward();
+    HapticFeedback.selectionClick();
   }
 
   void _onTapUp(TapUpDetails _) {

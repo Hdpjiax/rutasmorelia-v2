@@ -6,7 +6,6 @@ import '../../models/segment_model.dart';
 import '../../models/trip_plan_model.dart';
 import '../../state/app_controller.dart';
 import '../micro/via_panel.dart';
-import '../micro/via_timeline.dart';
 import 'report_route_dialog.dart';
 
 class TripPanel extends ConsumerWidget {
@@ -23,6 +22,7 @@ class TripPanel extends ConsumerWidget {
       subtitle: state.origin != null && state.destination != null
           ? '${state.origin!.name} → ${state.destination!.name}'
           : 'Elige origen y destino',
+      maxHeightFactor: 0.42,
       onClose: () => ctrl.setPanel(AppPanel.none),
       actions: [
         IconButton(
@@ -219,7 +219,7 @@ class _PlanCard extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ViaRadii.card),
         border: Border.all(
@@ -268,104 +268,12 @@ class _PlanCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header row: type badge + duration + walk
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Type badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: (isTransfer
-                                    ? ViaColors.secondary
-                                    : ViaColors.primary)
-                                .withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(99),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                isTransfer
-                                    ? Icons.transfer_within_a_station_rounded
-                                    : Icons.trending_flat_rounded,
-                                size: 13,
-                                color: isTransfer
-                                    ? ViaColors.secondary
-                                    : ViaColors.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                isTransfer ? 'Transbordo' : 'Directa',
-                                style: TextStyle(
-                                  color: isTransfer
-                                      ? ViaColors.secondary
-                                      : ViaColors.primary,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
-                        // Duration + walk
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '~${plan.totalDurationMinutes} min',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 16,
-                                color: ViaColors.ink,
-                                height: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${plan.walkDistanceTotal.round()} m caminata',
-                              style: const TextStyle(
-                                color: ViaColors.textMuted,
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            if (plan.totalFareFormatted != null) ...[
-                              const SizedBox(height: 2),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.attach_money_rounded,
-                                    size: 12,
-                                    color: ViaColors.textMuted,
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    plan.totalFareFormatted!,
-                                    style: const TextStyle(
-                                      color: ViaColors.textMuted,
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    // Route name chips with color dots
+                    // Route chips (always visible)
                     if (routeNames.isNotEmpty) ...[
-                      const SizedBox(height: 10),
                       Wrap(
                         spacing: 6,
                         runSpacing: 4,
@@ -376,64 +284,101 @@ class _PlanCard extends StatelessWidget {
                           );
                         }).toList(),
                       ),
+                      const SizedBox(height: 8),
                     ],
 
-                    // Fare estimate banner
-                    const SizedBox(height: 8),
+                    // Time and Cost below the route chips
                     Row(
                       children: [
-                        Icon(Icons.attach_money_rounded,
-                            size: 14, color: ViaColors.textSecondary),
+                        // Time Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: ViaColors.esmeraldaSoft,
+                            borderRadius: BorderRadius.circular(ViaRadii.sm),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.access_time_filled_rounded,
+                                size: 12,
+                                color: ViaColors.esmeralda,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${plan.totalDurationMinutes} min',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: ViaColors.esmeralda,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Cost Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: ViaColors.doradoSoft,
+                            borderRadius: BorderRadius.circular(ViaRadii.sm),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.payments_rounded,
+                                size: 12,
+                                color: ViaColors.amberDark,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                plan.totalFareFormatted ?? '\$9.00',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: ViaColors.amberDark,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline_rounded,
+                          size: 13,
+                          color: ViaColors.textSecondary,
+                        ),
                         const SizedBox(width: 4),
-                        Text(
-                          'Tarifa estimada: \$9 - \$12',
-                          style: const TextStyle(
-                            color: ViaColors.textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
+                        Expanded(
+                          child: Text(
+                            plan.fareDetail,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: ViaColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
                     ),
 
-                    // Tracking label (collapsed)
-                    if (trackingLabel != null && !selected) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: ViaColors.coral,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            trackingLabel!,
-                            style: const TextStyle(
-                              color: ViaColors.coral,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-
-                    // Expanded details when selected
+                    // Tracking label & action button when selected
                     if (selected) ...[
-                      // Tracking label (expanded)
                       if (trackingLabel != null) ...[
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
+                              horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
                             color: ViaColors.coralSoft,
-                            borderRadius:
-                                BorderRadius.circular(ViaRadii.sm),
+                            borderRadius: BorderRadius.circular(ViaRadii.sm),
                             border: Border.all(
                               color: ViaColors.coral.withValues(alpha: 0.25),
                             ),
@@ -441,53 +386,53 @@ class _PlanCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Container(
-                                width: 8,
-                                height: 8,
+                                width: 6,
+                                height: 6,
                                 decoration: const BoxDecoration(
                                   color: ViaColors.coral,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                trackingLabel!,
-                                style: const TextStyle(
-                                  color: ViaColors.coral,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 12.5,
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  trackingLabel!,
+                                  style: const TextStyle(
+                                    color: ViaColors.coral,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ],
-                      const SizedBox(height: 12),
-                      ViaTripTimeline(plan: plan),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
+                        height: 38,
                         child: FilledButton.icon(
                           onPressed: tracking ? onStopTrack : onTrack,
                           icon: Icon(
                             tracking
                                 ? Icons.stop_rounded
                                 : Icons.navigation_rounded,
-                            size: 18,
+                            size: 16,
                           ),
                           label: Text(
-                            tracking
-                                ? 'Detener seguimiento'
-                                : 'Seguir mi viaje',
+                            tracking ? 'Detener seguimiento' : 'Seguir mi viaje',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                           ),
                           style: FilledButton.styleFrom(
-                            backgroundColor: tracking
-                                ? ViaColors.coral
-                                : ViaColors.primary,
+                            backgroundColor: tracking ? ViaColors.coral : ViaColors.primary,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(ViaRadii.sm),
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      const ViaSuggestedStopBanner(),
                     ],
                   ],
                 ),

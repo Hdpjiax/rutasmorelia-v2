@@ -192,24 +192,27 @@ class _FavoritesPanelState extends ConsumerState<FavoritesPanel> {
     Widget? leading,
     VoidCallback? onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Material(
         color: ViaColors.paperElevated.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(ViaRadii.sm),
-        border: Border.all(color: ViaColors.hairline.withValues(alpha: 0.6)),
-      ),
-      child: ListTile(
-        dense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-        leading: leading ??
-            const Icon(Icons.favorite_rounded, color: ViaColors.coral, size: 20),
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5)),
-        subtitle: subtitle == null
-            ? null
-            : Text(subtitle, style: const TextStyle(color: ViaColors.textMuted, fontSize: 12)),
-        trailing: trailing,
-        onTap: onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ViaRadii.sm),
+          side: BorderSide(color: ViaColors.hairline.withValues(alpha: 0.6)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+          leading: leading ??
+              const Icon(Icons.favorite_rounded, color: ViaColors.coral, size: 20),
+          title: Text(name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5)),
+          subtitle: subtitle == null
+              ? null
+              : Text(subtitle, style: const TextStyle(color: ViaColors.textMuted, fontSize: 12)),
+          trailing: trailing,
+          onTap: onTap,
+        ),
       ),
     );
   }

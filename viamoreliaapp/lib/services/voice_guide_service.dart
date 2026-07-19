@@ -7,11 +7,6 @@ class VoiceGuideService {
 
   final FlutterTts _tts = FlutterTts();
   bool _initialized = false;
-  String _lastUttered = '';
-
-  bool _announcedBoard = false;
-  bool _announcedNearAlight = false;
-  String _lastTurnInstruction = '';
 
   Future<void> init() async {
     if (_initialized) return;
@@ -23,20 +18,12 @@ class VoiceGuideService {
   }
 
   void reset() {
-    _announcedBoard = false;
-    _announcedNearAlight = false;
-    _lastTurnInstruction = '';
-    _lastUttered = '';
     stop();
   }
 
   Future<void> speak(String text) async {
-    if (text == _lastUttered) return;
-    _lastUttered = text;
-    await init();
-    try {
-      await _tts.speak(text);
-    } catch (_) {}
+    // Silenciado por completo
+    return;
   }
 
   Future<void> stop() async {
@@ -53,36 +40,6 @@ class VoiceGuideService {
     required String? routeName,
     required String? routeDirection,
   }) {
-    if (trackingSegment == 'ride' && nearAlight && !_announcedNearAlight) {
-      _announcedNearAlight = true;
-      speak('Prepárate para bajar. Tu destino está cerca.');
-      return;
-    }
-
-    if (trackingSegment == 'walkToBoard' && metersToNext < 30 && !_announcedBoard) {
-      _announcedBoard = true;
-      final route = routeName ?? 'la ruta';
-      speak('Sube a $route $routeDirection');
-      return;
-    }
-
-    if ((trackingSegment == 'walkToBoard' || trackingSegment == 'walkToDest') &&
-        navInstruction != null &&
-        navInstruction != _lastTurnInstruction) {
-      _lastTurnInstruction = navInstruction;
-      speak(navInstruction);
-      return;
-    }
-
-    if (trackingSegment == 'ride' && !_announcedBoard) {
-      _announcedBoard = true;
-      final route = routeName ?? 'la ruta';
-      speak('Abordo de $route $routeDirection');
-    }
-
-    if (trackingSegment == 'done') {
-      speak('Has llegado a tu destino.');
-      reset();
-    }
+    // Silenciado por completo
   }
 }

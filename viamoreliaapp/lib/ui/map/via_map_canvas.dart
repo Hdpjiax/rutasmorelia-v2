@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -56,7 +57,9 @@ class ViaMapCanvas extends ConsumerStatefulWidget {
 class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
     with TickerProviderStateMixin {
   MapController? _controller;
-  bool _basemapEnhanced = false;
+  StyleController? _styleController;
+  final List<String> _addedSourceIds = [];
+  final List<String> _addedLayerIds = [];
 
   // Cache solo de polylines (baratas de invalidar).
   Object? _layersKey;
@@ -75,22 +78,20 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
   late final AnimationController _pulseCtrl;
   double _pulseGlow = 0.0;
 
-  static const _positronStyle =
-      'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
-  /// Máx. puntos por polyline en pantalla (MapLibre se ahoga con miles de vértices).
-  static const int _maxLinePoints = 160;
+
+
 
   @override
   void initState() {
     super.initState();
+    _revealProgress = 1.0;
+    _planRevealProgress = 1.0;
+
     _revealCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 300),
     );
-    _revealCtrl.addListener(() {
-      setState(() => _revealProgress = _revealCtrl.value);
-    });
     _revealCtrl.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _pulseCtrl.forward(from: 0.0);
@@ -99,11 +100,8 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
 
     _planRevealCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 300),
     );
-    _planRevealCtrl.addListener(() {
-      setState(() => _planRevealProgress = _planRevealCtrl.value);
-    });
 
     _pulseCtrl = AnimationController(
       vsync: this,
@@ -167,32 +165,9 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
   Geographic _g(LatLng p) => Geographic(lon: p.longitude, lat: p.latitude);
 
   /// Reduce vértices manteniendo extremos (mucho más barato al pintar).
-  List<LatLng> _decimate(List<LatLng> coords, {int maxPoints = _maxLinePoints}) {
-    if (coords.length <= maxPoints) return coords;
-    final step = (coords.length / maxPoints).ceil().clamp(2, 200);
-    final out = <LatLng>[coords.first];
-    for (var i = step; i < coords.length - 1; i += step) {
-      out.add(coords[i]);
-    }
-    out.add(coords.last);
-    return out;
-  }
 
-  Feature<LineString> _lineFeature(List<LatLng> coords,
-      {String? id, double reveal = 1.0}) {
-    final count =
-        (coords.length * reveal.clamp(0.0, 1.0)).ceil().clamp(2, coords.length);
-    final visible = coords.take(count).toList();
-    final flat = <double>[];
-    for (final c in visible) {
-      flat.add(c.longitude);
-      flat.add(c.latitude);
-    }
-    return Feature(
-      id: id,
-      geometry: LineString(flat.positions(Coords.xy)),
-    );
-  }
+
+
 
   Object? _planKey(TripPlanModel? p) {
     if (p == null) return null;
@@ -232,13 +207,107 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
 
 
 
-  void _updateNativeLayers() {}
+  void _updateNativeLayers() {
+    unawaited(_updateNativeLayersAsync());
+  }
 
-  List<Layer> _buildLayers() {
-    final layers = <Layer>[];
+  Future<void> _clearNativeLayers() async {
+    final style = _styleController;
+    if (style == null) return;
+
+    if (_addedLayerIds.isNotEmpty) {
+      final layers = List<String>.from(_addedLayerIds.reversed);
+      _addedLayerIds.clear();
+      try {
+        await Future.wait(layers.map((id) => style.removeLayer(id).catchError((_) {})));
+      } catch (_) {}
+    }
+
+    if (_addedSourceIds.isNotEmpty) {
+      final sources = List<String>.from(_addedSourceIds);
+      _addedSourceIds.clear();
+      try {
+        await Future.wait(sources.map((id) => style.removeSource(id).catchError((_) {})));
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _updateNativeLayersAsync() async {
+    final style = _styleController;
+    if (style == null) return;
+
+    await _clearNativeLayers();
+
+    final lines = <_MapRouteLine>[];
 
     if (widget.activePlan != null) {
-      _layersForPlan(widget.activePlan!, layers);
+      final plan = widget.activePlan!;
+      final usedIds = plan.segments
+          .where((s) => s.routeId != null)
+          .map((s) => s.routeId!)
+          .toSet();
+
+      // Corredor completo de fondo (visible y claro)
+      for (final id in usedIds) {
+        for (final shape in widget.shapes.where((s) => s.routeId == id)) {
+          if (shape.coordinates.length < 2) continue;
+          lines.add(_MapRouteLine(
+            id: 'bg-${shape.id}',
+            coordinates: shape.coordinates,
+            color: shape.color.withValues(alpha: 0.32),
+            casingColor: const Color(0xFF0F172A).withValues(alpha: 0.15),
+            width: 3.5,
+            direction: shape.direction,
+          ));
+        }
+      }
+
+      // Tramo activo del plan
+      for (var i = 0; i < plan.segments.length; i++) {
+        final segment = plan.segments[i];
+        if (segment.type == SegmentType.ride &&
+            segment.boardingPoint != null &&
+            segment.alightingPoint != null) {
+          final shape = widget.shapes.cast<RouteShapeModel?>().firstWhere(
+                (s) =>
+                    s != null &&
+                    s.routeId == segment.routeId &&
+                    s.direction == segment.direction,
+                orElse: () => null,
+              );
+          final coords = shape != null
+              ? _slice(shape.coordinates, segment.boardingPoint!, segment.alightingPoint!)
+              : [segment.boardingPoint!, segment.alightingPoint!];
+          if (coords.length < 2) continue;
+          lines.add(_MapRouteLine(
+            id: 'seg-${segment.routeId}-$i',
+            coordinates: coords,
+            color: segment.color ?? ViaColors.mint,
+            casingColor: const Color(0xFF0F172A),
+            width: 4.5,
+            direction: segment.direction,
+          ));
+        } else if (segment.type == SegmentType.walk &&
+            segment.walkFrom != null &&
+            segment.walkTo != null) {
+          final path = segment.walkPath ?? [segment.walkFrom!, segment.walkTo!];
+          if (path.length < 2) continue;
+          final color = switch (segment.walkKind) {
+            WalkKind.toBoard => ViaColors.walkToBoard,
+            WalkKind.fromAlight => ViaColors.walkFromAlight,
+            WalkKind.transfer => const Color(0xFF6AA9D8),
+            null => ViaColors.textSecondary,
+          };
+          lines.add(_MapRouteLine(
+            id: 'walk-${segment.walkKind}-$i',
+            coordinates: path,
+            color: color,
+            casingColor: Colors.white.withValues(alpha: 0.8),
+            width: 2.5,
+            isWalk: true,
+          ));
+        }
+      }
     } else if (widget.shapes.isNotEmpty) {
       final display = DirectionModeService.toCorridorDisplay(
         widget.shapes,
@@ -247,135 +316,101 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
       for (final shape in display) {
         if (shape.coordinates.length < 2) continue;
         final isSense = shape.role == 'sense-label';
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(shape.coordinates,
-                id: '${shape.id}-cas', reveal: _revealProgress)
-          ],
-          color: shape.casingColor ?? const Color(0xFF0F172A),
-          width: isSense ? 3 : 4,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(shape.coordinates,
-                id: shape.id, reveal: _revealProgress)
-          ],
+        lines.add(_MapRouteLine(
+          id: shape.id,
+          coordinates: shape.coordinates,
           color: shape.color.withValues(alpha: isSense ? 0.55 : 1),
-          width: isSense ? 2 : 3,
+          casingColor: shape.casingColor ?? const Color(0xFF0F172A),
+          width: isSense ? 2.5 : 3.5,
+          direction: shape.direction,
         ));
-      }
-
-      // Pulse glow on top of route lines after reveal completes
-      if (_pulseGlow > 0.01) {
-        for (final shape in display) {
-          if (shape.coordinates.length < 2) continue;
-          layers.add(PolylineLayer(
-            polylines: [
-              _lineFeature(shape.coordinates,
-                  id: 'pulse-${shape.id}', reveal: 1.0)
-            ],
-            color: const Color(0xFFF5B719).withValues(alpha: _pulseGlow),
-            width: 8,
-          ));
-        }
       }
     }
 
-    return layers;
+    for (final line in lines) {
+      final sourceId = 'src-${line.id}';
+      final casingLayerId = 'lay-cas-${line.id}';
+      final lineLayerId = 'lay-line-${line.id}';
+
+      final geojson = jsonEncode({
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": line.coordinates.map((c) => [c.longitude, c.latitude]).toList()
+        },
+        "properties": {}
+      });
+
+      try {
+        await style.addSource(GeoJsonSource(id: sourceId, data: geojson, maxZoom: 18));
+        _addedSourceIds.add(sourceId);
+
+        // 1. Casing
+        await style.addLayer(LineStyleLayer(
+          id: casingLayerId,
+          sourceId: sourceId,
+          paint: {
+            'line-color': '#${line.casingColor.value.toRadixString(16).substring(2)}',
+            'line-width': line.width + 1.5,
+            'line-opacity': line.casingColor.opacity,
+          },
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+          },
+        ));
+        _addedLayerIds.add(casingLayerId);
+
+        // 2. Linea Principal
+        final linePaint = <String, Object>{
+          'line-color': '#${line.color.value.toRadixString(16).substring(2)}',
+          'line-width': line.width,
+          'line-opacity': line.color.opacity,
+        };
+        final lineLayout = <String, Object>{
+          'line-cap': 'round',
+          'line-join': 'round',
+        };
+        if (line.isWalk) {
+          linePaint['line-dasharray'] = [2, 2];
+        }
+        await style.addLayer(LineStyleLayer(
+          id: lineLayerId,
+          sourceId: sourceId,
+          paint: linePaint,
+          layout: lineLayout,
+        ));
+        _addedLayerIds.add(lineLayerId);
+
+        // 3. Texto nativo "Esta es tu ruta" incrustado en el trazo del viaje destacado
+        if (line.id.startsWith('seg-')) {
+          final textLayerId = 'lay-txt-${line.id}';
+          await style.addLayer(SymbolStyleLayer(
+            id: textLayerId,
+            sourceId: sourceId,
+            minZoom: 12.0,
+            layout: {
+              'symbol-placement': 'line',
+              'symbol-spacing': 280.0,
+              'text-field': 'Esta es tu ruta',
+              'text-size': 10.5,
+              'text-keep-upright': true,
+              'text-allow-overlap': false,
+            },
+            paint: {
+              'text-color': '#FFFFFF',
+              'text-halo-color': '#005B57', // Petróleo de marca
+              'text-halo-width': 1.8,
+            },
+          ));
+          _addedLayerIds.add(textLayerId);
+        }
+      } catch (_) {}
+    }
   }
 
-  void _layersForPlan(TripPlanModel plan, List<Layer> layers) {
-    final usedIds = plan.segments
-        .where((s) => s.routeId != null)
-        .map((s) => s.routeId!)
-        .toSet();
-
-    // Corredor completo de fondo (muy tenue y delgado)
-    for (final id in usedIds) {
-      for (final shape in widget.shapes.where((s) => s.routeId == id)) {
-        if (shape.coordinates.length < 2) continue;
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(shape.coordinates,
-                id: '${shape.id}-bg-cas', reveal: _planRevealProgress)
-          ],
-          color: const Color(0xFF1E293B).withValues(alpha: 0.14),
-          width: 3,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(shape.coordinates,
-                id: '${shape.id}-bg', reveal: _planRevealProgress)
-          ],
-          color: shape.color.withValues(alpha: 0.2),
-          width: 2,
-        ));
-      }
-    }
-
-    // Tramo activo del plan: delgado (antes casing 10 / fill 6)
-    for (final segment in plan.segments) {
-      if (segment.type == SegmentType.ride &&
-          segment.boardingPoint != null &&
-          segment.alightingPoint != null) {
-        final shape = widget.shapes.cast<RouteShapeModel?>().firstWhere(
-              (s) =>
-                  s != null &&
-                  s.routeId == segment.routeId &&
-                  s.direction == segment.direction,
-              orElse: () => null,
-            );
-        final coords = shape != null
-            ? _slice(shape.coordinates, segment.boardingPoint!, segment.alightingPoint!)
-            : [segment.boardingPoint!, segment.alightingPoint!];
-        if (coords.length < 2) continue;
-        final color = segment.color ?? ViaColors.mint;
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(coords,
-                id: 'seg-cas-${segment.routeId}', reveal: _planRevealProgress)
-          ],
-          color: const Color(0xFF0F172A),
-          width: 4,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(coords,
-                id: 'seg-${segment.routeId}', reveal: _planRevealProgress)
-          ],
-          color: color,
-          width: 3,
-        ));
-      } else if (segment.type == SegmentType.walk &&
-          segment.walkFrom != null &&
-          segment.walkTo != null) {
-        final path = segment.walkPath ?? [segment.walkFrom!, segment.walkTo!];
-        if (path.length < 2) continue;
-        final color = switch (segment.walkKind) {
-          WalkKind.toBoard => ViaColors.walkToBoard,
-          WalkKind.fromAlight => ViaColors.walkFromAlight,
-          WalkKind.transfer => const Color(0xFF6AA9D8), // azul bajito
-          null => ViaColors.textSecondary,
-        };
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(path,
-                id: 'walk-cas-${segment.walkKind}', reveal: 1.0)
-          ],
-          color: Colors.white.withValues(alpha: 0.85),
-          width: 3,
-        ));
-        layers.add(PolylineLayer(
-          polylines: [
-            _lineFeature(path,
-                id: 'walk-${segment.walkKind}', reveal: 1.0)
-          ],
-          color: color,
-          width: 2,
-          dashArray: const [2, 2],
-        ));
-      }
-    }
+  List<Layer> _buildLayers() {
+    return const [];
   }
 
   /// Etiquetas, orbes y flechas con animación suave (throttle en setState).
@@ -388,53 +423,6 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
         size: const Size(32, 32),
         child: ViaUserDot(size: 28, pulse: widget.tracking),
       ));
-
-      // Direction arrow during walk navigation
-      if (widget.tracking) {
-        final navState = ref.read(appControllerProvider);
-        if (navState.walkNavSteps != null && navState.currentNavStep != null) {
-          List<LatLng>? wp;
-          if (widget.activePlan != null) {
-            for (final seg in widget.activePlan!.segments) {
-              if (seg.type == SegmentType.walk && seg.walkPath != null && seg.walkPath!.length >= 2) {
-                if (navState.currentNavStep!.startIndex < seg.walkPath!.length) {
-                  wp = seg.walkPath!;
-                  break;
-                }
-              }
-            }
-          }
-          if (wp != null && widget.userPosition != null) {
-            final idx = navState.currentNavStep!.startIndex;
-            final nextIdx = idx < wp.length - 1 ? idx + 1 : idx;
-            final dy = wp[nextIdx].latitude - wp[idx].latitude;
-            final dx = wp[nextIdx].longitude - wp[idx].longitude;
-            if (dx != 0 || dy != 0) {
-              final angle = math.atan2(dy, dx);
-              markers.add(Marker(
-                point: _g(widget.userPosition!),
-                size: const Size(48, 48),
-                alignment: Alignment.center,
-                child: Transform.rotate(
-                  angle: -angle + (math.pi / 2),
-                  child: Icon(
-                    navState.currentNavStep!.instruction.contains('derecha')
-                        ? Icons.turn_right_rounded
-                        : navState.currentNavStep!.instruction.contains('izquierda')
-                            ? Icons.turn_left_rounded
-                            : Icons.navigation_rounded,
-                    size: 36,
-                    color: ViaColors.walkToBoard.withValues(alpha: 0.85),
-                    shadows: const [
-                      Shadow(color: Colors.black45, blurRadius: 6),
-                    ],
-                  ),
-                ),
-              ));
-            }
-          }
-        }
-      }
     }
     if (widget.tracking && widget.projectedOnRoute != null) {
       // Pulse ring behind bus marker
@@ -524,8 +512,10 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
       );
       for (final shape in display) {
         if (shape.coordinates.length < 10) continue;
+        // Inyectar flechas a lo largo de las rutas en el catálogo
+        markers.addAll(_generateArrowsForPath(shape.coordinates, shape.color));
+
         final label = shape.direction == 'vuelta' ? 'Vuelta' : 'Ida';
-        // Ida al inicio, Vuelta al inicio (extremos opuestos de la ciudad)
         final frac = 0.08;
         final pt = _pointAtFraction(shape.coordinates, frac);
         markers.add(Marker(
@@ -536,25 +526,6 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
               : Alignment.bottomCenter,
           child: _senseChip(label),
         ));
-
-        // Densidad de flechas dinámica según el nivel de zoom
-        int arrowCount = 8;
-        if (_lastZoom > 15.0) {
-          arrowCount = 28;
-        } else if (_lastZoom > 13.5) {
-          arrowCount = 16;
-        } else if (_lastZoom > 11.5) {
-          arrowCount = 10;
-        }
-
-        _addArrows(
-          markers,
-          shape.coordinates,
-          shape.color,
-          count: arrowCount,
-          size: 16,
-          skipEnds: 0.08,
-        );
       }
     }
 
@@ -609,27 +580,11 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
         final coords = shape != null
             ? _slice(shape.coordinates, segment.boardingPoint!, segment.alightingPoint!)
             : [segment.boardingPoint!, segment.alightingPoint!];
-        final color = segment.color ?? ViaColors.mint;
 
         if (coords.length >= 4) {
-          // Densidad de flechas para plan según zoom
-          int planArrowCount = 6;
-          if (_lastZoom > 15.0) {
-            planArrowCount = 20;
-          } else if (_lastZoom > 13.5) {
-            planArrowCount = 12;
-          } else if (_lastZoom > 11.5) {
-            planArrowCount = 8;
-          }
-
-          _addArrows(markers, coords, color, count: planArrowCount, size: 14, skipEnds: 0.12);
-          final sensePt = _pointAtFraction(coords, 0.45);
-          markers.add(Marker(
-            point: _g(sensePt),
-            size: const Size(68, 28),
-            alignment: Alignment.bottomCenter,
-            child: _senseChip(segment.direction == 'vuelta' ? 'Vuelta' : 'Ida'),
-          ));
+          // Inyectar flechas a lo largo del tramo del plan seleccionado
+          final color = segment.color ?? ViaColors.primary;
+          markers.addAll(_generateArrowsForPath(coords, color));
         }
 
         // Si el tramo anterior/siguiente es caminata de transbordo → no Sube/Baja ahí
@@ -658,13 +613,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
                 ? [segment.walkFrom!, segment.walkTo!]
                 : <LatLng>[]);
         if (path.length > 4) {
-          final color = switch (segment.walkKind) {
-            WalkKind.toBoard => ViaColors.walkToBoard,
-            WalkKind.fromAlight => ViaColors.walkFromAlight,
-            WalkKind.transfer => const Color(0xFF6AA9D8),
-            null => ViaColors.textSecondary,
-          };
-          _addArrows(markers, path, color, count: 4, size: 12, skipEnds: 0.18);
+          // Las flechas de caminata ya no se dibujan por marcador
         }
       }
     }
@@ -695,47 +644,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
   }
 
   /// Flechas de sentido con loop suave (el setState ya va throttled).
-  void _addArrows(
-    List<Marker> markers,
-    List<LatLng> coords,
-    Color color, {
-    int count = 4,
-    double size = 13,
-    double skipEnds = 0.1,
-  }) {
-    if (coords.length < 4) return;
-    // IMPORTANTE: Usar coordenadas reales sin decimar para que las flechas
-    // se ubiquen 100% sobre la línea dibujada y no floten fuera.
-    final slim = coords;
-    final span = 1.0 - 2 * skipEnds;
-    for (var k = 0; k < count; k++) {
-      final frac = skipEnds + span * (k / (count - 1).clamp(1, 25));
-      final exact = frac * (slim.length - 2);
-      final index = exact.floor().clamp(0, slim.length - 2);
-      final rem = exact - index;
-      final p1 = slim[index];
-      final p2 = slim[index + 1];
-      final lat = p1.latitude + (p2.latitude - p1.latitude) * rem;
-      final lng = p1.longitude + (p2.longitude - p1.longitude) * rem;
-      final angle = math.atan2(p2.latitude - p1.latitude, p2.longitude - p1.longitude);
-      markers.add(Marker(
-        point: Geographic(lon: lng, lat: lat),
-        size: Size(size + 2, size + 2),
-        child: Transform.rotate(
-          angle: -angle + (math.pi / 2),
-          child: Icon(
-            Icons.navigation_rounded,
-            size: size,
-            color: Colors.white,
-            shadows: [
-              Shadow(color: color.withValues(alpha: 0.9), blurRadius: 2),
-              const Shadow(color: Colors.black54, blurRadius: 2),
-            ],
-          ),
-        ),
-      ));
-    }
-  }
+
 
   Widget _senseChip(String label) {
     final isVuelta = label.toLowerCase().contains('vuelta');
@@ -763,6 +672,8 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
       ),
     );
   }
+
+
 
   Widget _stopChip(String text, Color color) {
     return Container(
@@ -849,14 +760,75 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
     return dx * dx + dy * dy;
   }
 
+  List<Marker> _generateArrowsForPath(List<LatLng> coords, Color color) {
+    if (coords.length < 5) return const [];
+    final arrows = <Marker>[];
+    
+    final indexes = [
+      (coords.length * 0.25).toInt(),
+      (coords.length * 0.50).toInt(),
+      (coords.length * 0.75).toInt(),
+    ];
+
+    for (final idx in indexes) {
+      if (idx >= 0 && idx < coords.length - 1) {
+        final current = coords[idx];
+        final next = coords[idx + 1];
+        final dy = next.latitude - current.latitude;
+        final dx = next.longitude - current.longitude;
+        if (dx != 0 || dy != 0) {
+          final angle = math.atan2(dy, dx);
+          arrows.add(Marker(
+            point: _g(current),
+            size: const Size(20, 20),
+            alignment: Alignment.center,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(2),
+              child: Transform.rotate(
+                angle: -angle + (math.pi / 2),
+                child: Icon(
+                  Icons.navigation_rounded,
+                  color: color,
+                  size: 13,
+                ),
+              ),
+            ),
+          ));
+        }
+      }
+    }
+    return arrows;
+  }
+
+
+
   Future<void> _onStyleLoaded(StyleController style) async {
-    if (_basemapEnhanced) return;
-    _basemapEnhanced = true;
+    _styleController = style;
     await enhanceBasemapLikeWeb(style);
+    _updateNativeLayers();
   }
 
   @override
   Widget build(BuildContext context) {
+    final mapStyleUri = ref.watch(appControllerProvider.select((s) => s.mapStyleUri));
+    
+    ref.listen(appControllerProvider.select((s) => s.mapStyleUri), (previous, next) {
+      if (next != previous && _controller != null) {
+        _controller!.setStyle(next);
+      }
+    });
+
     final lk = _computeLayersKey();
     if (lk != _layersKey) {
       _layersKey = lk;
@@ -868,7 +840,7 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
     return RepaintBoundary(
       child: MapLibreMap(
         options: MapOptions(
-          initStyle: _positronStyle,
+          initStyle: mapStyleUri,
           initCenter: Geographic(
             lon: GeoConstants.moreliaCenter.longitude,
             lat: GeoConstants.moreliaCenter.latitude,
@@ -910,4 +882,24 @@ class _ViaMapCanvasState extends ConsumerState<ViaMapCanvas>
       ),
     );
   }
+}
+
+class _MapRouteLine {
+  final String id;
+  final List<LatLng> coordinates;
+  final Color color;
+  final Color casingColor;
+  final double width;
+  final bool isWalk;
+  final String? direction;
+
+  _MapRouteLine({
+    required this.id,
+    required this.coordinates,
+    required this.color,
+    required this.casingColor,
+    required this.width,
+    this.isWalk = false,
+    this.direction,
+  });
 }
